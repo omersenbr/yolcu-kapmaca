@@ -5,18 +5,47 @@
     "vardiyaUcreti": 3000,
     "vardiyaSaat": 12,
     "_vardiyaNot": "Şoför patronun aracı ve plakasıyla 12 saatlik vardiya için öder; kalanı şoförün. Kendi aracıyla plaka kiralayan da aynı ücreti öder.",
-    "cirakIndirimi": { "gun": 3, "ucret": 1500 },
+    "cirakIndirimi": {
+      "gun": 3,
+      "ucret": 1500
+    },
     "plakaAylikKira": 80000,
     "plakaSatis": 12000000,
     "plakaAlis": 11600000,
     "_plakaNot": "Kasım 2026 piyasası: alış 11,6 M, satış 12,0–12,2 M TL; aylık kira 67–80 bin TL.",
-    "plakaHisseleri": [0.125, 0.25, 0.5, 1]
+    "plakaHisseleri": [
+      0.125,
+      0.25,
+      0.5,
+      1
+    ]
   },
   "hafta": {
     "_not": "Oyun günü haftanın bir günü. Cuma, cumartesi, pazar en yoğun.",
-    "gunler": ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"],
-    "yogunGunler": ["Cuma", "Cumartesi", "Pazar"],
-    "hedefBrutKazanc": { "haftaIci": [7000, 10000], "yogun": [10000, 14000] },
+    "gunler": [
+      "Pazartesi",
+      "Salı",
+      "Çarşamba",
+      "Perşembe",
+      "Cuma",
+      "Cumartesi",
+      "Pazar"
+    ],
+    "yogunGunler": [
+      "Cuma",
+      "Cumartesi",
+      "Pazar"
+    ],
+    "hedefBrutKazanc": {
+      "haftaIci": [
+        7000,
+        10000
+      ],
+      "yogun": [
+        10000,
+        14000
+      ]
+    },
     "_hedefNot": "Ortalama bir taksicinin günlük brüt kazancı; ücretler ve yolcu yoğunluğu buna göre ayarlanacak."
   },
   "araclar": {
@@ -27,5 +56,48 @@
     "kurBaslangic": 36,
     "gunlukOynama": 0.02,
     "makas": 0.05
+  },
+  "tempo": {
+    "_not": "Dünya saati ortak ve sürekli işler (çok oyunculuda zorunlu). Oyuncunun araçları başkasının vardiyasında çalışırken de gelir getirir; birikim, tahsil edilmezse belli bir süreden sonra durur.",
+    "oyunGunuDakika": 8,
+    "vardiyaDakika": 4,
+    "cevrimdisiBirikimSaat": 12
+  },
+  "gelir": {
+    "_not": "Vardiya başı ortalamalar. Brüt hedef kullanıcıdan (hafta içi ₺10 bine kadar, yoğun günler üstü).",
+    "vardiyaBrut": {
+      "haftaIci": 8500,
+      "yogun": 12000
+    },
+    "benzinVardiya": 1000,
+    "gorevVardiya": 2500,
+    "_gorevNot": "görevler, bahşiş, etkinlik ve turist doları ortalaması",
+    "gunlukGiris": [
+      25000,
+      35000,
+      50000,
+      60000,
+      75000,
+      100000,
+      150000
+    ],
+    "_girisNot": "7 günlük seri; gün atlanırsa başa döner",
+    "ilkGunBonus": 200000
+  },
+  "filo": {
+    "_not": "Kendi aracın + kiralık plaka. Vardiyayı NPC ya da arkadaş şoför sürer, sana ₺3 000 öder; sen plaka sahibine kira ve araç bakımı ödersin.",
+    "eskiTaksi": 450000,
+    "yeniTaksi": 1800000,
+    "aracBakimVardiya": 500,
+    "plakaKiraVardiya": 1333,
+    "_plakaKiraNot": "aylık ₺80 000 / 60 vardiya",
+    "kiralikPlakaLimiti": 2,
+    "_limitNot": "Piyasada kiralık plaka az: kiralık plakayla en fazla 2 araç; fazlası için kendi plakan (tam) gerekir."
+  },
+  "kredi": {
+    "_not": "Plaka kredisi: peşinat (hisseler dahil) ile tam plaka; kalan borç faiziyle gerçek günlere bölünür, taksit kasadan düşer.",
+    "pesinat": 0.2,
+    "toplamFaiz": 0.15,
+    "vadeGun": 20
   }
 }

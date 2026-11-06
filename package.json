@@ -12,7 +12,8 @@
     "test": "node tests/smoke.mjs && node tests/scenes.mjs",
     "test:parity": "node tests/parity.mjs",
     "test:perf": "node tests/perf.mjs",
-    "sim": "vite build --ssr tools/headless.ts --outDir dist-node --emptyOutDir --logLevel warn && node dist-node/headless.js"
+    "sim": "vite build --ssr tools/headless.ts --outDir dist-node --emptyOutDir --logLevel warn && node dist-node/headless.js",
+    "ekonomi": "node tools/ekonomi-sim.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",

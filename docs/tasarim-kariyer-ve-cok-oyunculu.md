@@ -40,7 +40,27 @@ Sıfır sermayeyle, başkasının aracında başlarsın. Her gün kazandığın�
 
 **Hafta:** oyun günleri haftanın günlerini takip eder (Pazartesi → Pazar). **Cuma, cumartesi ve pazar en yoğun günler**: daha çok yolcu, daha uzun yolculuk, gece hayatı. Ücretler ve yolcu yoğunluğu, ortalama bir şoför bu hedeflere ulaşacak şekilde ayarlanacak (bugünkü taksimetre bir oyun gününde ₺3 000’ü zor çıkarıyor).
 
-**Tempo sorunu (karar bekliyor):** gerçek rakamlarla bir şoför haftada ~₺40 000 net biriktirir. Tam plaka (₺12 M) ~300 oyun haftası, yani ~280 saat oynanış eder. Seçenekler bir sonraki bölümde.
+### Tempo: gerçekçi fiyat, ulaşılabilir hedef
+
+**Kullanıcının kuralı:** rakamlar gerçekçi olacak, ama kimse bir plaka için haftalarını vermez; günlük giriş ve çeşitli ödüller kazancı katlayabilir.
+
+Çözüm üç kaldıraçla:
+1. **Ortak ve sürekli dünya saati:** oyun günü 8 dakika; çok oyunculuda zaten zorunlu. Oyuncunun aracı başkasının vardiyasında da çalışır. NPC ya da arkadaş şoför sana ₺3 000 öder, sen plaka kirası ve bakım ödersin. Oyunda değilken de birikir, ama en fazla 12 saatlik; sonra durur, “kasayı topla” gerekir. Rakamlar oyun günü başına gerçek; servet, gerçek plaka ağalarındaki gibi araçlardan büyür.
+2. **Ödüller:** ilk gün bonusu ₺200 bin; 7 günlük giriş serisi (₺25 bin → ₺150 bin); görev, bahşiş, etkinlik ve turist dolarından vardiya başına ortalama ₺2 500.
+3. **Gerçekçi sınır ve kaldıraç:**
+   - Piyasada kiralık plaka az: kiralık plakayla en fazla 2 araç çalıştırılır. Fazlası için kendi plakan gerekir, bu yüzden plaka almak zorunlu bir hedef olur.
+   - **Hisseli plaka** (1/8 = ₺1,5 M) ilk “plaka sahibi” basamağı; payı kadar kira getirir.
+   - **Plaka kredisi:** %20 peşinat (hisseler dahil), %15 faiz, 20 günde ödenir.
+
+`npm run ekonomi` (tools/ekonomi-sim.mjs) ile hesaplanan tempo, gerçek gün olarak:
+
+| Günde aktif oyun | İlk kendi taksin | Plaka hissesi (“plaka sahibi”) | İlk tam plaka (kredili) | Kredi biter | 5 plaka (Plaka Ağası) |
+| --- | --- | --- | --- | --- | --- |
+| 20 dk | 4. gün | 9. gün | 10. gün | 31. gün | 54. gün |
+| 45 dk | 2. gün | 6. gün | 8. gün | 28. gün | 50. gün |
+| 90 dk | 2. gün | 5. gün | 7. gün | 28. gün | 45. gün |
+
+Yani bir plaka sahibi olmak ~1 hafta, Plaka Ağası olmak 1,5–2 ay sürer. Bütün sayılar `data/ekonomi.json` içinde; oynanış testiyle ayarlanacak.
 
 ## 4. Tag’ci kariyeri
 
