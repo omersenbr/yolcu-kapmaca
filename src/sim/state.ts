@@ -29,6 +29,8 @@ export function addTagXP() {
   save('yk-tagxp', TAGXP);
 }
 export function tagLevel(xp?: number) {
+  // kariyerde seviye sürülen araçtan gelir
+  if (xp === undefined && G && G.tagLevel !== undefined) return G.tagLevel;
   const L = DLG.tagLevels.levels;
   let k = 0;
   for (let i = 0; i < L.length; i++) if ((xp === undefined ? TAGXP : xp) >= L[i].xp) k = i;
@@ -44,7 +46,7 @@ export function setDay(d) {
 /** saat: hızlı günde 05:00’ten başlayıp 24 saat; kariyer vardiyasında G.startH’ten G.span saat */
 export const hourNow = () => (G ? ((G.startH ?? START_H) + ((DAY - G.time) / DAY) * (G.span ?? 24)) % 24 : START_H);
 /** vardiya çarpanları (kariyer); hızlı günde hepsi 1 */
-const NO_MODS = { fareMul: 1, demandMul: 1, complaintMul: 1 };
+const NO_MODS = { fareMul: 1, demandMul: 1, complaintMul: 1, fuelMul: 1 };
 export const mods = (): typeof NO_MODS => (G && G.mods) || NO_MODS;
 export function demand() {
   const d = demand0(),

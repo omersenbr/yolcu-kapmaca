@@ -167,7 +167,7 @@ export function initMenu() {
     if (pendingRole) {
       const r = pendingRole;
       pendingRole = null;
-      if (careerMode() && r === 'taxi') openCareer();
+      if (careerMode()) openCareer(r);
       else startRole(r);
     }
   });
@@ -180,7 +180,7 @@ export function initMenu() {
         $('uname').focus();
         return;
       }
-      if (careerMode() && b.dataset.role === 'taxi') return openCareer();
+      if (careerMode()) return openCareer(b.dataset.role);
       startRole(b.dataset.role);
     }),
   );

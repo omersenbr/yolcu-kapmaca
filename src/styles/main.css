@@ -1727,3 +1727,13 @@ body.inmenu .hud {
   margin: 0 0 6px;
   color: var(--text);
 }
+.crole {
+  margin: 12px 0 6px;
+  font:
+    400 24px/1 'Bangers',
+    'Archivo Black',
+    sans-serif;
+  letter-spacing: 0.8px;
+  border-top: 3px dashed #111;
+  padding-top: 10px;
+}

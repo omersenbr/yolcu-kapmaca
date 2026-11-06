@@ -1955,14 +1955,17 @@
   "baslik": "Kariyer",
   "modHizli": "Hızlı gün",
   "modKariyer": "Kariyer",
-  "tagYakinda": "Tag’ci kariyeri yakında",
   "statu": {
    "cirak": "Çırak şoför",
    "sofor": "Şoför",
    "aracSahibi": "Taksi sahibi (kiralık plaka)",
    "ortak": "Plaka ortağı",
    "plakaSahibi": "Plaka sahibi",
-   "aga": "Plaka Ağası"
+   "aga": "Plaka Ağası",
+   "tagArkadas": "Arkadaşının aracında",
+   "tagKendi": "Kendi aracıyla Tag’ci",
+   "tagFilo": "Tag filosu sahibi",
+   "tagPatron": "Mahalle patronu"
   },
   "ozet": "{gun}. gün · {haftaGunu}",
   "yogunGun": "Yoğun gün: daha çok yolcu, daha yüksek kazanç",
@@ -2013,6 +2016,23 @@
   "sonrakiVardiya": "Sonraki vardiya",
   "kariyereDon": "Kariyere dön",
   "hapis": "Nezarette geçen vardiya: kazanç gitti, kefalet kasadan.",
-  "ruhsat": "Viral video: ruhsat cezası kasadan düştü, kazanç gitti."
+  "ruhsat": "Viral video: ruhsat cezası kasadan düştü, kazanç gitti.",
+  "taksiBolum": "Taksici",
+  "tagBolum": "Tag’ci",
+  "taksiVardiya": "Taksi vardiyası",
+  "tagVardiya": "Tag vardiyası",
+  "rolNotu": "Tek kasa, iki garaj: istediğin vardiyada taksiye ya da Tag’e geçebilirsin.",
+  "tagArkadasArac": "Arkadaşının aracı ({arac}): kazancın %{arkadas}’i arkadaşına, %{komisyon}’u Tag sistemine.",
+  "tagKendiArac": "Kendi aracın ({arac}): yalnızca %{komisyon} Tag payı.",
+  "tagBenzin": " Çok yakar: benzin ×{benzin}.",
+  "tagOtopark": "Otoparkta {n} aracın var ({saat} saat sonra çıkar).",
+  "tagGarajMetin": "Araçların: {n} / {limit} (sen + mahalleden en fazla 3 arkadaş). Senin sürmediğin araçları arkadaşların sürer, sana pay verir; ama bağlanabilir.",
+  "tagAl": "{arac} · ₺{fiyat}",
+  "sat": "Sat ({arac}, ₺{fiyat})",
+  "satildi": "Araç satıldı: +₺{fiyat}",
+  "baglananToast": "{n} aracın arkadaşın sürerken bağlandı! Ceza −₺{ceza}, araç 24 saat otoparkta.",
+  "sonucArkadas": "Arkadaş payı: −₺{tutar}",
+  "sonucKomisyon": "Tag komisyonu: −₺{tutar}",
+  "baglandi": "Araç bağlandı: kazanç gitti, ceza kasadan; kendi aracınsa 24 saat otoparkta."
  }
 }

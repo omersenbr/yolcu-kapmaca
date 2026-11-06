@@ -129,31 +129,45 @@ Herkesin şoför olarak aynı çizgiden başlaması çok oyunculu modun adaletin
 - **Kalıcı veri:** Supabase ya da Firestore. Kasa, plakalar, duraklar, ekipler, sezon burada tutulur. Anlık araç senkronu için kullanılmaz.
 - **İlk hedef:** şehir başına 1 000–1 500 NPC araç + 50–100 gerçek oyuncu.
 
-## Uygulama durumu (taksici kariyeri, tek oyunculu)
+## Uygulama durumu (tek oyunculu kariyer: taksici + Tag’ci)
 
-Yapıldı:
-- **Ana ekran:** “Hızlı gün / Kariyer” seçimi. Kariyerde şimdilik yalnızca taksici var; Tag’ci kariyeri sırada.
-- **Kariyer ekranı:**
-  - Kasa, dolar ve kur; gün sayısı ve haftanın günü (yoğun gün uyarısı); oyuncunun sabit durağı.
-  - **Vardiya:** gündüz 05–17 ya da gece 17–05, orta zorlukta ~4 dakika. Ücret durumuna göre: patronun aracında ₺3 000; çırakken ₺1 500 (ilk 6 vardiya); kendi aracınla plaka kirası ve bakım ₺1 833; kendi plakanla yalnızca bakım.
-  - **Kasayı topla:** araçlar ve plaka payı gerçek saatle, en fazla 12 saat birikir; kredi taksiti buradan düşer.
-  - **Garaj:** eski ₺450 bin, yeni ₺1,8 milyon. Kiralık plakayla en fazla 2 araç; her tam plaka 1 araç hakkı ekler.
-  - **Plaka:** 1/8 hisse ₺1,5 milyon; kredili tam plaka (%20 peşinat, hisseler dahil).
-  - **Döviz bürosu:** 100 $ al/sat, kur her takvim günü oynar.
-  - **Günlük giriş ödülü:** ilk gün ₺200 bin bonus, 7 günlük seri.
-- **Vardiya içinde:**
-  - Ücretler ×1,3; cuma, cumartesi ve pazar ayrıca ×1,15 ücret ve ×1,3 yolcu.
-  - Eski araçta şikayet ihtimali ×1,5 (yolu uzatma ve reddetme şikayetleri).
-- **Vardiya sonu:** gazete ekranında döküm (kazanç, ücret/kira, ceza, net, kasa). Kariyerde kalıcı sıfırlama yok: hapiste kazanç gider, ₺5 000 kefalet; viral videoda ₺25 000 ceza.
-- **Kayıt:** `localStorage` → `yk-kariyer`.
-- **Test:** `tests/career.mjs`.
+**Tek kasa, iki garaj.** Kariyerde dolar ve takvim ortaktır. Her vardiya başında “Taksi vardiyası” ya da “Tag vardiyası” seçilir; **taksici Tag’e, Tag’ci taksiye geçebilir**. Sarı taksi Tag’de, Tag aracı taksi olarak kullanılamaz.
 
-Sırada:
-- Tag’ci kariyeri.
-- Turistten dolar.
-- Vardiya sonunda arabada yolcu varsa ne olacağı. Şimdi taksimetre yanıyor, hızlı gündeki gibi.
-- Araçları satma, yeni araca geçme.
-- Plaka değerinin piyasayla oynaması.
+Ortak:
+- Kasa, dolar, kur.
+- Takvim: 2 vardiya = 1 gün; cuma, cumartesi ve pazar yoğun.
+- Günlük giriş ödülü.
+- **Kasayı topla:** taksi ve Tag filosunun birikimi, en fazla 12 saat; kredi taksiti de buradan düşer.
+- Döviz bürosu. Kariyerde kalıcı sıfırlama yok, yalnızca ceza.
+
+Taksici:
+- **Vardiya:** gündüz 05–17 ya da gece 17–05, ~4 dakika. Patron aracında ₺3 000, çırakken ₺1 500 (ilk 6 vardiya); kendi aracınla plaka kirası ve bakım; kendi plakanla yalnızca bakım. Ücretler ×1,3, yoğun günlerde ek çarpan; eski araçta şikayet ×1,5.
+- **Garaj:** eski ₺450 bin, yeni ₺1,8 milyon; kiralık plakayla en fazla 2 araç. İkinci el satış alış fiyatının %70’i.
+- **Plaka:** 1/8 hisse; %20 peşinatla kredili tam plaka.
+- **Ceza:** hapiste ₺5 000 kefalet, viral videoda ₺25 000.
+
+Tag’ci:
+- **Arkadaşının aracı** (kompakt sedan): kazancın %25’i arkadaşa, %10’u Tag sistemine. Zarar edilen vardiyada pay alınmaz.
+- **Kendi araçları:** bugünkü 5 Tag seviyesi.
+
+  | Araç | Fiyat | Benzin |
+  | --- | --- | --- |
+  | emektar hatchback | ₺350 bin | ×1,6, çok yakar |
+  | kompakt sedan | ₺800 bin | ×1,3 |
+  | yeni hatchback | ₺1,3 milyon | ×1,0 |
+  | kompakt SUV | ₺2,2 milyon | ×1,05 |
+  | siyah lüks sedan | ₺4,5 milyon | ×1,15 |
+
+  Ücret, sabır ve bahşiş seviyeden gelir. Kendi aracında yalnızca %10 Tag payı. Kariyerde Tag seviyesi teslimat sayısından değil, sürülen araçtan gelir; hızlı gündeki kalıcı Tag seviyesi değişmez.
+- **Mahalle** ilk Tag vardiyasında seçilir, sabit kalır.
+- **Filo:** sen ve mahalleden en fazla 3 arkadaş, yani 4 araç. En iyi aracı sen sürersin, diğerlerini arkadaşların. Araç başına 12 saatte ~₺265 bin getirir, ama araç başına ~%24 ihtimalle bağlanır: ₺90 bin ceza ve 24 saat otopark. Taksi filosu (~₺210 bin) daha az getirir ama risksizdir ve plakayla büyür. Tag kârlı ama riskli, taksi güvenli ve kalıcı.
+- **Araç bağlanırsa** (vardiyada): kazanç gider, ₺90 bin ceza, kendi aracınsa 24 saat otoparkta; o sırada arkadaşının aracına dönülür.
+
+**Testler:**
+- `npm run test:kariyer`: kariyer hesapları, Node’da.
+- `tests/career.mjs`: tarayıcıda taksi vardiyası, rol değiştirip Tag vardiyası, araç alma, kalıcı kayıt.
+
+**Sırada:** turistten dolar; vardiya bitince arabadaki yolcu; plaka değerinin piyasayla oynaması; Tag tarafının tempo simülasyonu.
 
 ## 10. Yol haritası
 

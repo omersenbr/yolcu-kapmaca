@@ -124,6 +124,55 @@
   "kariyer": {
     "hapisCezasi": 5000,
     "ruhsatCezasi": 25000,
-    "_cezaNot": "Kariyerde kalıcı sıfırlama yok: vardiya kazancı gider, ayrıca ceza kasadan düşer."
+    "_cezaNot": "Kariyerde kalıcı sıfırlama yok: vardiya kazancı gider, ayrıca ceza kasadan düşer.",
+    "ikinciElOrani": 0.7
+  },
+  "tag": {
+    "_not": "Tag’ci kariyeri. Arkadaşının aracıyla başlarsın: kazancın bir kısmı arkadaşa, daha cüzi bir kısmı Tag sistemine. Kendi araçlarında yalnızca Tag payı. Araç seviyesi (tag1–tag5) sahip olunan araçtan gelir; ücret/sabır/bahşiş dialoglar.json → tagLevels.",
+    "arkadasPayi": 0.25,
+    "tagKomisyonu": 0.1,
+    "ucretCarpani": 1.2,
+    "araclar": [
+      {
+        "seviye": 0,
+        "fiyat": 350000,
+        "benzin": 1.6,
+        "_ad": "emektar hatchback (çok yakar)"
+      },
+      {
+        "seviye": 1,
+        "fiyat": 800000,
+        "benzin": 1.3
+      },
+      {
+        "seviye": 2,
+        "fiyat": 1300000,
+        "benzin": 1.0
+      },
+      {
+        "seviye": 3,
+        "fiyat": 2200000,
+        "benzin": 1.05
+      },
+      {
+        "seviye": 4,
+        "fiyat": 4500000,
+        "benzin": 1.15
+      }
+    ],
+    "_aracNot": "Fiyatlar 2026 ikinci el piyasasına yakın ilk tahmin.",
+    "filoLimiti": 4,
+    "_filoNot": "Sen + mahalleden en fazla 3 arkadaş.",
+    "arkadasSoforPayi": 0.25,
+    "_soforNot": "Aracını süren arkadaş vardiya brütünün %25’ini sana verir.",
+    "ortalamaVardiyaBrut": 7500,
+    "aracBakimVardiya": 400,
+    "baglanmaRiski": 0.0015,
+    "_riskNot": "Arkadaş sürerken vardiya başına bağlanma ihtimali: 12 saatlik birikimde araç başına ~%24. Tag kârlı ama riskli; taksi daha güvenli ve kalıcı.",
+    "baglanmaCezasi": 90000,
+    "blokajSaat": 24,
+    "_cezaNot": "Korsan taşımacılık cezası ~₺90 bin (2026); araç 24 gerçek saat otoparkta.",
+    "arkadasAracSeviye": 1,
+    "_arkadasNot": "Arkadaşının aracı kompakt sedan (seviye 2); kendi ilk aracın emektar hatchback olabilir: daha çok yakar ama pay vermezsin."
   }
 }

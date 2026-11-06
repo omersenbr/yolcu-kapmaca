@@ -19,14 +19,20 @@ export interface ShiftOpts {
   startH: number;
   /** süre (saat); gün uzunluğu buna göre kısalır */
   span: number;
-  mods: { fareMul: number; demandMul: number; complaintMul: number };
+  mods: { fareMul: number; demandMul: number; complaintMul: number; fuelMul: number };
+  /** kariyer Tag’ci: sürülen aracın seviyesi (0–4) */
+  tagLevel?: number;
   /** kariyerde oyuncunun sabit durağı */
   stand?: string;
+  /** kariyerde Tag’cinin sabit mahallesi (kare) */
+  home?: [number, number];
 }
 export function newGame(role, shift?: ShiftOpts) {
   setDay(((DF().day || 480) * (shift ? shift.span : 24)) / 24);
   setG({
-    ...(shift ? { career: true, startH: shift.startH, span: shift.span, mods: shift.mods } : {}),
+    ...(shift
+      ? { career: true, startH: shift.startH, span: shift.span, mods: shift.mods, tagLevel: shift.tagLevel }
+      : {}),
     role,
     time: DAY,
     money: 0,
@@ -79,7 +85,7 @@ export function newGame(role, shift?: ShiftOpts) {
         s[0] % 4 === 0 &&
         s[1] % 4 === 0,
     );
-    st = rnd(pool);
+    st = shift && shift.home ? shift.home : rnd(pool);
     G.home = { x: st[0], y: st[1], name: district(st[0], st[1]) };
   }
   const P = mkEnt(role === 'taxi' ? 'taxi' : 'tag', st[0], st[1], true);
@@ -227,7 +233,8 @@ export function deliver(e) {
         1300,
       );
     }
-    {
+    if (!G.career) {
+      // hızlı günde teslimat sayısı kalıcı Tag seviyesini yükseltir; kariyerde seviye araçtan gelir
       const before = tagLevel();
       addTagXP();
       if (tagLevel() > before) {
