@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write src",
     "test": "node tests/smoke.mjs && node tests/scenes.mjs",
-    "test:parity": "node tests/parity.mjs"
+    "test:parity": "node tests/parity.mjs",
+    "test:perf": "node tests/perf.mjs"
   },
   "devDependencies": {
     "prettier": "^3.9.10",

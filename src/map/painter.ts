@@ -240,19 +240,22 @@ export function paintRegion(m, c0, r0, c1, r1) {
   // otoyol şerit çizgileri
   m.lineWidth = Math.max(1.5, TS * 0.07);
   m.beginPath();
+  // kesik çizgi deseni 16 karelik sınırlardan başlar (prototiptekiyle aynı desen, parça boyundan bağımsız)
+  const dc0 = c0 - (c0 % 16),
+    dr0 = r0 - (r0 % 16);
   for (const s of MAP.otoyollar) {
     if (s[0] === 'h') {
       const r = s[1];
       if (r + 1 < r0 || r - 1 > r1) continue;
       for (const k of [0, 1]) {
-        m.moveTo(Math.max(s[2], c0 - 1) * TS, (r + k) * TS);
+        m.moveTo(Math.max(s[2], dc0 - 1) * TS, (r + k) * TS);
         m.lineTo((Math.min(s[3], c1 + 1) + 1) * TS, (r + k) * TS);
       }
     } else {
       const c = s[1];
       if (c + 1 < c0 || c - 1 > c1) continue;
       for (const k of [0, 1]) {
-        m.moveTo((c + k) * TS, Math.max(s[2], r0 - 1) * TS);
+        m.moveTo((c + k) * TS, Math.max(s[2], dr0 - 1) * TS);
         m.lineTo((c + k) * TS, (Math.min(s[3], r1 + 1) + 1) * TS);
       }
     }
