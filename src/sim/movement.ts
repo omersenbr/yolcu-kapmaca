@@ -1,7 +1,7 @@
 // <auto-imports>
-import { DF, G } from '../core/state';
-import { rnd } from '../core/util';
-import { DIRS, isRoad, tch } from '../map/grid';
+import { DF, G } from './state';
+import { rnd } from './util';
+import { DIRS, isRoad, tch } from './grid';
 import { fleeDir, npcGoal } from './ai';
 import { arrive, fx } from './game';
 import { bfs } from './pathfinding';

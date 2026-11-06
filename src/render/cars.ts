@@ -1,9 +1,9 @@
 // <auto-imports>
 import { img, ready } from '../core/assets';
-import { MANIFEST } from '../core/content';
-import { G, ORN, TL, tagLevel } from '../core/state';
-import { rnd } from '../core/util';
-import { isTunnel } from '../map/grid';
+import { MANIFEST } from '../sim/content';
+import { G, ORN, TL, tagLevel } from '../sim/state';
+import { rnd } from '../sim/util';
+import { isTunnel } from '../sim/grid';
 import { pal } from '../map/painter';
 import { TS, ctx, px, rr, star } from './view';
 // </auto-imports>

@@ -1,8 +1,8 @@
 // <auto-imports>
-import { G } from '../core/state';
-import { rnd } from '../core/util';
-import { COLS, DIRS, ROADS, ROWS, isRoad } from '../map/grid';
-import type { Tile } from '../core/types';
+import { G } from './state';
+import { rnd } from './util';
+import { COLS, DIRS, ROADS, ROWS, isRoad } from './grid';
+import type { Tile } from './types';
 // </auto-imports>
 /* ================= YOL BULMA ================= */
 export const randRoad = () => rnd(ROADS).slice();

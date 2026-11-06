@@ -1,12 +1,6 @@
 // <auto-imports>
-import { $ } from '../core/dom';
-import { DF, G, TL, demand } from '../core/state';
-import { dist } from '../core/util';
-import { stingDialog, tagVsPolice, tagVsTaxi } from '../dialog/tagScenes';
-import { taxiCatchTag, taxiVsPolice, turfDialog } from '../dialog/taxiScenes';
-import { px } from '../render/view';
-import { endGame } from '../ui/endscreen';
-import { toast, updHud } from '../ui/hud';
+import { DF, G, TL, demand } from './state';
+import { dist } from './util';
 import { onPlayer, startChase } from './ai';
 import { mkEnt } from './entities';
 import { newCheck, waveTick } from './events';
@@ -14,6 +8,7 @@ import { cinematic, fx } from './game';
 import { move } from './movement';
 import { spawnPax } from './passengers';
 import { randFar } from './pathfinding';
+import { bus } from './bus';
 // </auto-imports>
 /* ================= GÜNCELLEME: her kare dünya, kovalama, çarpışma ve olaylar ================= */
 export function update(dt) {
@@ -28,18 +23,18 @@ export function update(dt) {
     G.cine.t += dt;
     w = dt * 0.15;
     if (G.cine.t >= G.cine.dur) {
-      const fn = G.cine.then;
+      const c = G.cine;
       G.cine = null;
       G.paused = true;
-      fn();
+      bus.scene(c.scene, ...c.args);
       return;
     }
   }
   G.time -= w;
   if (G.time <= 0) {
     G.time = 0;
-    updHud();
-    endGame('time');
+    bus.hud();
+    bus.end('time');
     return;
   }
   G.invuln = Math.max(0, G.invuln - w);
@@ -47,11 +42,7 @@ export function update(dt) {
   if (G.nitroCD > 0) {
     G.nitroCD -= w;
   }
-  {
-    const b = $('nitroBtn');
-    b.disabled = G.nitroCD > 0;
-    $('nitroLbl').textContent = G.nitroCD > 0 ? Math.ceil(G.nitroCD) + ' sn' : 'NİTRO';
-  }
+  bus.frame();
   for (const r of G.respawns) {
     r.t -= w;
     if (r.t <= 0) {
@@ -63,13 +54,11 @@ export function update(dt) {
   const dm = demand();
   if (G.intelT > 0) {
     G.intelT -= w;
-    if (G.intelT <= 0) {
-      $('intelBtn').classList.remove('on');
-    }
+    if (G.intelT <= 0) bus.frame();
   }
   if (G.freeFuel > 0) {
     G.freeFuel -= w;
-    if (G.freeFuel <= 0) $('fuelBtn').classList.remove('on');
+    if (G.freeFuel <= 0) bus.frame();
   }
   waveTick(w);
   G.paxT -= w;
@@ -88,9 +77,9 @@ export function update(dt) {
   }
   if (dm.tag !== G.lastDm) {
     if (G.lastDm !== undefined) {
-      if (dm.rush === 'am') toast('Sabah trafiği başladı, herkes işe gidiyor!');
-      else if (dm.rush === 'pm') toast('Akşam trafiği! Herkes eve dönüyor.');
-      else if (dm.tag === 'gece') toast('Gece oldu, yolcu azaldı.');
+      if (dm.rush === 'am') bus.toast('Sabah trafiği başladı, herkes işe gidiyor!');
+      else if (dm.rush === 'pm') bus.toast('Akşam trafiği! Herkes eve dönüyor.');
+      else if (dm.tag === 'gece') bus.toast('Gece oldu, yolcu azaldı.');
     }
     G.lastDm = dm.tag;
   }
@@ -108,19 +97,19 @@ export function update(dt) {
   {
     const c = P.carry;
     if (G.role === 'tag' && c && c.look.sting && !G.busy && c.rideT > 3.5) {
-      cinematic(px(P.x), px(P.y), 0.5, () => stingDialog(c));
+      cinematic(P.x, P.y, 0.5, 'stingDialog', c);
     }
     if (G.role === 'tag' && c) {
       c.rideT += w;
       const exp = (((c.m / 4.5) * 1.5 + 6) * DF().patience * TL().pat) / DF().world;
       if (!c.warned && c.rideT > exp) {
         c.warned = true;
-        toast(`${c.look.name}: “Daha ne kadar var?”`, true);
+        bus.toast(`${c.look.name}: “Daha ne kadar var?”`, true);
       }
       if (!c.complained && c.rideT > exp * 1.5) {
         c.complained = true;
         c.fare = Math.round(c.fare * 0.5);
-        toast('Yolcu uygulamaya şikayet etti! Ücret yarıya indi.', true);
+        bus.toast('Yolcu uygulamaya şikayet etti! Ücret yarıya indi.', true);
       }
     }
   }
@@ -170,7 +159,7 @@ export function update(dt) {
     } else if (mine) still = true;
   }
   if (had && !still && !G.busy) {
-    toast('Atlattın!');
+    bus.toast('Atlattın!');
     for (const e of G.ents) e.helperRolled = false;
   }
   // NPC taksici NPC Tag’i yakaladı
@@ -190,10 +179,10 @@ export function update(dt) {
       if (G.role === 'taxi' && G.assist === T && dist(T, P) < 4) {
         G.money += 30;
         fx(P.x, P.y, '+₺30', '#2f9e44');
-        toast('Meslektaşlarla birlikte yakaladınız! “Sağ ol kardeşim.” +₺30');
+        bus.toast('Meslektaşlarla birlikte yakaladınız! “Sağ ol kardeşim.” +₺30');
         G.assist = null;
       } else if (dist(T, P) < 9)
-        toast(e.zone ? 'Durakçılar bir Tag’i yakalayıp pataklıyor!' : 'Taksiciler bir Tag’i yakalayıp pataklıyor!');
+        bus.toast(e.zone ? 'Durakçılar bir Tag’i yakalayıp pataklıyor!' : 'Taksiciler bir Tag’i yakalayıp pataklıyor!');
     }
   }
   if (
@@ -201,7 +190,7 @@ export function update(dt) {
     (!G.ents.includes(G.assist) || (!G.ents.some((x) => x.chase && x.target === G.assist) && G.assist.revealed <= 0))
   ) {
     G.assist = null;
-    toast('Kovalama bitti, Tag kaçtı.');
+    bus.toast('Kovalama bitti, Tag kaçtı.');
   }
   if (G.role === 'tag') {
     G.helperT -= w;
@@ -214,7 +203,7 @@ export function update(dt) {
             e.helperRolled = true;
             if (Math.random() < 0.5) {
               startChase(e, P);
-              toast('Bir taksici daha yardıma geldi!', true);
+              bus.toast('Bir taksici daha yardıma geldi!', true);
             }
           }
         }
@@ -223,30 +212,30 @@ export function update(dt) {
   if (!G.busy && G.invuln <= 0) {
     for (const e of G.ents) {
       if (e.isPlayer || dist(e, P) >= 0.7) continue;
-      const fx2 = (px(P.x) + px(e.x)) / 2,
-        fy2 = (px(P.y) + px(e.y)) / 2;
+      const fx2 = (P.x + e.x) / 2,
+        fy2 = (P.y + e.y) / 2;
       if (G.role === 'tag') {
         if (onPlayer(e) && e.kind === 'police') {
-          cinematic(fx2, fy2, 0.7, () => tagVsPolice(false));
+          cinematic(fx2, fy2, 0.7, 'tagVsPolice', false);
           break;
         }
         if (onPlayer(e) && e.kind === 'taxi') {
           const n = G.ents.filter((x) => onPlayer(x) && x.kind === 'taxi' && dist(x, P) < 3).length;
-          cinematic(fx2, fy2, 0.7, () => tagVsTaxi(Math.max(1, n)));
+          cinematic(fx2, fy2, 0.7, 'tagVsTaxi', Math.max(1, n));
           break;
         }
       } else {
         if (e.kind === 'police' && onPlayer(e)) {
-          cinematic(fx2, fy2, 0.7, () => taxiVsPolice(false));
+          cinematic(fx2, fy2, 0.7, 'taxiVsPolice', false);
           break;
         }
         if (e.kind === 'taxi' && e.turf && onPlayer(e)) {
           const zz = e.zone;
-          cinematic(fx2, fy2, 0.6, () => turfDialog(zz));
+          cinematic(fx2, fy2, 0.6, 'turfDialog', zz);
           break;
         }
         if (e.kind === 'tag' && (e.revealed > 0 || G.assist === e || G.ents.some((x) => x.chase && x.target === e))) {
-          cinematic(fx2, fy2, 0.6, () => taxiCatchTag(e));
+          cinematic(fx2, fy2, 0.6, 'taxiCatchTag', e);
           break;
         }
       }

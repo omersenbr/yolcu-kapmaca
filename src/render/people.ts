@@ -1,7 +1,7 @@
 // <auto-imports>
 import { img, ready } from '../core/assets';
-import { MANIFEST } from '../core/content';
-import { G } from '../core/state';
+import { MANIFEST } from '../sim/content';
+import { G } from '../sim/state';
 import { TS, ctx, px, rr, star } from './view';
 // </auto-imports>
 /* ================= YOLCULAR HARİTADA: figür atlası (128 px hücre), el sallama, hedef bayrağı ================= */

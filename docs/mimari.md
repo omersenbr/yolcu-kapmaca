@@ -24,17 +24,23 @@ Base64 gömme yok; görseller Vite ile ayrı dosya olarak paketlenir (`import.me
 ## Modüller (`src/`)
 | Klasör | İçerik |
 | --- | --- |
-| `core/` | `state` (G, zorluk, Tag seviyesi, saat/talep, süs/eşya, kullanıcı adı), `content` (DLG, harita, manifest), `assets` (görsel kaydı), `storage`, `util`, `types`, `dom` |
-| `map/` | `grid` (ızgara, yol ağı, semt, durak bölgeleri, radarlar), `painter` (parçalı harita önbelleği, sprite yerleşimi, simge yapılar, mini harita tabanı) |
-| `world/` | `game` (yeni gün, alma/indirme, ücret, kontrol noktası, nitro, sinematik), `movement` (kareden kareye hareket, yön kuyruğu), `pathfinding` (A*), `ai` (hedef, kaçış, kovalama, tanık), `passengers` (görünüş, profil, doğma, hedef), `events` (dalgalar, sivil çevirmeler), `update` (kare güncellemesi), `entities` |
-| `dialog/` | `comic` (panel, balon, süreli cevaplar), `engine` (sorgu motoru, şablon değişkenleri), `portraits` (karakter görselleri, SVG yüzler), `tagScenes`, `taxiScenes`, `ads` (simüle reklam, avukat/torpil) |
+| `sim/` | **Saf oyun mantığı, ekrana hiç dokunmaz** (DOM tipleri olmadan derlenir; Node’da `npm run sim` ile koşar). `grid` (ızgara, yol ağı, semt, durak bölgeleri, radarlar), `state` (G, zorluk, Tag seviyesi, saat/talep), `game` (yeni gün, alma/indirme, ücret, kontrol noktası, nitro, sinematik), `movement`, `pathfinding` (A*), `ai`, `passengers`, `events`, `update`, `entities`, `content` (DLG, harita, manifest), `bus` (simülasyon → dış dünya olayları), `util`, `types`, `storage` |
+| `core/` | tarayıcıya özgü: `assets` (görsel kaydı), `dom` |
+| `map/` | `painter`: parçalı harita önbelleği, sprite yerleşimi, simge yapılar, mini harita tabanı |
+| `dialog/` | `comic` (panel, balon, süreli cevaplar), `engine` (sorgu motoru), `portraits`, `tagScenes`, `taxiScenes`, `ads` |
 | `fight/` | VUR mini oyunu + çark |
-| `render/` | `view` (canvas, TS, kamera), `render` (kare çizimi, ışık, işaretler, mini harita), `cars`, `people` |
-| `ui/` | `hud`, `menu` (ana ekran, mağaza, profil), `endscreen`, `leaderboard`, `pageflip` |
+| `render/` | `view` (canvas, TS, kamera), `render`, `cars`, `people` |
+| `ui/` | `bindings` (sim olaylarını arayüze bağlar), `hud`, `menu`, `endscreen`, `leaderboard`, `pageflip` |
 | `input/` | dokunma ve klavye |
-| `audio/` | ses için iskelet (prototipte ses yoktu) |
+| `audio/` | ses için iskelet |
 
-Modüller arası paylaşılan değişkenler sahibi olan modülde `export let` olarak durur; diğer modüller okur, yazmak için setter kullanır (`setG`, `setDiff`, `setOrn` …).
+`tools/headless.ts`: simülasyonu tarayıcısız koşturan betik (ileride oyun sunucusunun çekirdeği).
+
+### Simülasyon ile arayüz arasındaki sınır
+- `sim/`, `sim/` dışından hiçbir şey import etmez. Kullanıcıya bir şey gösterilecekse `bus` üzerinden söyler: `toast`, `hud`, `frame`, `flash`, `radio`, `scene`, `end`.
+- Sahneler (sorgu, dövüş) simülasyonda yalnızca ad ve argümanla anılır (`cinematic(x, y, süre, 'pickupDialog', yolcu)`). Arayüz bu adı diyalog fonksiyonuna bağlar. Sunucuda bu ad oyuncuya gönderilecek bir etkileşim olacak.
+- Sinematik odağı (`G.focus`) kare koordinatında tutulur; piksele çizim tarafı çevirir.
+- Diyaloglar hâlâ simülasyon durumunu doğrudan değiştiriyor (para, yolcu bindirme). Çok oyunculu aşamada bunlar sunucuya “cevap” olarak gidecek.
 
 ## Prototipten bilinçli farklar
 - Görseller oyun başlamadan önce yüklendiği için prototipteki “görsel yüklenene kadar” yedek çizimler (düz çatı, basit stadyum/cami/köprü) kaldırıldı.

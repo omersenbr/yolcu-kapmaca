@@ -1,12 +1,12 @@
 // <auto-imports>
 import { $ } from '../core/dom';
-import { DF, G, UNAME } from '../core/state';
-import { load, save } from '../core/storage';
-import { esc } from '../core/util';
+import { DF, G, UNAME } from '../sim/state';
+import { load, save } from '../sim/storage';
+import { esc } from '../sim/util';
 import { face } from '../dialog/portraits';
 import { addLB, renderLB } from './leaderboard';
 import { pageTurn } from './pageflip';
-import { LOOK } from '../world/passengers';
+import { LOOK } from '../sim/passengers';
 // </auto-imports>
 /* ================= GÜN SONU: gazete manşeti, rekor, sıralama ================= */
 export function endGame(why) {

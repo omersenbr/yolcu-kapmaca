@@ -1,11 +1,11 @@
 // <auto-imports>
-import { DLG } from '../core/content';
-import { DF, G } from '../core/state';
-import { T, clamp, rnd, shuffle } from '../core/util';
+import { DLG } from '../sim/content';
+import { DF, G } from '../sim/state';
+import { T, clamp, rnd, shuffle } from '../sim/util';
 import { ask, meter, say } from './comic';
-import { DAT, DISTS, district } from '../map/grid';
-import { FN, MN } from '../world/passengers';
-import type { Pax, Vars } from '../core/types';
+import { DAT, DISTS, district } from '../sim/grid';
+import { FN, MN } from '../sim/passengers';
+import type { Pax, Vars } from '../sim/types';
 // </auto-imports>
 /* ================= DİYALOG MOTORU: metinler data/dialoglar.json’dan; sorgu düğümleri, şüphe ================= */
 export const sayL = (line: string[], v?: Vars, btn?: string) => say(T(line[0], v), T(line[1], v), btn);

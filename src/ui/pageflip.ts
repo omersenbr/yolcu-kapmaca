@@ -1,6 +1,6 @@
 // <auto-imports>
 import { $ } from '../core/dom';
-import { reduce } from '../core/util';
+import { reduce } from '../core/dom';
 import { ui } from '../dialog/comic';
 import { cv } from '../render/view';
 // </auto-imports>

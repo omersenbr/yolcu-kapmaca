@@ -1,17 +1,18 @@
 // <auto-imports>
 import { manifestFiles, preload } from './core/assets';
-import { setContent } from './core/content';
+import { setContent } from './sim/content';
 import { $ } from './core/dom';
-import { G } from './core/state';
+import { G } from './sim/state';
 import { initInput } from './input/input';
-import { COLS, ROWS, initGrid } from './map/grid';
+import { COLS, ROWS, initGrid } from './sim/grid';
 import { buildMap, initPainter } from './map/painter';
 import { render } from './render/render';
 import { TS, cam, resize } from './render/view';
 import { initHud } from './ui/hud';
 import { initMenu } from './ui/menu';
-import { initPathfinding } from './world/pathfinding';
-import { update } from './world/update';
+import { initPathfinding } from './sim/pathfinding';
+import { update } from './sim/update';
+import { initBindings } from './ui/bindings';
 // </auto-imports>
 import * as tagScenes from './dialog/tagScenes';
 import * as taxiScenes from './dialog/taxiScenes';
@@ -50,6 +51,7 @@ export async function boot() {
   });
   initPainter();
   initHud();
+  initBindings();
   initMenu();
   initInput();
   resize();

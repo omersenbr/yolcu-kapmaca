@@ -1,8 +1,8 @@
 // <auto-imports>
 import { ui } from '../dialog/comic';
 import { cv, resize } from '../render/view';
-import { nitro } from '../world/game';
-import { setWant } from '../world/movement';
+import { nitro } from '../sim/game';
+import { setWant } from '../sim/movement';
 // </auto-imports>
 /* ================= GİRDİ: parmak kaydırma, ok tuşları/WASD, sorularda 1–4, nitro Shift/N ================= */
 export let sx = 0,

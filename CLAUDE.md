@@ -50,14 +50,14 @@ Yeni görseller gelince kesme işini betikle yap: arka plan rengini köşelerden
 
 ## Proje yapısı (1. adım tamamlandı)
 
-Vite + TypeScript + düz canvas. Kod `src/` altında modüllere bölündü; ayrıntı `docs/mimari.md`. `npm run dev` ile çalışır, `npm run build` tip denetimi yapar, `npm test` (dev sunucusu açıkken) Playwright ile oyunu otomatik oynatır. Prototip referans olarak `prototip/` altında duruyor.
+Vite + TypeScript + düz canvas. Kod `src/` altında modüllere bölündü; ayrıntı `docs/mimari.md`. `npm run dev` ile çalışır, `npm run build` tip denetimi yapar, `npm test` (dev sunucusu açıkken) Playwright ile oyunu otomatik oynatır. Prototip referans olarak `prototip/` altında duruyor. Oyun mantığı `src/sim/` altında ve ekrandan bağımsız (`npm run sim` ile Node’da koşar); kariyer ve çok oyunculu tasarım `docs/tasarim-kariyer-ve-cok-oyunculu.md` içinde.
 
 ## Yapılacaklar (öncelik sırasıyla)
 
 1. ~~**Projeyi kur:**~~ (yapıldı) Vite + TypeScript önerilir; render için Phaser 3 ya da düz canvas (prototip düz canvas ve iyi çalışıyor). Kodu modüllere böl: harita, hareket ve yol bulma, yapay zekâ, yolcular ve olaylar, sorgu sistemi, dövüş, arayüz, ses. Veriler `data/`, görseller `assets/` altından yüklensin; base64 gömme yok.
 2. **Prototiple eşitlik:** (test hazır: `npm run test:parity`; taksici 3000, Tag’ci 900 kare birebir aynı; bot yolcu teslim etmediği için bazı sahneler henüz kapsanmadı) Önce bütün davranışları birebir taşı; tarayıcıda Playwright ile otomatik oynatıp ekran görüntüsüyle karşılaştır.
 3. ~~**Performans:**~~ (yapıldı, `docs/mimari.md`) Harita parçalı önbellekle çizilsin; görünmeyen araç ve yolcular çizilmesin; görseller sıkıştırılmış atlaslar.
-4. **Telefonda test:** Yerel ağdan ya da Netlify/GitHub Pages ile link.
+4. ~~**Telefonda test:**~~ (yapıldı: https://omersenbr.github.io/yolcu-kapmaca/, `main`’e gönderimde otomatik yayın)
 5. **Capacitor ile Android (sonra iOS; iOS için Mac ve Xcode gerekir).**
 6. **Ertelenen mekanikler (kullanıcı hepsini istedi, tek tek detaylandırılacak):** kariyer ve ilerleme, yolcu puan sistemi, günlük görevler, yolculuk içi olaylar, şehir ve hava olayları, sürüş kombosu, tekrar eden karakterler.
 7. **Çok oyunculu (sonra):** Açık dünya (semt kontrolü: her semtte durak ve mahalle; taksiciler durakları para, savaş ya da diplomasiyle alır; Tag ekipleri aynı mahalleden en fazla 3 kişi, komşu mahallelere yayılır; bölge bakım maliyeti; kalıcı dünya için Firebase benzeri sunucu; haftalık sezon) ve hızlı maç modu Plaka Ağası (agar.io benzeri filo). Önce botlarla tek oyunculu denenecek.

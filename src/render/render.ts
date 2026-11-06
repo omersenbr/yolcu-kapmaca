@@ -1,14 +1,14 @@
 // <auto-imports>
 import { img, ready } from '../core/assets';
-import { MANIFEST } from '../core/content';
-import { G, hourNow } from '../core/state';
-import { clamp, mixHex } from '../core/util';
-import { COLS, RADARS, ROWS } from '../map/grid';
+import { MANIFEST } from '../sim/content';
+import { G, hourNow } from '../sim/state';
+import { clamp, mixHex } from '../sim/util';
+import { COLS, RADARS, ROWS } from '../sim/grid';
 import { CHT, CHX, CHY, mapChunk, mapChunks, miniCv, pal, setChunkCap } from '../map/painter';
 import { drawCar } from './cars';
 import { drawDest, drawPax } from './people';
 import { DPR, TS, VH, VW, cam, ctx, mctx, mini, px, rr, star } from './view';
-import { onPlayer } from '../world/ai';
+import { onPlayer } from '../sim/ai';
 // </auto-imports>
 /* ================= ÇİZİM: kamera, harita parçaları, nesneler, ışık, ekran kenarı işaretleri, mini harita ================= */
 /* gün ışığı: renkleri çarpma ile koyulaştır (pus yok) */
@@ -54,7 +54,7 @@ export function render(t, dt) {
   ctx.fillStyle = pal.water;
   ctx.fillRect(0, 0, VW, VH);
   let tg = { x: COLS * TS * 0.55, y: ROWS * TS * 0.7 };
-  if (G) tg = G.focus || { x: px(G.player.x), y: px(G.player.y) };
+  if (G) tg = G.focus ? { x: px(G.focus.x), y: px(G.focus.y) } : { x: px(G.player.x), y: px(G.player.y) }; // focus kare koordinatında
   const zt = G ? G.zoomT : 1,
     k = Math.min(1, dt * 7);
   cam.z += (zt - cam.z) * k;

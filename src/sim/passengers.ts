@@ -1,10 +1,10 @@
 // <auto-imports>
-import { MANIFEST } from '../core/content';
-import { G, demand } from '../core/state';
-import { rnd } from '../core/util';
-import { ASIA, DIRS, KIYI, MERKEZ, STREETS, TARIHI, WORK, ZONES, district, tch, zoneAt } from '../map/grid';
+import { MANIFEST } from './content';
+import { G, demand } from './state';
+import { rnd } from './util';
+import { ASIA, DIRS, KIYI, MERKEZ, STREETS, TARIHI, WORK, ZONES, district, tch, zoneAt } from './grid';
 import { randNear } from './pathfinding';
-import type { Pax } from '../core/types';
+import type { Pax } from './types';
 // </auto-imports>
 /* ================= YOLCULAR: görünüş, profil, doğma, hedef ================= */
 export const SKINS = ['#f1c9a5', '#e0ac7e', '#c68a5a', '#8d5a3b', '#f6d6bd'];

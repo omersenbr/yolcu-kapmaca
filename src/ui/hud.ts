@@ -1,8 +1,8 @@
 // <auto-imports>
 import { $ } from '../core/dom';
-import { DF, G, TL, demand, hourNow } from '../core/state';
-import { clamp } from '../core/util';
-import { district } from '../map/grid';
+import { DF, G, TL, demand, hourNow } from '../sim/state';
+import { clamp } from '../sim/util';
+import { district } from '../sim/grid';
 // </auto-imports>
 /* ---- telsiz: yakındaki meslektaşlar Tag kovalıyor (taksici rolü) ---- */
 export let radioT = 0;

@@ -6,7 +6,6 @@ export const hsh = (c, r) => {
   h = (h ^ (h >>> 13)) * 1274126177;
   return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
 };
-export const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 export const rnd = (a) => a[Math.floor(Math.random() * a.length)];
 export const shuffle = (a) => {
   for (let i = a.length - 1; i > 0; i--) {

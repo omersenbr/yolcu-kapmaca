@@ -1,25 +1,21 @@
 // <auto-imports>
-import { DLG } from '../core/content';
-import { $ } from '../core/dom';
-import { DAY, DF, G, TL, addTagXP, setDay, setG, tagLevel } from '../core/state';
-import { T, dist, rnd } from '../core/util';
-import { tagVsPolice } from '../dialog/tagScenes';
-import { pickupDialog, routeDialog, taxiVsPolice, viralDialog } from '../dialog/taxiScenes';
-import { DAT, RADARS, STREETS, TAXI_START, ZONES, district, isBog, isBridge, isTunnel, zoneAt } from '../map/grid';
-import { cam, px } from '../render/view';
-import { toast, updHud } from '../ui/hud';
-import { pageTurn } from '../ui/pageflip';
+import { DLG } from './content';
+import { DAY, DF, G, TL, addTagXP, setDay, setG, tagLevel } from './state';
+import { T, dist, rnd } from './util';
+import { DAT, RADARS, STREETS, TAXI_START, ZONES, district, isBog, isBridge, isTunnel, zoneAt } from './grid';
 import { npcWitness, witness } from './ai';
 import { mkEnt } from './entities';
 import { newCheck, pickWave } from './events';
 import { clearWant } from './movement';
 import { pickDest, spawnPax } from './passengers';
 import { randFar } from './pathfinding';
+import { bus } from './bus';
+import type { SceneName } from './bus';
 // </auto-imports>
 /* ================= OYUN: yeni gün, yolcu alma/indirme, ücretler, kontrol noktaları ================= */
+/** yeni gün: dünyayı kurar. Ekran tarafı (kamera, katmanlar, açılış bildirimleri) ui/menu.ts’de. */
 export function newGame(role) {
   setDay(DF().day || 480);
-  pageTurn();
   setG({
     role,
     time: DAY,
@@ -104,23 +100,8 @@ export function newGame(role) {
   G.checks = [];
   for (let i = 0; i < 100; i++) G.checks.push(newCheck());
   for (let i = 0; i < 200; i++) spawnPax();
-  cam.x = px(P.x);
-  cam.y = px(P.y);
-  cam.z = 1;
-  $('start').hidden = true;
-  $('end').hidden = true;
-  $('comic').hidden = true;
-  $('radio').hidden = true;
-  $('adbtns').hidden = false;
-  $('nitroBtn').hidden = false;
   G.nextWave = pickWave();
-  updHud();
-  if (role === 'tag') setTimeout(() => toast(T(DLG.tagLevels.intro, { arac: TL().ad, seviye: tagLevel() + 1 })), 900);
-  toast(
-    role === 'taxi'
-      ? `Durağın: ${G.stand.name}. Burada yolcu alabilirsin, başka duraklarda dikkat!`
-      : `Mahallen: ${G.home.name}. Taksiciler peşine düşerse buraya getir!`,
-  );
+  bus.hud();
 }
 export function arrive(e) {
   if (e.kind === 'police' || e.home) return;
@@ -131,7 +112,7 @@ export function arrive(e) {
     if (onB && !e.onBridge) {
       G.money -= 15;
       fx(e.x, e.y, 'Köprü −₺15', '#868e96');
-      updHud();
+      bus.hud();
     }
     e.onBridge = onB;
     {
@@ -139,8 +120,8 @@ export function arrive(e) {
       if (inT && !e.inTunnel) {
         G.money -= 25;
         fx(e.x, e.y, 'Avrasya −₺25', '#d6402b');
-        toast('Avrasya Tüneli geçiş ücreti −₺25');
-        updHud();
+        bus.toast('Avrasya Tüneli geçiş ücreti −₺25');
+        bus.hud();
       }
       e.inTunnel = inT;
     }
@@ -151,11 +132,9 @@ export function arrive(e) {
         const fine = 300;
         G.money -= fine;
         fx(e.x, e.y, 'Radar −₺' + fine, '#d6402b');
-        toast(`Radar! Nitroyla hız sınırını aştın. Hız cezası −₺${fine}`, true);
-        const fl = $('flash');
-        fl.classList.add('on');
-        setTimeout(() => fl.classList.remove('on'), 60);
-        updHud();
+        bus.toast(`Radar! Nitroyla hız sınırını aştın. Hız cezası −₺${fine}`, true);
+        bus.flash();
+        bus.hud();
       }
     }
     if (!G.busy && G.invuln <= 0) {
@@ -180,7 +159,7 @@ export function arrive(e) {
     const zz = zoneAt(p.x, p.y);
     if (p.dx === undefined)
       pickDest(p, p.look.tourist ? 'tour' : zz && zz.w >= 2 ? 'long' : Math.random() < 0.5 ? 'short' : 'long');
-    cinematic(px(p.x), px(p.y), 0.45, () => pickupDialog(p));
+    cinematic(p.x, p.y, 0.45, 'pickupDialog', p);
     return;
   }
   board(e, p);
@@ -202,22 +181,22 @@ export function board(e, p) {
     if (G.role === 'tag') {
       G.lastAct = 'aldın';
       G.lastLoc = district(Math.round(P.x), Math.round(P.y));
-      if (!witness(P, 'aldın')) toast(`${p.look.name} bindi, kimse görmedi. ${DAT[p.dest]} götür.`);
+      if (!witness(P, 'aldın')) bus.toast(`${p.look.name} bindi, kimse görmedi. ${DAT[p.dest]} götür.`);
     }
   } else if (e.kind === 'tag') {
     const n = npcWitness(e);
     if (G.role === 'taxi' && dist(e, P) <= 5) {
       e.revealed = 10;
       e.innocent = Math.random() < 0.2;
-      toast('Şu araç Tag! Yolcu aldı, peşine düş.');
+      bus.toast('Şu araç Tag! Yolcu aldı, peşine düş.');
     } else if (n && G.role === 'tag' && dist(e, P) < 10)
-      toast(
+      bus.toast(
         zoneAt(Math.round(e.x), Math.round(e.y))
           ? 'Durakçılar bir Tag’in peşine düştü!'
           : 'Taksiciler bir Tag’in peşine düştü!',
       );
   }
-  updHud();
+  bus.hud();
 }
 export function deliver(e) {
   const p = e.carry;
@@ -234,7 +213,7 @@ export function deliver(e) {
       const tp = 20 + Math.floor(Math.random() * 4) * 10;
       G.money += tp;
       setTimeout(
-        () => toast(T(DLG.tagLevels.tip, { yolcu: p.look.name, soz: rnd(DLG.tagLevels.happy), bahsis: tp })),
+        () => bus.toast(T(DLG.tagLevels.tip, { yolcu: p.look.name, soz: rnd(DLG.tagLevels.happy), bahsis: tp })),
         1300,
       );
     }
@@ -243,33 +222,33 @@ export function deliver(e) {
       addTagXP();
       if (tagLevel() > before) {
         G.player.spr = null;
-        setTimeout(() => toast(T(DLG.tagLevels.up, { arac: TL().ad })), 2600);
+        setTimeout(() => bus.toast(T(DLG.tagLevels.up, { arac: TL().ad })), 2600);
       }
     }
     G.lastLoc = district(Math.round(e.x), Math.round(e.y));
     if (!witness(e, 'indirdin'))
-      toast(p.complained ? `${p.dest} teslim ama şikayetli. +₺${f}` : `${p.dest} teslim. +₺${f}`);
+      bus.toast(p.complained ? `${p.dest} teslim ama şikayetli. +₺${f}` : `${p.dest} teslim. +₺${f}`);
   } else {
     const before = G.money;
     const normal = 30 + 11 * p.m + (p.cross ? 40 : 0);
     if (p.scam) {
       if (p.look.vlog && Math.random() < 0.75 && !G.busy) {
-        cinematic(px(e.x), px(e.y), 0.6, () => viralDialog(p));
+        cinematic(e.x, e.y, 0.6, 'viralDialog', p);
         return;
       }
       G.money += p.fare;
       fx(e.x, e.y, '+₺' + p.fare, '#2f9e44');
       if (Math.random() < 0.2) {
         G.money -= 1500;
-        toast(`Turist otelden şikayet etti! Taksimetresiz fahiş ücret cezası −₺1500`, true);
-      } else toast(`${p.dest} teslim. Turistten ₺${p.fare} kazıkladın...`);
+        bus.toast(`Turist otelden şikayet etti! Taksimetresiz fahiş ücret cezası −₺1500`, true);
+      } else bus.toast(`${p.dest} teslim. Turistten ₺${p.fare} kazıkladın...`);
     } else if (p.fixed) {
       G.money += p.fare;
       fx(e.x, e.y, '+₺' + p.fare, '#2f9e44');
       if (p.lateComplain) {
         G.money -= 400;
-        toast(`${p.look.name}: “${DLG.pickup.lateComplain}” −₺400`, true);
-      } else toast(`${p.dest} teslim. Pazarlıklı ₺${p.fare}`);
+        bus.toast(`${p.look.name}: “${DLG.pickup.lateComplain}” −₺400`, true);
+      } else bus.toast(`${p.dest} teslim. Pazarlıklı ₺${p.fare}`);
     } else {
       const dr = Math.round(p.driven || 0),
         meter = 30 + 11 * dr + (p.cross ? 40 : 0),
@@ -282,19 +261,21 @@ export function deliver(e) {
           Math.min(0.95, (ratio - 1.2) * 0.9 + (p.look.rec ? 0.2 : 0)) *
             (p.look.tourist ? (p.look.vlog ? 0.8 : 0.35) : 1)
       ) {
-        cinematic(px(e.x), px(e.y), 0.5, () => routeDialog(p, meter, normal));
-        updHud();
+        cinematic(e.x, e.y, 0.5, 'routeDialog', p, meter, normal);
+        bus.hud();
         return;
       }
       if (p.honest) {
         const tip = 20 + Math.floor(Math.random() * 5) * 10;
         G.money += tip;
-        toast(`Turist bahşiş bıraktı: “Teşekkür, çok iyi!” +₺${tip}`);
+        bus.toast(`Turist bahşiş bıraktı: “Teşekkür, çok iyi!” +₺${tip}`);
       }
       G.money += meter;
       fx(e.x, e.y, '+₺' + meter, '#2f9e44');
       if (!p.honest)
-        toast(meter > normal + 20 ? `${p.dest} teslim. Taksimetre şişti: +₺${meter}` : `${p.dest} teslim. +₺${meter}`);
+        bus.toast(
+          meter > normal + 20 ? `${p.dest} teslim. Taksimetre şişti: +₺${meter}` : `${p.dest} teslim. +₺${meter}`,
+        );
     }
     if (G.debt > 0) {
       const g = G.money - before;
@@ -302,34 +283,34 @@ export function deliver(e) {
         const cut = Math.round(g / 2);
         G.money -= cut;
         G.debt--;
-        setTimeout(() => toast(`${G.debtName} payını aldı: −₺${cut}`, true), 1200);
+        setTimeout(() => bus.toast(`${G.debtName} payını aldı: −₺${cut}`, true), 1200);
       }
     }
   }
-  updHud();
+  bus.hud();
 }
 export function checkpoint(ck) {
   ck.shown = 6;
   const P = G.player;
   if (G.role === 'tag') {
     if (P.carry) {
-      cinematic(px(P.x), px(P.y), 0.6, () => tagVsPolice(true));
+      cinematic(P.x, P.y, 0.6, 'tagVsPolice', true);
       return true;
     }
-    toast('Sivil polis çevirmesi! Boştaydın, ehliyet ruhsatla geçtin.');
+    bus.toast('Sivil polis çevirmesi! Boştaydın, ehliyet ruhsatla geçtin.');
     return false;
   }
   if (G.fightT > 0) {
-    cinematic(px(P.x), px(P.y), 0.6, () => taxiVsPolice(true));
+    cinematic(P.x, P.y, 0.6, 'taxiVsPolice', true);
     return true;
   }
   if (P.carry && P.carry.fixed) {
     G.money -= 500;
-    toast('Sivil çevirme: taksimetre kapalı! −₺500', true);
-    updHud();
+    bus.toast('Sivil çevirme: taksimetre kapalı! −₺500', true);
+    bus.hud();
     return false;
   }
-  toast('Sivil polis çevirmesi. Rutin kontrol, iyi çalışmalar.');
+  bus.toast('Sivil polis çevirmesi. Rutin kontrol, iyi çalışmalar.');
   return false;
 }
 export function fx(x, y, text, color) {
@@ -342,9 +323,10 @@ export function nitro() {
   fx(G.player.x, G.player.y, 'NİTRO!', '#e8590c');
 }
 export const inHome = () => G.home && dist(G.player, G.home) <= 3.6;
-export function cinematic(x, y, dur, fn) {
+/** olaya yakınlaş; süre dolunca bus.scene ile sahne açılır. x, y kare koordinatı. */
+export function cinematic(x: number, y: number, dur: number, scene: SceneName, a?: any, b?: any, c?: any) {
   G.busy = true;
-  G.cine = { t: 0, dur, then: fn };
+  G.cine = { t: 0, dur, scene, args: [a, b, c] };
   G.focus = { x, y };
   G.zoomT = 2.1;
 }

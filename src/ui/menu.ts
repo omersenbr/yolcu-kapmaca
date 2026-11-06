@@ -1,16 +1,17 @@
 // <auto-imports>
 import { assetUrl } from '../core/assets';
-import { DLG, MANIFEST } from '../core/content';
+import { DLG, MANIFEST } from '../sim/content';
 import { $ } from '../core/dom';
-import { DIFF, G, ORN, TL, UNAME, WPN, setDiff, setG, setOrn, setUname, setWpn, tagLevel } from '../core/state';
-import { esc } from '../core/util';
+import { DIFF, G, ORN, TL, UNAME, WPN, setDiff, setG, setOrn, setUname, setWpn, tagLevel } from '../sim/state';
+import { T, esc } from '../sim/util';
+import { cam, px } from '../render/view';
 import { hudAd } from '../dialog/ads';
 import { stopTimer } from '../dialog/comic';
 import { wIcon } from '../dialog/portraits';
 import { toast } from './hud';
 import { renderLB } from './leaderboard';
 import { pageTurn } from './pageflip';
-import { newGame, nitro } from '../world/game';
+import { newGame, nitro } from '../sim/game';
 // </auto-imports>
 /* ================= ANA EKRAN: kapak, profil, rol düğmeleri, alttan açılan sayfalar ================= */
 export function toMenu() {
@@ -90,7 +91,25 @@ export function paintDiff() {
 export function startRole(r) {
   document.body.classList.remove('inmenu');
   window.dispatchEvent(new Event('resize'));
+  pageTurn();
   newGame(r);
+  // yeni günün ekran tarafı: kamera, katmanlar, açılış bildirimleri
+  const P = G.player;
+  cam.x = px(P.x);
+  cam.y = px(P.y);
+  cam.z = 1;
+  $('start').hidden = true;
+  $('end').hidden = true;
+  $('comic').hidden = true;
+  $('radio').hidden = true;
+  $('adbtns').hidden = false;
+  $('nitroBtn').hidden = false;
+  if (r === 'tag') setTimeout(() => toast(T(DLG.tagLevels.intro, { arac: TL().ad, seviye: tagLevel() + 1 })), 900);
+  toast(
+    r === 'taxi'
+      ? `Durağın: ${G.stand.name}. Burada yolcu alabilirsin, başka duraklarda dikkat!`
+      : `Mahallen: ${G.home.name}. Taksiciler peşine düşerse buraya getir!`,
+  );
 }
 export function initMenu() {
   $('uname').value = UNAME;
