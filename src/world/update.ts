@@ -124,15 +124,20 @@ export function update(dt) {
       }
     }
   }
+  // kovalayan eşlemesi karede bir kez kurulur (her Tag için bütün listeyi taramak yerine);
+  // Map’e ilk kovalayan yazılır, böylece sonuç Array.find ile aynıdır.
+  const alive = new Set(G.ents),
+    hunter = new Map();
+  for (const x of G.ents) if (x.chase && x.target && !hunter.has(x.target)) hunter.set(x.target, x);
   for (const e of G.ents) {
     if (e.stun > 0) e.stun -= w;
-    if (e.chase && e.target && e.target !== P && !G.ents.includes(e.target)) {
+    if (e.chase && e.target && e.target !== P && !alive.has(e.target)) {
       e.chase = false;
       e.target = null;
     }
     if (e.kind === 'tag' && !e.isPlayer) {
       if (e.revealed > 0) e.revealed -= w;
-      const th = G.ents.find((x) => x.chase && x.target === e);
+      const th = hunter.get(e);
       if (th && dist(th, e) < 7) {
         e.flee = true;
         e.threat = th;

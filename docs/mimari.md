@@ -8,6 +8,9 @@ npm install
 npm run dev        # http://localhost:5173 (yerel ağdan telefonla da açılır)
 npm run build      # dist/ (tip denetimi + paket)
 npm test           # dev sunucusu açıkken: duman testi + sahne testi (Playwright)
+npm run test:parity  # prototiple kare kare eşitlik (tohumlu rastgelelik + sanal saat)
+npm run test:perf    # kare süresi ölçümü; --proto ile prototip, --cpu 4 ile telefon benzetimi, --profile ile sıcak noktalar
+python3 scripts/build_atlas.py  # araç atlası (assets/atlas/cars.webp) ve manifest’teki atlas koordinatları
 ```
 
 ## Yükleme sırası (`src/main.ts`)
@@ -38,3 +41,23 @@ Modüller arası paylaşılan değişkenler sahibi olan modülde `export let` ol
 - Stil kuralı gereği emojiler kaldırıldı (telsiz etiketi `ui/i_radio` simgesiyle, sıralama başlıkları düz yazı).
 - Yolcu cinsiyet tablosu koddan `assets/manifest.json`’a taşındı (zaten oradaydı).
 - Yükleme ekranı eklendi.
+
+## Performans (3. adım)
+- **Harita:** 8×8 karelik parçalar halinde önbelleğe çizilir. Bir karede ~6 ms’lik parça çizim bütçesi var; boş kalan karelerde görüş alanının bir halka dışındaki parça önceden çizilir. Önbellek sınırı görüş alanına göre hesaplanır. Eskiden sabit 28 adet 16×16 parça tutuluyordu, bu DPR 2’de ~170 MB ediyordu; şimdi ~40 MB.
+- **Görünmeyen nesneler çizilmez:** araçlar, yolcular, radarlar ve sivil çevirmeler görüş alanı dışında atlanır.
+- **Güncelleme:** “bu Tag’i kim kovalıyor” sorusu karede bir kez kurulan eşlemeyle cevaplanır. Eskiden her Tag için bütün araç listesi taranıyordu (~130 bin karşılaştırma/kare).
+- **Donmuş kare:** JPEG kodlaması `toBlob` ile arka planda yapılır, panel açılırken ana iş parçacığı kilitlenmez.
+- **Görseller:** zaten kayıplı WebP; yeniden sıkıştırmak yalnızca ~%1 kazandırıyor. Her karede çizilen araçlar tek atlasta (`assets/atlas/cars.webp`), yolcu figürleri ve ev/ağaç parçaları zaten 4×4 atlas.
+
+Ölçüm (`tests/perf.mjs`, GPU’suz Chromium, 450 kare, taksici, aynı tohum):
+
+| | ortalama | p95 | en kötü |
+| --- | --- | --- | --- |
+| Prototip | 13,1 ms | 19,6 ms | 55,4 ms |
+| Yeni | 11,0 ms | 18,0 ms | 27,2 ms |
+
+Bu sürelerin çoğu piksel boyama (raster); GPU’lu telefonda çok daha ucuzdur. JavaScript tarafı (güncelleme + çizim komutları) kare başına 1–2 ms.
+
+## Telefonda test (4. adım)
+- **Yerel ağ:** bilgisayarda `npm run dev`, telefonda terminalde yazan `Network:` adresi (aynı Wi-Fi).
+- **GitHub Pages:** `.github/workflows/pages.yml`, `main`’e her gönderimde derleyip yayınlar. Bir kez Settings → Pages → Source: “GitHub Actions” seçilmeli. Adres: `https://<kullanıcı>.github.io/yolcu-kapmaca/`. Derleme göreli yollarla (`base: './'`) yapıldığı için alt dizinde çalışır.

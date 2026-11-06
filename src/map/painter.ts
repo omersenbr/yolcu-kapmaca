@@ -62,8 +62,14 @@ export function dark() {
   return mq.matches;
 }
 export let pal: any = PAL.light;
-/* ---- harita çizimi: parça parça (16×16 kare), sadece görünen bölgeler, en fazla 28 parça önbellekte ---- */
-export const CHT = 16;
+/* ---- harita çizimi: parça parça (8×8 kare), sadece görünen ve hemen çevresindeki bölgeler;
+   önbellek görüş alanına göre sınırlı (telefon belleği için) ---- */
+export const CHT = 8;
+/** önbellekte tutulacak en fazla parça; çizim her kare görüş alanına göre ayarlar */
+export let chunkCap = 28;
+export function setChunkCap(n: number) {
+  chunkCap = n;
+}
 export let CHX = 0,
   CHY = 0,
   chMS = 1,
@@ -582,7 +588,7 @@ export function mapChunk(i, j) {
   paintRegion(m, i * CHT, j * CHT, Math.min(COLS - 1, (i + 1) * CHT - 1), Math.min(ROWS - 1, (j + 1) * CHT - 1));
   mapChunks[k] = c;
   chunkOrder.push(k);
-  while (chunkOrder.length > 28) {
+  while (chunkOrder.length > chunkCap) {
     const old = chunkOrder.shift();
     mapChunks[old] = null;
   }

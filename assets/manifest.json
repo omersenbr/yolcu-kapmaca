@@ -186,67 +186,144 @@
    "file": "assets/cars/tag3.webp",
    "w": 109,
    "h": 200,
-   "note": "üstten görünüş, ön yukarı bakar"
+   "note": "üstten görünüş, ön yukarı bakar",
+   "atlas": {
+    "file": "assets/atlas/cars.webp",
+    "x": 0,
+    "y": 0,
+    "w": 109,
+    "h": 200
+   }
   },
   "tag4": {
    "file": "assets/cars/tag4.webp",
    "w": 109,
    "h": 200,
-   "note": "üstten görünüş, ön yukarı bakar"
+   "note": "üstten görünüş, ön yukarı bakar",
+   "atlas": {
+    "file": "assets/atlas/cars.webp",
+    "x": 111,
+    "y": 0,
+    "w": 109,
+    "h": 200
+   }
   },
   "tag2": {
    "file": "assets/cars/tag2.webp",
    "w": 109,
    "h": 200,
-   "note": "üstten görünüş, ön yukarı bakar"
+   "note": "üstten görünüş, ön yukarı bakar",
+   "atlas": {
+    "file": "assets/atlas/cars.webp",
+    "x": 222,
+    "y": 0,
+    "w": 109,
+    "h": 200
+   }
   },
   "tag1": {
    "file": "assets/cars/tag1.webp",
    "w": 109,
    "h": 200,
-   "note": "üstten görünüş, ön yukarı bakar"
+   "note": "üstten görünüş, ön yukarı bakar",
+   "atlas": {
+    "file": "assets/atlas/cars.webp",
+    "x": 333,
+    "y": 0,
+    "w": 109,
+    "h": 200
+   }
   },
   "taxi3": {
    "file": "assets/cars/taxi3.webp",
    "w": 109,
    "h": 200,
-   "note": "üstten görünüş, ön yukarı bakar"
+   "note": "üstten görünüş, ön yukarı bakar",
+   "atlas": {
+    "file": "assets/atlas/cars.webp",
+    "x": 444,
+    "y": 0,
+    "w": 109,
+    "h": 200
+   }
   },
   "taxi2": {
    "file": "assets/cars/taxi2.webp",
    "w": 104,
    "h": 200,
-   "note": "üstten görünüş, ön yukarı bakar"
+   "note": "üstten görünüş, ön yukarı bakar",
+   "atlas": {
+    "file": "assets/atlas/cars.webp",
+    "x": 555,
+    "y": 0,
+    "w": 104,
+    "h": 200
+   }
   },
   "taxi1": {
    "file": "assets/cars/taxi1.webp",
    "w": 103,
    "h": 200,
-   "note": "üstten görünüş, ön yukarı bakar"
+   "note": "üstten görünüş, ön yukarı bakar",
+   "atlas": {
+    "file": "assets/atlas/cars.webp",
+    "x": 661,
+    "y": 0,
+    "w": 103,
+    "h": 200
+   }
   },
   "sivil": {
    "file": "assets/cars/sivil.webp",
    "w": 105,
    "h": 200,
-   "note": "üstten görünüş, ön yukarı bakar"
+   "note": "üstten görünüş, ön yukarı bakar",
+   "atlas": {
+    "file": "assets/atlas/cars.webp",
+    "x": 766,
+    "y": 0,
+    "w": 105,
+    "h": 200
+   }
   },
   "police2": {
    "file": "assets/cars/police2.webp",
    "w": 105,
    "h": 200,
-   "note": "üstten görünüş, ön yukarı bakar"
+   "note": "üstten görünüş, ön yukarı bakar",
+   "atlas": {
+    "file": "assets/atlas/cars.webp",
+    "x": 873,
+    "y": 0,
+    "w": 105,
+    "h": 200
+   }
   },
   "police1": {
    "file": "assets/cars/police1.webp",
    "w": 105,
    "h": 200,
-   "note": "üstten görünüş, ön yukarı bakar"
+   "note": "üstten görünüş, ön yukarı bakar",
+   "atlas": {
+    "file": "assets/atlas/cars.webp",
+    "x": 0,
+    "y": 202,
+    "w": 105,
+    "h": 200
+   }
   },
   "tag5": {
    "file": "assets/cars/tag5.webp",
    "w": 105,
    "h": 200,
-   "note": "üstten görünüş, ön yukarı bakar"
+   "note": "üstten görünüş, ön yukarı bakar",
+   "atlas": {
+    "file": "assets/atlas/cars.webp",
+    "x": 107,
+    "y": 202,
+    "w": 105,
+    "h": 200
+   }
   }
  },
  "passengers": {

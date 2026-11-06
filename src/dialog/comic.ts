@@ -24,8 +24,25 @@ export const ui = {
   timer: $('timer'),
   tbar: $('timerBar'),
 };
-export function panelScene() {
-  // olay anının haritadan donmuş karesi: bizim araçlarımız, gerçek sokak
+/* olay anının haritadan donmuş karesi: kare anında küçük bir tuvale kopyalanır,
+   JPEG kodlaması ana iş parçacığını kilitlememek için toBlob ile arka planda yapılır */
+let sceneUrl = '',
+  sceneToken = 0;
+function setSceneBg(url: string | null) {
+  const st = ui.panel.style;
+  if (url) {
+    st.backgroundImage = `radial-gradient(rgba(0,0,0,.16) 1.3px,transparent 1.7px),linear-gradient(var(--pbg),var(--pbg)),linear-gradient(rgba(255,255,255,.45),rgba(255,255,255,.45)),url(${url})`;
+    st.backgroundSize = '9px 9px,cover,cover,cover';
+    st.backgroundPosition = '0 0,center,center,center';
+    st.backgroundBlendMode = 'normal,multiply,normal,normal';
+  } else {
+    st.backgroundImage = '';
+    st.backgroundSize = '';
+    st.backgroundBlendMode = '';
+  }
+}
+export function panelScene(): boolean {
+  const token = ++sceneToken;
   try {
     const W = cv.width,
       H = cv.height,
@@ -38,24 +55,26 @@ export function panelScene() {
     c.height = 600;
     const g = c.getContext('2d');
     g.drawImage(cv, sx, sy, cw, ch, 0, 0, 480, 600);
-    return c.toDataURL('image/jpeg', 0.72);
+    c.toBlob(
+      (b) => {
+        if (!b || token !== sceneToken) return;
+        if (sceneUrl) URL.revokeObjectURL(sceneUrl);
+        sceneUrl = URL.createObjectURL(b);
+        setSceneBg(sceneUrl);
+      },
+      'image/jpeg',
+      0.72,
+    );
+    return true;
   } catch (e) {
-    return null;
+    return false;
   }
 }
 export function openPanel(theme: string, caption: string, cast: CastMember[], hide?: boolean) {
   if (ui.comic.hidden) {
-    const sc = G && !G.over ? panelScene() : null;
-    if (sc) {
-      ui.panel.style.backgroundImage = `radial-gradient(rgba(0,0,0,.16) 1.3px,transparent 1.7px),linear-gradient(var(--pbg),var(--pbg)),linear-gradient(rgba(255,255,255,.45),rgba(255,255,255,.45)),url(${sc})`;
-      ui.panel.style.backgroundSize = '9px 9px,cover,cover,cover';
-      ui.panel.style.backgroundPosition = '0 0,center,center,center';
-      ui.panel.style.backgroundBlendMode = 'normal,multiply,normal,normal';
-    } else {
-      ui.panel.style.backgroundImage = '';
-      ui.panel.style.backgroundSize = '';
-      ui.panel.style.backgroundBlendMode = '';
-    }
+    // donmuş kare hazır olana kadar düz panel; hazır olunca arka plana oturur
+    setSceneBg(null);
+    if (!(G && !G.over && panelScene())) sceneToken++;
     pageTurn();
   }
   if (G) {

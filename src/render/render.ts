@@ -4,7 +4,7 @@ import { MANIFEST } from '../core/content';
 import { G, hourNow } from '../core/state';
 import { clamp, mixHex } from '../core/util';
 import { COLS, RADARS, ROWS } from '../map/grid';
-import { CHT, CHX, CHY, mapChunk, mapChunks, miniCv, pal } from '../map/painter';
+import { CHT, CHX, CHY, mapChunk, mapChunks, miniCv, pal, setChunkCap } from '../map/painter';
 import { drawCar } from './cars';
 import { drawDest, drawPax } from './people';
 import { DPR, TS, VH, VW, cam, ctx, mctx, mini, px, rr, star } from './view';
@@ -72,7 +72,10 @@ export function render(t, dt) {
   ctx.translate(-cx, -cy);
   ctx.imageSmoothingQuality = 'high';
   if (mapChunks) {
+    // parça çizimi zaman bütçeli: görünen eksik parçalar ~6 ms’ye kadar, hiç çizim yapılmayan karede
+    // görüş alanının bir halka dışındaki ilk eksik parça önceden çizilir
     let built = 0;
+    const tb = performance.now();
     const CW = CHT * TS,
       i0 = Math.max(0, Math.floor((cx - hw) / CW)),
       i1 = Math.min(CHX - 1, Math.floor((cx + hw) / CW)),
@@ -81,12 +84,20 @@ export function render(t, dt) {
     for (let j = j0; j <= j1; j++)
       for (let i = i0; i <= i1; i++) {
         let c = mapChunks[j * CHX + i];
-        if (!c && built < 3) {
+        if (!c && (built === 0 || performance.now() - tb < 6)) {
           c = mapChunk(i, j);
           built++;
         } else if (c) mapChunk(i, j);
         if (c) ctx.drawImage(c, i * CW, j * CW, CW, CW);
       }
+    setChunkCap((i1 - i0 + 3) * (j1 - j0 + 3) + 6);
+    if (!built)
+      prefetch: for (let j = Math.max(0, j0 - 1); j <= Math.min(CHY - 1, j1 + 1); j++)
+        for (let i = Math.max(0, i0 - 1); i <= Math.min(CHX - 1, i1 + 1); i++)
+          if (!mapChunks[j * CHX + i]) {
+            mapChunk(i, j);
+            break prefetch;
+          }
   }
   const VX0 = (cx - hw) / TS - 2,
     VX1 = (cx + hw) / TS + 2,
@@ -215,7 +226,7 @@ export function render(t, dt) {
       ctx.fillText('RADAR', x, y + TS * 0.78);
     }
     for (const ck of G.checks)
-      if (ck.shown > 0) {
+      if (ck.shown > 0 && inView(ck.x, ck.y)) {
         ctx.fillStyle = '#ff7b00';
         ctx.strokeStyle = '#111';
         ctx.lineWidth = 1;

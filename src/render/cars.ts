@@ -94,8 +94,10 @@ export function drawCar0(e, t) {
     ctx.restore();
   }
   if (!e.spr) e.spr = pickCarSpr(e);
+  // araçlar tek atlastan çizilir (assets/atlas/cars.webp, scripts/build_atlas.py); atlas yoksa tekil dosya
   const CSP = CARS()[e.spr],
-    CIM = CSP ? img(CSP.file) : null;
+    AT = CSP && CSP.atlas,
+    CIM = CSP ? img(AT ? AT.file : CSP.file) : null;
   if (CSP && ready(CIM)) {
     ctx.save();
     ctx.translate(x, y);
@@ -103,7 +105,8 @@ export function drawCar0(e, t) {
     if (blink) ctx.globalAlpha = 0.45;
     const h = TS * 1.32,
       w = (h * CSP.w) / CSP.h;
-    ctx.drawImage(CIM, -w / 2, -h / 2, w, h);
+    if (AT) ctx.drawImage(CIM, AT.x, AT.y, AT.w, AT.h, -w / 2, -h / 2, w, h);
+    else ctx.drawImage(CIM, -w / 2, -h / 2, w, h);
     if (e.carry) {
       const hy = h * 0.13,
         r = w * 0.15,
