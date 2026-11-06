@@ -9,7 +9,7 @@
     "preview": "vite preview --host",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tools",
     "format": "prettier --write src",
-    "test": "node tests/smoke.mjs && node tests/scenes.mjs",
+    "test": "node tests/smoke.mjs && node tests/scenes.mjs && node tests/career.mjs",
     "test:parity": "node tests/parity.mjs",
     "test:perf": "node tests/perf.mjs",
     "sim": "vite build --ssr tools/headless.ts --outDir dist-node --emptyOutDir --logLevel warn && node dist-node/headless.js",

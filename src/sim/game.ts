@@ -1,22 +1,32 @@
 // <auto-imports>
 import { DLG } from './content';
-import { DAY, DF, G, TL, addTagXP, setDay, setG, tagLevel } from './state';
+import { DAY, DF, G, TL, addTagXP, mods, setDay, setG, tagLevel } from './state';
 import { T, dist, rnd } from './util';
 import { DAT, RADARS, STREETS, TAXI_START, ZONES, district, isBog, isBridge, isTunnel, zoneAt } from './grid';
 import { npcWitness, witness } from './ai';
 import { mkEnt } from './entities';
 import { newCheck, pickWave } from './events';
 import { clearWant } from './movement';
-import { pickDest, spawnPax } from './passengers';
+import { pickDest, spawnPax, taximeter } from './passengers';
 import { randFar } from './pathfinding';
 import { bus } from './bus';
 import type { SceneName } from './bus';
 // </auto-imports>
 /* ================= OYUN: yeni gün, yolcu alma/indirme, ücretler, kontrol noktaları ================= */
 /** yeni gün: dünyayı kurar. Ekran tarafı (kamera, katmanlar, açılış bildirimleri) ui/menu.ts’de. */
-export function newGame(role) {
-  setDay(DF().day || 480);
+export interface ShiftOpts {
+  /** başlangıç saati (ör. 5 ya da 17) */
+  startH: number;
+  /** süre (saat); gün uzunluğu buna göre kısalır */
+  span: number;
+  mods: { fareMul: number; demandMul: number; complaintMul: number };
+  /** kariyerde oyuncunun sabit durağı */
+  stand?: string;
+}
+export function newGame(role, shift?: ShiftOpts) {
+  setDay(((DF().day || 480) * (shift ? shift.span : 24)) / 24);
   setG({
+    ...(shift ? { career: true, startH: shift.startH, span: shift.span, mods: shift.mods } : {}),
     role,
     time: DAY,
     money: 0,
@@ -57,7 +67,7 @@ export function newGame(role) {
   clearWant();
   let st = TAXI_START;
   if (role === 'taxi') {
-    G.stand = rnd(ZONES);
+    G.stand = (shift && ZONES.find((z) => z.name === shift.stand)) || rnd(ZONES);
     const z = G.stand,
       pool = STREETS.filter((s) => zoneAt(s[0], s[1]) === z && !z.homes.some((h) => h[0] === s[0] && h[1] === s[1]));
     st = rnd(pool);
@@ -230,7 +240,7 @@ export function deliver(e) {
       bus.toast(p.complained ? `${p.dest} teslim ama şikayetli. +₺${f}` : `${p.dest} teslim. +₺${f}`);
   } else {
     const before = G.money;
-    const normal = 30 + 11 * p.m + (p.cross ? 40 : 0);
+    const normal = taximeter(p.m, p.cross);
     if (p.scam) {
       if (p.look.vlog && Math.random() < 0.75 && !G.busy) {
         cinematic(e.x, e.y, 0.6, 'viralDialog', p);
@@ -251,14 +261,14 @@ export function deliver(e) {
       } else bus.toast(`${p.dest} teslim. Pazarlıklı ₺${p.fare}`);
     } else {
       const dr = Math.round(p.driven || 0),
-        meter = 30 + 11 * dr + (p.cross ? 40 : 0),
+        meter = taximeter(dr, p.cross),
         ratio = dr / Math.max(1, p.m);
       if (
         !G.busy &&
         dr > p.m + 4 &&
         ratio > 1.35 &&
         Math.random() <
-          Math.min(0.95, (ratio - 1.2) * 0.9 + (p.look.rec ? 0.2 : 0)) *
+          Math.min(0.95, ((ratio - 1.2) * 0.9 + (p.look.rec ? 0.2 : 0)) * mods().complaintMul) *
             (p.look.tourist ? (p.look.vlog ? 0.8 : 0.35) : 1)
       ) {
         cinematic(e.x, e.y, 0.5, 'routeDialog', p, meter, normal);

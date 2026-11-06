@@ -12,6 +12,8 @@ import { toast } from './hud';
 import { renderLB } from './leaderboard';
 import { pageTurn } from './pageflip';
 import { newGame, nitro } from '../sim/game';
+import type { ShiftOpts } from '../sim/game';
+import { careerMode, nextShift, openCareer } from './career';
 // </auto-imports>
 /* ================= ANA EKRAN: kapak, profil, rol düğmeleri, alttan açılan sayfalar ================= */
 export function toMenu() {
@@ -88,11 +90,11 @@ export function paintDiff() {
     .querySelectorAll<HTMLElement>('#diff button')
     .forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.d === DIFF)));
 }
-export function startRole(r) {
+export function startRole(r, shift?: ShiftOpts) {
   document.body.classList.remove('inmenu');
   window.dispatchEvent(new Event('resize'));
   pageTurn();
-  newGame(r);
+  newGame(r, shift);
   // yeni günün ekran tarafı: kamera, katmanlar, açılış bildirimleri
   const P = G.player;
   cam.x = px(P.x);
@@ -165,7 +167,8 @@ export function initMenu() {
     if (pendingRole) {
       const r = pendingRole;
       pendingRole = null;
-      startRole(r);
+      if (careerMode() && r === 'taxi') openCareer();
+      else startRole(r);
     }
   });
   document.querySelectorAll<HTMLElement>('#start .role').forEach((b) =>
@@ -177,6 +180,7 @@ export function initMenu() {
         $('uname').focus();
         return;
       }
+      if (careerMode() && b.dataset.role === 'taxi') return openCareer();
       startRole(b.dataset.role);
     }),
   );
@@ -189,7 +193,11 @@ export function initMenu() {
     }),
   );
   paintDiff();
-  $('again').addEventListener('click', () => startRole(G.role));
-  $('swap').addEventListener('click', toMenu);
+  $('again').addEventListener('click', () => (G.career ? nextShift() : startRole(G.role)));
+  $('swap').addEventListener('click', () => {
+    const wasCareer = G && G.career;
+    toMenu();
+    if (wasCareer) openCareer();
+  });
   renderLB($('lb'));
 }

@@ -55,7 +55,9 @@
   "doviz": {
     "kurBaslangic": 36,
     "gunlukOynama": 0.02,
-    "makas": 0.05
+    "makas": 0.05,
+    "kurAlt": 28,
+    "kurUst": 48
   },
   "tempo": {
     "_not": "Dünya saati ortak ve sürekli işler (çok oyunculuda zorunlu). Oyuncunun araçları başkasının vardiyasında çalışırken de gelir getirir; birikim, tahsil edilmezse belli bir süreden sonra durur.",
@@ -99,5 +101,29 @@
     "pesinat": 0.2,
     "toplamFaiz": 0.15,
     "vadeGun": 20
+  },
+  "vardiya": {
+    "_not": "Kariyerde oynanan birim 12 saatlik vardiya (orta zorlukta 4 dakika). Hızlı gün modunu etkilemez.",
+    "secenekler": [
+      {
+        "id": "gunduz",
+        "baslangic": 5,
+        "saat": 12
+      },
+      {
+        "id": "gece",
+        "baslangic": 17,
+        "saat": 12
+      }
+    ],
+    "ucretCarpani": 1.3,
+    "yogunUcretCarpani": 1.15,
+    "yogunTalepCarpani": 1.3,
+    "_carpanNot": "Bot ölçümü: çarpansız taksimetre 12 saatte ₺8–10 bin; insan oyuncu için ×1,3."
+  },
+  "kariyer": {
+    "hapisCezasi": 5000,
+    "ruhsatCezasi": 25000,
+    "_cezaNot": "Kariyerde kalıcı sıfırlama yok: vardiya kazancı gider, ayrıca ceza kasadan düşer."
   }
 }

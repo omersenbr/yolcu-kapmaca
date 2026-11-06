@@ -48,6 +48,7 @@
     <h1 class="hlogo">Yolcu<br>Kapmaca</h1>
     <p class="hsub">Bütün İstanbul, tek bir gün.</p>
     <div class="hplay">
+      <div class="diff mode" id="modeSel"><button data-m="hizli">Hızlı gün</button><button data-m="kariyer">Kariyer</button></div>
       <button class="role taxi" data-role="taxi"><img class="rcar" id="rcTaxi" alt=""><span class="rt"><b>Taksici ol</b><span>Kısa mesafeyi geçiştir, Tag’i yakala</span></span></button>
       <button class="role tag" data-role="tag"><img class="rcar" id="rcTag" alt=""><span class="rt"><b>Tag’ci ol</b><span>Taksicilere ve polise yakalanma</span></span></button>
       <div class="diff" id="diff"><button data-d="kolay">Kolay</button><button data-d="orta">Orta</button><button data-d="zor">Zor</button></div>
@@ -63,6 +64,7 @@
     <div class="sheet" id="sh-prof" hidden><div class="shead"><b>Profil</b><button class="sx" aria-label="Kapat">✕</button></div>
       <label class="nm" id="nmWrap">Kullanıcı adın<input id="uname" maxlength="16" autocomplete="nickname" placeholder="ör. Kadıköylü Reis"></label>
       <button class="btn" id="profOk">Kaydet</button></div>
+    <div class="sheet" id="sh-career" hidden><div class="shead"><b id="careerTitle">Kariyer</b><button class="sx" aria-label="Kapat">✕</button></div><div id="careerBody"></div></div>
     <div class="sheet" id="sh-help" hidden><div class="shead"><b>Nasıl oynanır</b><button class="sx" aria-label="Kapat">✕</button></div>
       <p><b>Taksici:</b> Kısa mesafeyi bahaneyle geçiştir, yolu uzatıp taksimetreyi şişir ama şikayet yeme. Başka durakların bölgesinde durakçılara dikkat. Yolcu alan Tag’i yakala; kavgadan sonra polise yakalanırsan hapse düşersin.</p>
       <p><b>Tag’ci:</b> Taksicilerin önünde yolcu alma ya da indirme. Yolcuyu geç götürürsen şikayet eder. Sivil çevirmeler görünmez. Polis aracını bağlarsa her şey sıfırlanır.</p>

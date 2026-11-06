@@ -13,6 +13,7 @@ import { initMenu } from './ui/menu';
 import { initPathfinding } from './sim/pathfinding';
 import { update } from './sim/update';
 import { initBindings } from './ui/bindings';
+import { initCareer } from './ui/career';
 // </auto-imports>
 import * as tagScenes from './dialog/tagScenes';
 import * as taxiScenes from './dialog/taxiScenes';
@@ -21,6 +22,7 @@ import './styles/main.css';
 import mapUrl from '/data/harita.json?url';
 import dlgUrl from '/data/dialoglar.json?url';
 import manifestUrl from '/assets/manifest.json?url';
+import ecoUrl from '/data/ekonomi.json?url';
 
 export let lastFrame = performance.now();
 export function loop(now) {
@@ -34,15 +36,15 @@ export function loop(now) {
 export async function boot() {
   const bar = $('loadBar'),
     lbl = $('loadTxt');
-  const [map, dlg, manifest] = await Promise.all(
-    [mapUrl, dlgUrl, manifestUrl].map((u) =>
+  const [map, dlg, manifest, eco] = await Promise.all(
+    [mapUrl, dlgUrl, manifestUrl, ecoUrl].map((u) =>
       fetch(u).then((r) => {
         if (!r.ok) throw new Error(u + ' ' + r.status);
         return r.json();
       }),
     ),
   );
-  setContent(map, dlg, manifest);
+  setContent(map, dlg, manifest, eco);
   initGrid(map);
   initPathfinding();
   await preload(manifestFiles(manifest), (n, t) => {
@@ -53,6 +55,7 @@ export async function boot() {
   initHud();
   initBindings();
   initMenu();
+  initCareer();
   initInput();
   resize();
   cam.x = COLS * TS * 0.55;

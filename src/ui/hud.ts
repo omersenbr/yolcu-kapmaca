@@ -1,6 +1,7 @@
 // <auto-imports>
 import { $ } from '../core/dom';
 import { DF, G, TL, demand, hourNow } from '../sim/state';
+import { taximeter } from '../sim/passengers';
 import { clamp } from '../sim/util';
 import { district } from '../sim/grid';
 // </auto-imports>
@@ -50,7 +51,7 @@ export function updHud() {
     : 'Boş';
   let lbl = 'Yolcu';
   if (c && G.role === 'taxi')
-    lbl = c.fixed ? `Pazarlık ₺${c.fare}` : `Taksimetre ₺${30 + 11 * Math.round(c.driven || 0) + (c.cross ? 40 : 0)}`;
+    lbl = c.fixed ? `Pazarlık ₺${c.fare}` : `Taksimetre ₺${taximeter(Math.round(c.driven || 0), c.cross)}`;
   if (c && G.role === 'tag') {
     const exp = (((c.m / 4.5) * 1.5 + 6) * 1.5 * DF().patience * TL().pat) / DF().world,
       k = clamp(Math.ceil(5 * (1 - (c.rideT || 0) / exp)), 0, 5);

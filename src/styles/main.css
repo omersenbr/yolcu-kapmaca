@@ -1635,3 +1635,95 @@ body.inmenu .hud {
   vertical-align: -4px;
   margin-right: 4px;
 }
+
+/* ---- kariyer ---- */
+.home .mode button {
+  max-width: 150px;
+}
+.home .role[disabled] {
+  filter: grayscale(0.8);
+  opacity: 0.7;
+}
+.cstats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: 0 0 8px;
+}
+.cstats div {
+  background: #fff;
+  border: 3px solid #111;
+  border-radius: 12px;
+  padding: 6px 8px;
+  text-align: center;
+}
+.cstats small {
+  display: block;
+  font:
+    700 11px/1.1 'Grandstander',
+    'Archivo',
+    sans-serif;
+  opacity: 0.7;
+}
+.cstats b {
+  display: block;
+  font:
+    400 22px/1.1 'Bangers',
+    'Archivo Black',
+    sans-serif;
+  letter-spacing: 0.5px;
+}
+.cmeta {
+  font:
+    700 13px/1.35 'Grandstander',
+    'Archivo',
+    sans-serif;
+  margin: 0 0 8px;
+}
+.cmeta .busy {
+  color: #c92a2a;
+}
+.csec {
+  background: #fff;
+  border: 3px solid #111;
+  border-radius: 14px;
+  padding: 8px 10px;
+  margin: 0 0 8px;
+}
+.csec h4 {
+  margin: 0 0 4px;
+  font:
+    400 19px/1 'Bangers',
+    'Archivo Black',
+    sans-serif;
+  letter-spacing: 0.6px;
+}
+.csec p {
+  font:
+    600 13px/1.35 'Grandstander',
+    'Archivo',
+    sans-serif !important;
+  margin: 0 0 6px !important;
+}
+.csec .row {
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+.csec .btn {
+  font-size: 17px;
+  padding: 8px 6px;
+  margin: 0 !important;
+  width: auto !important;
+}
+.csec .btn:disabled {
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+.endlines {
+  font:
+    700 14px/1.5 'Grandstander',
+    'Archivo',
+    sans-serif;
+  margin: 0 0 6px;
+  color: var(--text);
+}

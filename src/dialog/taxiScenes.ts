@@ -1,6 +1,6 @@
 // <auto-imports>
 import { DLG } from '../sim/content';
-import { G, hourNow } from '../sim/state';
+import { G, hourNow, mods } from '../sim/state';
 import { T, clamp, dist, esc, rnd, shuffle } from '../sim/util';
 import { rescue } from './ads';
 import { ask, closePanel, openPanel, say, setCast, ui } from './comic';
@@ -217,7 +217,8 @@ export async function refuse(p, chance, line) {
   p.claim = null;
   p.cool = G.clock + 5;
   p.refused = (p.refused || 0) + 1;
-  if (Math.random() < Math.min(0.95, chance)) {
+  // eski araçta yolcular homurdanır: şikayet ihtimali artar (kariyer)
+  if (Math.random() < Math.min(0.95, chance * mods().complaintMul)) {
     setCast([
       { svg: face(LOOK.taxi1, 'nervous'), name: 'Sen' },
       { svg: face({ ...L, rec: true }, 'angry'), name: L.name },

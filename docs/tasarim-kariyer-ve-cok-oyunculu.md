@@ -129,6 +129,32 @@ Herkesin şoför olarak aynı çizgiden başlaması çok oyunculu modun adaletin
 - **Kalıcı veri:** Supabase ya da Firestore. Kasa, plakalar, duraklar, ekipler, sezon burada tutulur. Anlık araç senkronu için kullanılmaz.
 - **İlk hedef:** şehir başına 1 000–1 500 NPC araç + 50–100 gerçek oyuncu.
 
+## Uygulama durumu (taksici kariyeri, tek oyunculu)
+
+Yapıldı:
+- **Ana ekran:** “Hızlı gün / Kariyer” seçimi. Kariyerde şimdilik yalnızca taksici var; Tag’ci kariyeri sırada.
+- **Kariyer ekranı:**
+  - Kasa, dolar ve kur; gün sayısı ve haftanın günü (yoğun gün uyarısı); oyuncunun sabit durağı.
+  - **Vardiya:** gündüz 05–17 ya da gece 17–05, orta zorlukta ~4 dakika. Ücret durumuna göre: patronun aracında ₺3 000; çırakken ₺1 500 (ilk 6 vardiya); kendi aracınla plaka kirası ve bakım ₺1 833; kendi plakanla yalnızca bakım.
+  - **Kasayı topla:** araçlar ve plaka payı gerçek saatle, en fazla 12 saat birikir; kredi taksiti buradan düşer.
+  - **Garaj:** eski ₺450 bin, yeni ₺1,8 milyon. Kiralık plakayla en fazla 2 araç; her tam plaka 1 araç hakkı ekler.
+  - **Plaka:** 1/8 hisse ₺1,5 milyon; kredili tam plaka (%20 peşinat, hisseler dahil).
+  - **Döviz bürosu:** 100 $ al/sat, kur her takvim günü oynar.
+  - **Günlük giriş ödülü:** ilk gün ₺200 bin bonus, 7 günlük seri.
+- **Vardiya içinde:**
+  - Ücretler ×1,3; cuma, cumartesi ve pazar ayrıca ×1,15 ücret ve ×1,3 yolcu.
+  - Eski araçta şikayet ihtimali ×1,5 (yolu uzatma ve reddetme şikayetleri).
+- **Vardiya sonu:** gazete ekranında döküm (kazanç, ücret/kira, ceza, net, kasa). Kariyerde kalıcı sıfırlama yok: hapiste kazanç gider, ₺5 000 kefalet; viral videoda ₺25 000 ceza.
+- **Kayıt:** `localStorage` → `yk-kariyer`.
+- **Test:** `tests/career.mjs`.
+
+Sırada:
+- Tag’ci kariyeri.
+- Turistten dolar.
+- Vardiya sonunda arabada yolcu varsa ne olacağı. Şimdi taksimetre yanıyor, hızlı gündeki gibi.
+- Araçları satma, yeni araca geçme.
+- Plaka değerinin piyasayla oynaması.
+
 ## 10. Yol haritası
 
 1. ~~Simülasyonu ekrandan ayır~~ (yapıldı; davranış eşitlik testiyle doğrulandı).
