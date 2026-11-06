@@ -31,7 +31,7 @@ def pack(items, max_w=1024):
     return pos, width, y + row_h
 
 
-def build(group, out_name, quality=90):
+def build(group, out_name):
     man = json.loads(MANIFEST.read_text(encoding='utf-8'))
     entries = man[group]
     items = [(k, Image.open(ROOT / v['file']).convert('RGBA')) for k, v in entries.items()]
@@ -41,7 +41,8 @@ def build(group, out_name, quality=90):
         atlas.paste(im, pos[name])
     out = ROOT / 'assets' / 'atlas' / f'{out_name}.webp'
     out.parent.mkdir(exist_ok=True)
-    atlas.save(out, 'WEBP', quality=quality, method=6, exact=True)
+    # kayıpsız: atlas, tekil dosyalarla piksel piksel aynı olmalı
+    atlas.save(out, 'WEBP', lossless=True, quality=100, method=6, exact=True)
     rel = out.relative_to(ROOT).as_posix()
     for name, im in items:
         x, y = pos[name]

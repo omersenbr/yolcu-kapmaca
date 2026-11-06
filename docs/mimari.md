@@ -47,7 +47,7 @@ Modüller arası paylaşılan değişkenler sahibi olan modülde `export let` ol
 - **Görünmeyen nesneler çizilmez:** araçlar, yolcular, radarlar ve sivil çevirmeler görüş alanı dışında atlanır.
 - **Güncelleme:** “bu Tag’i kim kovalıyor” sorusu karede bir kez kurulan eşlemeyle cevaplanır. Eskiden her Tag için bütün araç listesi taranıyordu (~130 bin karşılaştırma/kare).
 - **Donmuş kare:** JPEG kodlaması `toBlob` ile arka planda yapılır, panel açılırken ana iş parçacığı kilitlenmez.
-- **Görseller:** zaten kayıplı WebP; yeniden sıkıştırmak yalnızca ~%1 kazandırıyor. Her karede çizilen araçlar tek atlasta (`assets/atlas/cars.webp`), yolcu figürleri ve ev/ağaç parçaları zaten 4×4 atlas.
+- **Görseller:** zaten kayıplı WebP; yeniden sıkıştırmak yalnızca ~%1 kazandırıyor. Her karede çizilen araçlar tek kayıpsız atlasta (`assets/atlas/cars.webp`, 251 KB; tekil dosyalarla piksel eşitliği için kayıpsız), yolcu figürleri ve ev/ağaç parçaları zaten 4×4 atlas.
 
 Ölçüm (`tests/perf.mjs`, GPU’suz Chromium, 450 kare, taksici, aynı tohum):
 
@@ -61,3 +61,5 @@ Bu sürelerin çoğu piksel boyama (raster); GPU’lu telefonda çok daha ucuzdu
 ## Telefonda test (4. adım)
 - **Yerel ağ:** bilgisayarda `npm run dev`, telefonda terminalde yazan `Network:` adresi (aynı Wi-Fi).
 - **GitHub Pages:** `.github/workflows/pages.yml`, `main`’e her gönderimde derleyip yayınlar. Bir kez Settings → Pages → Source: “GitHub Actions” seçilmeli. Adres: `https://<kullanıcı>.github.io/yolcu-kapmaca/`. Derleme göreli yollarla (`base: './'`) yapıldığı için alt dizinde çalışır.
+
+Eşitlik notu: performans değişikliklerinden sonra oyun durumu prototiple her karede hâlâ birebir aynı. Görüntüde ekranın ~%0,2’si kadar, gözle görülmeyen fark kalıyor: araç kenarlarında atlas örneklemesi ve 8 karelik parça birleşim çizgilerinde ≤8/255 yoğunluk farkı.
