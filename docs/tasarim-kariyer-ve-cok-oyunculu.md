@@ -25,17 +25,22 @@ Sıfır sermayeyle, başkasının aracında başlarsın. Her gün kazandığın�
 
 ## 3. Taksici kariyeri
 
-**Gerçek çapa (kullanıcıdan):** şoför 12 saatlik vardiya için plaka sahibine **₺3 000** öder, kalanı şoförün. Güncel taksi plakası **75 000–80 000** (para birimi netleşecek: TL mi, dolar mı).
+**Gerçek rakamlar** (sayılar `data/ekonomi.json` içinde):
+- Vardiya: şoför 12 saat için **₺3 000** öder, kalanı şoförün. **Plakayı kendi aracınla kiralayan da hep ₺3 000 öder**; aylık karşılığı ~**₺80 000**.
+- Taksi plakası satın alma: **₺11,6–12,2 milyon** (Kasım 2026 bayi fiyatları; kullanıcının ilk tahmini 7–8 milyondu, piyasa yükselmiş). Aylık kira piyasada ₺67–80 bin.
+- Günlük brüt kazanç: hafta içi **₺10 000’e kadar**, cuma, cumartesi ve pazar **₺10 000’in üstü**.
 
 | Basamak | Durum | Para akışı |
 | --- | --- | --- |
-| 1. **Şoför** | **Araç ve plaka plaka sahibinin** | **Vardiya ücreti ₺3 000 (12 saat), kalanı senin.** Benzin şoförden. Kötü günde zarar edebilirsin; ilk günler için “çırak” indirimi önerilir (ilk 3 gün ₺1 500). |
-| 2. **Plaka kiracısı** | **Kendi aracınla, plakayı kiralarsın** | Plaka kirası vardiya ücretinden düşük (öneri ₺1 800/vardiya), ama araç senin: önce eski bir taksi alırsın (bakım, arıza, benzin). |
-| 3. **Plaka sahibi** | **Plaka satın alırsın** | 75 000–80 000. Değeri piyasayla oynar (gazete manşetleri), gerekirse satılır. |
-| 4. Filo | Birden çok plaka | Plakaları (araçla ya da araçsız) NPC şoförlere ya da **arkadaşlarına** kiralarsın; artık ₺3 000’ü alan sensin. Oyunda değilken de birikir (en fazla 8 saat). |
+| 1. **Şoför** | **Araç ve plaka patronun** | **₺3 000/vardiya, kalanı senin.** İlk 3 gün çırak indirimi: ₺1 500. |
+| 2. **Kendi aracı + kiralık plaka** | Önce eski bir taksi alırsın | **Kira yine ₺3 000.** Fark araçta: **eski araçta yolcular homurdanır, şikayet ihtimali artar** (×1,5). Yeni araç şikayeti azaltır, bahşişi artırır. |
+| 3. **Plaka sahibi** | **Plaka satın alırsın** (~₺12 M) | Öneri: hisseli plaka (1/8, 1/4, 1/2). İstanbul’da gerçekten var, ara hedef olur. Plaka değeri piyasayla oynar. |
+| 4. Filo | Birden çok plaka | Plakaları NPC şoförlere ya da **arkadaşlarına** verirsin; artık ₺3 000’ü alan sensin. |
 | 5. **Durak sahibi / Plaka Ağası** | Durak satın alırsın | Duraktaki herkesten aidat, bölge kontrolü, sezon sıralaması. |
 
-**Ölçek:** bir oyun günü (05:00’ten 05:00’e, orta zorlukta 8 dakika) = bir vardiya sayılır. Ücretler gerçeğe yakın tutulursa bugünkü taksimetre (30 + 11 × mesafe) bir oyun gününde ₺3 000’ü zor çıkarır; ücretler ve yolcu yoğunluğu ortalama bir şoför günde ₺6 000–8 000 brüt, ₺3 000–5 000 net kazanacak şekilde ayarlanmalı.
+**Hafta:** oyun günleri haftanın günlerini takip eder (Pazartesi → Pazar). **Cuma, cumartesi ve pazar en yoğun günler**: daha çok yolcu, daha uzun yolculuk, gece hayatı. Ücretler ve yolcu yoğunluğu, ortalama bir şoför bu hedeflere ulaşacak şekilde ayarlanacak (bugünkü taksimetre bir oyun gününde ₺3 000’ü zor çıkarıyor).
+
+**Tempo sorunu (karar bekliyor):** gerçek rakamlarla bir şoför haftada ~₺40 000 net biriktirir. Tam plaka (₺12 M) ~300 oyun haftası, yani ~280 saat oynanış eder. Seçenekler bir sonraki bölümde.
 
 ## 4. Tag’ci kariyeri
 

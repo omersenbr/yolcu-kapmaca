@@ -1,0 +1,31 @@
+{
+  "_açıklama": "Kariyer ekonomisi. Bütün sayılar burada; kod sabit sayı içermez. Kaynak notları _kaynak alanlarında.",
+  "_kaynak": "Plaka fiyatı ve kirası: İstanbul plaka bayileri, Kasım 2026 (otoistanbul.com.tr, cengizarslantaxi.com, akyoltaksi.com, mastertaksi.com.tr). Vardiya ücreti ve günlük kazanç: kullanıcı.",
+  "taksi": {
+    "vardiyaUcreti": 3000,
+    "vardiyaSaat": 12,
+    "_vardiyaNot": "Şoför patronun aracı ve plakasıyla 12 saatlik vardiya için öder; kalanı şoförün. Kendi aracıyla plaka kiralayan da aynı ücreti öder.",
+    "cirakIndirimi": { "gun": 3, "ucret": 1500 },
+    "plakaAylikKira": 80000,
+    "plakaSatis": 12000000,
+    "plakaAlis": 11600000,
+    "_plakaNot": "Kasım 2026 piyasası: alış 11,6 M, satış 12,0–12,2 M TL; aylık kira 67–80 bin TL.",
+    "plakaHisseleri": [0.125, 0.25, 0.5, 1]
+  },
+  "hafta": {
+    "_not": "Oyun günü haftanın bir günü. Cuma, cumartesi, pazar en yoğun.",
+    "gunler": ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"],
+    "yogunGunler": ["Cuma", "Cumartesi", "Pazar"],
+    "hedefBrutKazanc": { "haftaIci": [7000, 10000], "yogun": [10000, 14000] },
+    "_hedefNot": "Ortalama bir taksicinin günlük brüt kazancı; ücretler ve yolcu yoğunluğu buna göre ayarlanacak."
+  },
+  "araclar": {
+    "_not": "Eski araç: yolcular homurdanır, şikayet ihtimali artar. Plaka kirası araçtan bağımsız.",
+    "eskiAracSikayetCarpani": 1.5
+  },
+  "doviz": {
+    "kurBaslangic": 36,
+    "gunlukOynama": 0.02,
+    "makas": 0.05
+  }
+}
