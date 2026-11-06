@@ -48,11 +48,15 @@ Hepsi `assets/` altında, açıklaması `assets/manifest.json` içinde. Kaynak �
 
 Yeni görseller gelince kesme işini betikle yap: arka plan rengini köşelerden bul, nesneyi mürekkep çizgisinden ayır, iç boşlukları (tespih halkası, köprü halatları arası) saydam bırak, gölgeyi yarı saydam yap, Gemini’nin yazdığı yazı ve marka amblemlerini temizle.
 
+## Proje yapısı (1. adım tamamlandı)
+
+Vite + TypeScript + düz canvas. Kod `src/` altında modüllere bölündü; ayrıntı `docs/mimari.md`. `npm run dev` ile çalışır, `npm run build` tip denetimi yapar, `npm test` (dev sunucusu açıkken) Playwright ile oyunu otomatik oynatır. Prototip referans olarak `prototip/` altında duruyor.
+
 ## Yapılacaklar (öncelik sırasıyla)
 
-1. **Projeyi kur:** Vite + TypeScript önerilir; render için Phaser 3 ya da düz canvas (prototip düz canvas ve iyi çalışıyor). Kodu modüllere böl: harita, hareket ve yol bulma, yapay zekâ, yolcular ve olaylar, sorgu sistemi, dövüş, arayüz, ses. Veriler `data/`, görseller `assets/` altından yüklensin; base64 gömme yok.
-2. **Prototiple eşitlik:** Önce bütün davranışları birebir taşı; tarayıcıda Playwright ile otomatik oynatıp ekran görüntüsüyle karşılaştır.
-3. **Performans:** Harita parçalı önbellekle çizilsin; görünmeyen araç ve yolcular çizilmesin; görseller sıkıştırılmış atlaslar.
+1. ~~**Projeyi kur:**~~ (yapıldı) Vite + TypeScript önerilir; render için Phaser 3 ya da düz canvas (prototip düz canvas ve iyi çalışıyor). Kodu modüllere böl: harita, hareket ve yol bulma, yapay zekâ, yolcular ve olaylar, sorgu sistemi, dövüş, arayüz, ses. Veriler `data/`, görseller `assets/` altından yüklensin; base64 gömme yok.
+2. **Prototiple eşitlik:** (test hazır: `npm run test:parity`; taksici 3000, Tag’ci 900 kare birebir aynı; bot yolcu teslim etmediği için bazı sahneler henüz kapsanmadı) Önce bütün davranışları birebir taşı; tarayıcıda Playwright ile otomatik oynatıp ekran görüntüsüyle karşılaştır.
+3. ~~**Performans:**~~ (yapıldı, `docs/mimari.md`) Harita parçalı önbellekle çizilsin; görünmeyen araç ve yolcular çizilmesin; görseller sıkıştırılmış atlaslar.
 4. **Telefonda test:** Yerel ağdan ya da Netlify/GitHub Pages ile link.
 5. **Capacitor ile Android (sonra iOS; iOS için Mac ve Xcode gerekir).**
 6. **Ertelenen mekanikler (kullanıcı hepsini istedi, tek tek detaylandırılacak):** kariyer ve ilerleme, yolcu puan sistemi, günlük görevler, yolculuk içi olaylar, şehir ve hava olayları, sürüş kombosu, tekrar eden karakterler.
