@@ -1,0 +1,394 @@
+{
+ "sprites": {
+  "apartman": {
+   "file": "assets/sprites/apartman.webp",
+   "count": 16,
+   "cell": 160,
+   "cols": 4
+  },
+  "kiremit": {
+   "file": "assets/sprites/kiremit.webp",
+   "count": 16,
+   "cell": 160,
+   "cols": 4
+  },
+  "yali": {
+   "file": "assets/sprites/yali.webp",
+   "count": 16,
+   "cell": 160,
+   "cols": 4
+  },
+  "mahalle": {
+   "file": "assets/sprites/mahalle.webp",
+   "count": 16,
+   "cell": 160,
+   "cols": 4
+  },
+  "blok": {
+   "file": "assets/sprites/blok.webp",
+   "count": 16,
+   "cell": 160,
+   "cols": 4
+  },
+  "agac": {
+   "file": "assets/sprites/agac.webp",
+   "count": 16,
+   "cell": 160,
+   "cols": 4
+  },
+  "bahce": {
+   "file": "assets/sprites/bahce.webp",
+   "count": 16,
+   "cell": 160,
+   "cols": 4
+  },
+  "sokak": {
+   "file": "assets/sprites/sokak.webp",
+   "count": 16,
+   "cell": 160,
+   "cols": 4
+  }
+ },
+ "landmarks": {
+  "Maslak gökdelenleri": {
+   "file": "assets/landmarks/maslak-gokdelenleri.webp",
+   "w": 640,
+   "h": 327
+  },
+  "Esenler Otogarı": {
+   "file": "assets/landmarks/esenler-otogari.webp",
+   "w": 640,
+   "h": 336
+  },
+  "Taksim Meydanı": {
+   "file": "assets/landmarks/taksim-meydani.webp",
+   "w": 640,
+   "h": 318
+  },
+  "Çamlıca Kulesi": {
+   "file": "assets/landmarks/camlica-kulesi.webp",
+   "w": 640,
+   "h": 419
+  },
+  "Rumeli Hisarı": {
+   "file": "assets/landmarks/rumeli-hisari.webp",
+   "w": 640,
+   "h": 320
+  },
+  "Ayasofya": {
+   "file": "assets/landmarks/ayasofya.webp",
+   "w": 640,
+   "h": 377
+  },
+  "Topkapı Sarayı": {
+   "file": "assets/landmarks/topkapi-sarayi.webp",
+   "w": 640,
+   "h": 325
+  },
+  "Sultanahmet Camii": {
+   "file": "assets/landmarks/sultanahmet-camii.webp",
+   "w": 640,
+   "h": 331
+  },
+  "Kız Kulesi": {
+   "file": "assets/landmarks/kiz-kulesi.webp",
+   "w": 640,
+   "h": 599
+  },
+  "Galata Kulesi": {
+   "file": "assets/landmarks/galata-kulesi.webp",
+   "w": 640,
+   "h": 351
+  },
+  "Zorlu PSM": {
+   "file": "assets/landmarks/zorlu-psm.webp",
+   "w": 640,
+   "h": 456
+  },
+  "Volkswagen Arena": {
+   "file": "assets/landmarks/volkswagen-arena.webp",
+   "w": 640,
+   "h": 397
+  },
+  "KüçükÇiftlik Park": {
+   "file": "assets/landmarks/kucukciftlik-park.webp",
+   "w": 640,
+   "h": 619
+  },
+  "Harbiye Açıkhava": {
+   "file": "assets/landmarks/harbiye-acikhava.webp",
+   "w": 640,
+   "h": 357
+  },
+  "Başakşehir Fatih Terim Stadyumu": {
+   "file": "assets/landmarks/basaksehir-fatih-terim-stadyumu.webp",
+   "w": 640,
+   "h": 429
+  },
+  "Atatürk Olimpiyat Stadı": {
+   "file": "assets/landmarks/ataturk-olimpiyat-stadi.webp",
+   "w": 640,
+   "h": 388
+  },
+  "Şükrü Saracoğlu Stadyumu": {
+   "file": "assets/landmarks/sukru-saracoglu-stadyumu.webp",
+   "w": 640,
+   "h": 599
+  },
+  "Tüpraş Stadyumu": {
+   "file": "assets/landmarks/tupras-stadyumu.webp",
+   "w": 640,
+   "h": 554
+  },
+  "Rams Park": {
+   "file": "assets/landmarks/rams-park.webp",
+   "w": 640,
+   "h": 447
+  },
+  "Havalimanı terminali": {
+   "file": "assets/landmarks/havalimani-terminali.webp",
+   "w": 640,
+   "h": 313
+  },
+  "Galata Köprüsü": {
+   "file": "assets/landmarks/galata-koprusu.webp",
+   "w": 1024,
+   "h": 211
+  },
+  "15 Temmuz Şehitler Köprüsü": {
+   "file": "assets/landmarks/15-temmuz-sehitler-koprusu.webp",
+   "w": 1024,
+   "h": 128
+  },
+  "FSM Köprüsü": {
+   "file": "assets/landmarks/fsm-koprusu.webp",
+   "w": 1024,
+   "h": 259
+  },
+  "Yavuz Sultan Selim Köprüsü": {
+   "file": "assets/landmarks/yavuz-sultan-selim-koprusu.webp",
+   "w": 1024,
+   "h": 181
+  },
+  "Avrasya Tüneli girişi": {
+   "file": "assets/landmarks/avrasya-tuneli-girisi.webp",
+   "w": 640,
+   "h": 599
+  },
+  "Dolmabahçe Sarayı": {
+   "file": "assets/landmarks/dolmabahce-sarayi.webp",
+   "w": 640,
+   "h": 538
+  }
+ },
+ "cars": {
+  "tag3": {
+   "file": "assets/cars/tag3.webp",
+   "w": 109,
+   "h": 200,
+   "note": "üstten görünüş, ön yukarı bakar"
+  },
+  "tag4": {
+   "file": "assets/cars/tag4.webp",
+   "w": 109,
+   "h": 200,
+   "note": "üstten görünüş, ön yukarı bakar"
+  },
+  "tag2": {
+   "file": "assets/cars/tag2.webp",
+   "w": 109,
+   "h": 200,
+   "note": "üstten görünüş, ön yukarı bakar"
+  },
+  "tag1": {
+   "file": "assets/cars/tag1.webp",
+   "w": 109,
+   "h": 200,
+   "note": "üstten görünüş, ön yukarı bakar"
+  },
+  "taxi3": {
+   "file": "assets/cars/taxi3.webp",
+   "w": 109,
+   "h": 200,
+   "note": "üstten görünüş, ön yukarı bakar"
+  },
+  "taxi2": {
+   "file": "assets/cars/taxi2.webp",
+   "w": 104,
+   "h": 200,
+   "note": "üstten görünüş, ön yukarı bakar"
+  },
+  "taxi1": {
+   "file": "assets/cars/taxi1.webp",
+   "w": 103,
+   "h": 200,
+   "note": "üstten görünüş, ön yukarı bakar"
+  },
+  "sivil": {
+   "file": "assets/cars/sivil.webp",
+   "w": 105,
+   "h": 200,
+   "note": "üstten görünüş, ön yukarı bakar"
+  },
+  "police2": {
+   "file": "assets/cars/police2.webp",
+   "w": 105,
+   "h": 200,
+   "note": "üstten görünüş, ön yukarı bakar"
+  },
+  "police1": {
+   "file": "assets/cars/police1.webp",
+   "w": 105,
+   "h": 200,
+   "note": "üstten görünüş, ön yukarı bakar"
+  },
+  "tag5": {
+   "file": "assets/cars/tag5.webp",
+   "w": 105,
+   "h": 200,
+   "note": "üstten görünüş, ön yukarı bakar"
+  }
+ },
+ "passengers": {
+  "map": {
+   "havalimani": "assets/passengers/map_havalimani.webp",
+   "konser": "assets/passengers/map_konser.webp",
+   "milli": "assets/passengers/map_milli.webp",
+   "bsk": "assets/passengers/map_bsk.webp",
+   "bjk": "assets/passengers/map_bjk.webp",
+   "fb": "assets/passengers/map_fb.webp",
+   "gs": "assets/passengers/map_gs.webp",
+   "turist": "assets/passengers/map_turist.webp",
+   "plaza": "assets/passengers/map_plaza.webp",
+   "kenar": "assets/passengers/map_kenar.webp",
+   "ogrenci": "assets/passengers/map_ogrenci.webp",
+   "zengin": "assets/passengers/map_zengin.webp"
+  },
+  "portraits": {
+   "konser": "assets/passengers/portrait_konser.webp",
+   "milli": "assets/passengers/portrait_milli.webp",
+   "bsk": "assets/passengers/portrait_bsk.webp",
+   "bjk": "assets/passengers/portrait_bjk.webp",
+   "fb": "assets/passengers/portrait_fb.webp",
+   "gs": "assets/passengers/portrait_gs.webp",
+   "turist": "assets/passengers/portrait_turist.webp",
+   "plaza": "assets/passengers/portrait_plaza.webp",
+   "kenar": "assets/passengers/portrait_kenar.webp",
+   "havalimani": "assets/passengers/portrait_havalimani.webp",
+   "zengin": "assets/passengers/portrait_zengin.webp",
+   "ogrenci": "assets/passengers/portrait_ogrenci.webp"
+  },
+  "note": "4x4 atlas; map hücresi 128px (ayaklar hücre altına hizalı), portre hücresi 144px; aynı indeks aynı kişi",
+  "genders": {
+   "havalimani": "mmmfmfmmmfmfmmmf",
+   "konser": "fmcmmmfmmmfffcmf",
+   "milli": "mmmmfmmmmmfmmmmm",
+   "bsk": "mmmmmcmmmmmfmmmm",
+   "bjk": "mmmmmfmmmmfmmmmm",
+   "fb": "mmmfmfmmmmfmmmmm",
+   "gs": "mmmfmfmmmmfmmmmm",
+   "turist": "mmfffmmmmmmfmmmm",
+   "plaza": "mfmmfmmmmmmfmmfm",
+   "kenar": "mfmfmfmfmmmfmfmm",
+   "zengin": "fmfmmfmfmmmfmmff",
+   "ogrenci": "mmmmffmcmmfmmmmm"
+  },
+  "genders_note": "m erkek, f kadın, c çift/grup (tek yolcu olarak kullanılmaz); turist profilinde turist olan indeksler: 0,1,2,3,4,5,8,9,12,13,15"
+ },
+ "characters": {
+  "taksici": {
+   "neutral": "assets/characters/taksici_neutral.webp",
+   "angry": "assets/characters/taksici_angry.webp",
+   "smile": "assets/characters/taksici_smile.webp",
+   "nervous": "assets/characters/taksici_nervous.webp",
+   "smug": "assets/characters/taksici_smug.webp"
+  },
+  "tag": {
+   "neutral": "assets/characters/tag_neutral.webp",
+   "nervous": "assets/characters/tag_nervous.webp",
+   "fake": "assets/characters/tag_fake.webp",
+   "smile": "assets/characters/tag_smile.webp",
+   "hurt": "assets/characters/tag_hurt.webp"
+  },
+  "polis": {
+   "neutral": "assets/characters/polis_neutral.webp",
+   "angry": "assets/characters/polis_angry.webp",
+   "smile": "assets/characters/polis_smile.webp",
+   "shock": "assets/characters/polis_shock.webp"
+  },
+  "durakci": {
+   "neutral": "assets/characters/durakci_neutral.webp",
+   "angry": "assets/characters/durakci_angry.webp",
+   "smile": "assets/characters/durakci_smile.webp",
+   "shock": "assets/characters/durakci_shock.webp"
+  },
+  "gizli": {
+   "neutral": "assets/characters/gizli_neutral.webp",
+   "angry": "assets/characters/gizli_angry.webp"
+  },
+  "avukat": {
+   "smile": "assets/characters/avukat_smile.webp",
+   "nervous": "assets/characters/avukat_nervous.webp"
+  },
+  "patron": {
+   "neutral": "assets/characters/patron_neutral.webp"
+  },
+  "vlog": {
+   "neutral": "assets/characters/vlog_neutral.webp",
+   "angry": "assets/characters/vlog_angry.webp"
+  }
+ },
+ "items": {
+  "weapons": {
+   "haydar": "assets/items/weapon_haydar.webp",
+   "bat": "assets/items/weapon_bat.webp",
+   "gloves": "assets/items/weapon_gloves.webp",
+   "tespih": "assets/items/weapon_tespih.webp"
+  },
+  "ornaments": {
+   "nazar": "assets/items/ornament_nazar.webp",
+   "crown": "assets/items/ornament_crown.webp",
+   "star": "assets/items/ornament_star.webp",
+   "fes": "assets/items/ornament_fes.webp",
+   "dice": "assets/items/ornament_dice.webp",
+   "tree": "assets/items/ornament_tree.webp",
+   "dog": "assets/items/ornament_dog.webp",
+   "flag": "assets/items/ornament_flag.webp",
+   "eagle": "assets/items/ornament_eagle.webp",
+   "lashes": "assets/items/ornament_lashes.webp",
+   "carpet": "assets/items/ornament_carpet.webp",
+   "flames": "assets/items/ornament_flames.webp",
+   "checker": "assets/items/ornament_checker.webp",
+   "horn": "assets/items/ornament_horn.webp",
+   "disco": "assets/items/ornament_disco.webp",
+   "led": "assets/items/ornament_led.webp"
+  }
+ },
+ "ui": {
+  "card_cream": "assets/ui/card_cream.webp",
+  "card_yellow": "assets/ui/card_yellow.webp",
+  "card_red": "assets/ui/card_red.webp",
+  "round_yellow": "assets/ui/round_yellow.webp",
+  "round_cream": "assets/ui/round_cream.webp",
+  "round_red": "assets/ui/round_red.webp",
+  "i_radio": "assets/ui/i_radio.webp",
+  "i_fuel": "assets/ui/i_fuel.webp",
+  "i_bolt": "assets/ui/i_bolt.webp",
+  "i_bag": "assets/ui/i_bag.webp",
+  "i_trophy": "assets/ui/i_trophy.webp",
+  "i_gear": "assets/ui/i_gear.webp",
+  "i_menu": "assets/ui/i_menu.webp",
+  "i_coins": "assets/ui/i_coins.webp",
+  "i_clock": "assets/ui/i_clock.webp",
+  "i_hourglass": "assets/ui/i_hourglass.webp",
+  "i_pin": "assets/ui/i_pin.webp",
+  "i_siren": "assets/ui/i_siren.webp",
+  "hud": "assets/ui/hud.webp",
+  "stamp_red": "assets/ui/stamp_red.webp",
+  "fx_burst": "assets/ui/fx_burst.webp",
+  "fx_burst_red": "assets/ui/fx_burst_red.webp",
+  "news_head": "assets/ui/news_head.jpg",
+  "page": "assets/ui/page.jpg",
+  "cover": "assets/ui/cover.jpg"
+ }
+}
