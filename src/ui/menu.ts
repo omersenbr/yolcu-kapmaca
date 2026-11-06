@@ -1,0 +1,176 @@
+// <auto-imports>
+import { assetUrl } from '../core/assets';
+import { DLG, MANIFEST } from '../core/content';
+import { $ } from '../core/dom';
+import { DIFF, G, ORN, TL, UNAME, WPN, setDiff, setG, setOrn, setUname, setWpn, tagLevel } from '../core/state';
+import { esc } from '../core/util';
+import { hudAd } from '../dialog/ads';
+import { stopTimer } from '../dialog/comic';
+import { wIcon } from '../dialog/portraits';
+import { toast } from './hud';
+import { renderLB } from './leaderboard';
+import { pageTurn } from './pageflip';
+import { newGame, nitro } from '../world/game';
+// </auto-imports>
+/* ================= ANA EKRAN: kapak, profil, rol düğmeleri, alttan açılan sayfalar ================= */
+export function toMenu() {
+  pageTurn();
+  $('nitroBtn').hidden = true;
+  $('adbtns').hidden = true;
+  $('adOv').hidden = true;
+  if (G) G.over = true;
+  stopTimer();
+  $('comic').hidden = true;
+  $('radio').hidden = true;
+  $('end').hidden = true;
+  setG(null);
+  renderLB($('lb'));
+  closeSheets();
+  paintProfile();
+  document.body.classList.add('inmenu');
+  window.dispatchEvent(new Event('resize'));
+  $('start').hidden = false;
+}
+export let menuArm = 0,
+  pendingRole = null;
+export function openSheet(k) {
+  document.querySelectorAll<HTMLElement>('#start .sheet').forEach((x) => (x.hidden = x.id !== 'sh-' + k));
+  if (k === 'lbs') renderLB($('lb'));
+}
+export function closeSheets() {
+  document.querySelectorAll<HTMLElement>('#start .sheet').forEach((x) => (x.hidden = true));
+}
+/* mağaza: araç süsleri ve kavga eşyaları (şimdilik bedava) */
+export function paintGarage() {
+  const O = MANIFEST.items.ornaments;
+  $('garage').innerHTML = DLG.shop.ornaments
+    .map(
+      (i) =>
+        `<button data-o="${i.id}" aria-pressed="${i.id === ORN}">${O[i.id] ? `<img alt="" src="${assetUrl(O[i.id])}" style="width:22px;height:22px;object-fit:contain;vertical-align:-6px"> ` : ''}${esc(i.t)}</button>`,
+    )
+    .join('');
+  $('weapons').innerHTML = DLG.shop.weapons
+    .map(
+      (i) =>
+        `<button data-w="${i.id}" aria-pressed="${i.id === WPN}">${wIcon(i.id)} ${esc(i.t)}${i.bonus ? ` +%${Math.round(i.bonus * 100)}` : ''}</button>`,
+    )
+    .join('');
+  $('weapons')
+    .querySelectorAll('button')
+    .forEach((b) =>
+      b.addEventListener('click', () => {
+        setWpn(b.dataset.w);
+        paintGarage();
+      }),
+    );
+  $('garage')
+    .querySelectorAll('button')
+    .forEach((b) =>
+      b.addEventListener('click', () => {
+        setOrn(b.dataset.o);
+        paintGarage();
+      }),
+    );
+}
+export function paintProfile() {
+  $('pName').textContent = UNAME || 'Misafir';
+  $('pLvl').textContent = `Tag seviye ${tagLevel() + 1} · ${TL().ad}`;
+  const a = MANIFEST.characters.taksici && MANIFEST.characters.taksici.smile;
+  if (a) $('pAv').style.backgroundImage = `url(${assetUrl(a)})`;
+  const C = MANIFEST.cars;
+  if (C.taxi1) $('rcTaxi').src = assetUrl(C.taxi1.file);
+  const tk = 'tag' + (tagLevel() + 1);
+  if (C[tk]) $('rcTag').src = assetUrl(C[tk].file);
+}
+export function paintDiff() {
+  document
+    .querySelectorAll<HTMLElement>('#diff button')
+    .forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.d === DIFF)));
+}
+export function startRole(r) {
+  document.body.classList.remove('inmenu');
+  window.dispatchEvent(new Event('resize'));
+  newGame(r);
+}
+export function initMenu() {
+  $('uname').value = UNAME;
+  $('uname').addEventListener('input', () => {
+    $('nmWrap').classList.remove('err');
+  });
+  $('intelBtn').addEventListener('click', () => hudAd('intel'));
+  $('nitroBtn').addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    nitro();
+  });
+  $('fuelBtn').addEventListener('click', () => hudAd('fuel'));
+  $('garTitle').textContent = DLG.shop.title;
+  $('garNote').textContent = DLG.shop.note;
+  $('ornTitle').textContent = DLG.shop.ornTitle;
+  $('wpnTitle').textContent = DLG.shop.wpnTitle;
+  paintGarage();
+  $('menuBtn').addEventListener('click', () => {
+    if (G && !G.over && Date.now() > menuArm) {
+      menuArm = Date.now() + 3000;
+      $('menuBtn').dataset.ic = $('menuBtn').dataset.ic || $('menuBtn').innerHTML;
+      $('menuBtn').textContent = 'Çık?';
+      toast('Ana menüye dönmek için tekrar bas. Bu oyun kaydedilmez.');
+      setTimeout(() => {
+        $('menuBtn').innerHTML = $('menuBtn').dataset.ic || '☰';
+      }, 3000);
+      return;
+    }
+    menuArm = 0;
+    $('menuBtn').innerHTML = $('menuBtn').dataset.ic || $('menuBtn').innerHTML;
+    toMenu();
+  });
+  document
+    .querySelectorAll<HTMLElement>('#start [data-sheet]')
+    .forEach((b) => b.addEventListener('click', () => openSheet(b.dataset.sheet)));
+  $('profBtn').addEventListener('click', () => openSheet('prof'));
+  document.querySelectorAll<HTMLElement>('#start .sx').forEach((b) =>
+    b.addEventListener('click', () => {
+      pendingRole = null;
+      closeSheets();
+    }),
+  );
+  $('profOk').addEventListener('click', () => {
+    const v = $('uname').value.trim().slice(0, 16);
+    if (!v) {
+      $('nmWrap').classList.add('err');
+      $('uname').focus();
+      return;
+    }
+    setUname(v);
+    paintProfile();
+    closeSheets();
+    if (pendingRole) {
+      const r = pendingRole;
+      pendingRole = null;
+      startRole(r);
+    }
+  });
+  document.querySelectorAll<HTMLElement>('#start .role').forEach((b) =>
+    b.addEventListener('click', () => {
+      if (!UNAME) {
+        pendingRole = b.dataset.role;
+        openSheet('prof');
+        $('nmWrap').classList.add('err');
+        $('uname').focus();
+        return;
+      }
+      startRole(b.dataset.role);
+    }),
+  );
+  paintProfile();
+  document.body.classList.add('inmenu');
+  document.querySelectorAll<HTMLElement>('#diff button').forEach((b) =>
+    b.addEventListener('click', () => {
+      setDiff(b.dataset.d);
+      paintDiff();
+    }),
+  );
+  paintDiff();
+  $('again').addEventListener('click', () => startRole(G.role));
+  $('swap').addEventListener('click', toMenu);
+  renderLB($('lb'));
+}

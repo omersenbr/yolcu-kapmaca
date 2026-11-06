@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#16171b">
+<title>Yolcu Kapmaca</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;600;700&family=Bangers&family=Grandstander:wght@600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="loading" id="loading"><b>Yolcu Kapmaca</b><i><span id="loadBar"></span></i><small id="loadTxt">Yükleniyor…</small></div>
+<div class="hud">
+  <div><small>Kasa</small><span id="money">₺0</span></div>
+  <div><small id="timeLbl">Saat</small><span id="time">05:00</span></div>
+  <div class="grow"><small id="paxLbl">Yolcu</small><span id="pax">Boş</span></div>
+  <button class="mbtn" id="menuBtn" aria-label="Ana menüye dön" title="Ana menü"><img alt="" src="/assets/ui/i_menu.webp"></button>
+</div>
+<div class="stage" id="stage">
+  <canvas id="cv"></canvas>
+  <canvas id="mini"></canvas>
+  <div class="toast" id="toast"></div>
+  <div class="adbtns" id="adbtns" hidden><button id="intelBtn" aria-label="Telsiz istihbaratı"><img alt="" src="/assets/ui/i_radio.webp"></button><button id="fuelBtn" aria-label="Benzin kartı"><img alt="" src="/assets/ui/i_fuel.webp"></button></div>
+  <button class="nitroBtn" id="nitroBtn" hidden aria-label="Nitro"><img alt="" src="/assets/ui/i_bolt.webp"><span id="nitroLbl">NİTRO</span></button>
+  <div class="flash" id="flash"></div>
+  <div class="overlay" id="adOv" hidden><div class="card" id="adCard"></div></div>
+  <div class="radio" id="radio" hidden><b><img alt="" src="/assets/ui/i_radio.webp">Telsiz</b><p id="radioTxt"></p><div><button id="radioYes">Yardıma git</button><button class="no" id="radioNo">Boş ver</button></div></div>
+
+  <div class="comic" id="comic" hidden>
+    <div class="panel" id="panel">
+      <div class="cap" id="cap"></div>
+      <div class="cast" id="cast"></div>
+      <div class="bubble" id="bubble"></div>
+      <div class="meter" id="meter" hidden><span>Şüphe</span><i><b id="meterBar"></b></i></div>
+      <div class="timer" id="timer" hidden><span>Süre</span><i><b id="timerBar"></b></i></div>
+      <div class="answers" id="answers"></div>
+    </div>
+  </div>
+
+  <div class="overlay home" id="start">
+    <img class="hbg" alt="" src="/assets/ui/cover.jpg">
+    <div class="hshade"></div>
+    <div class="htop">
+      <button class="chip" id="profBtn" aria-label="Profil"><span class="av" id="pAv"></span><span class="pt"><b id="pName">Misafir</b><small id="pLvl">Tag seviye 1</small></span></button>
+      <button class="ibtn" data-sheet="help" aria-label="Nasıl oynanır"><b>?</b></button>
+    </div>
+    <h1 class="hlogo">Yolcu<br>Kapmaca</h1>
+    <p class="hsub">Bütün İstanbul, tek bir gün.</p>
+    <div class="hplay">
+      <button class="role taxi" data-role="taxi"><img class="rcar" id="rcTaxi" alt=""><span class="rt"><b>Taksici ol</b><span>Kısa mesafeyi geçiştir, Tag’i yakala</span></span></button>
+      <button class="role tag" data-role="tag"><img class="rcar" id="rcTag" alt=""><span class="rt"><b>Tag’ci ol</b><span>Taksicilere ve polise yakalanma</span></span></button>
+      <div class="diff" id="diff"><button data-d="kolay">Kolay</button><button data-d="orta">Orta</button><button data-d="zor">Zor</button></div>
+    </div>
+    <nav class="hnav" aria-label="Menü">
+      <button data-sheet="shop"><img alt="" src="/assets/ui/i_bag.webp"><span>Mağaza</span></button>
+      <button data-sheet="lbs"><img alt="" src="/assets/ui/i_trophy.webp"><span>Sıralama</span></button>
+      <button data-sheet="prof"><img alt="" src="/assets/ui/i_gear.webp"><span>Profil</span></button>
+    </nav>
+    <div class="sheet" id="sh-shop" hidden><div class="shead"><b>Mağaza</b><button class="sx" aria-label="Kapat">✕</button></div>
+      <div class="garage"><b id="garTitle" hidden>Mağaza</b><small id="garNote"></small><small id="ornTitle"></small><div id="garage"></div><small id="wpnTitle" style="margin-top:8px"></small><div id="weapons"></div></div></div>
+    <div class="sheet" id="sh-lbs" hidden><div class="shead"><b>Sıralama</b><button class="sx" aria-label="Kapat">✕</button></div><div class="lb" id="lb"></div></div>
+    <div class="sheet" id="sh-prof" hidden><div class="shead"><b>Profil</b><button class="sx" aria-label="Kapat">✕</button></div>
+      <label class="nm" id="nmWrap">Kullanıcı adın<input id="uname" maxlength="16" autocomplete="nickname" placeholder="ör. Kadıköylü Reis"></label>
+      <button class="btn" id="profOk">Kaydet</button></div>
+    <div class="sheet" id="sh-help" hidden><div class="shead"><b>Nasıl oynanır</b><button class="sx" aria-label="Kapat">✕</button></div>
+      <p><b>Taksici:</b> Kısa mesafeyi bahaneyle geçiştir, yolu uzatıp taksimetreyi şişir ama şikayet yeme. Başka durakların bölgesinde durakçılara dikkat. Yolcu alan Tag’i yakala; kavgadan sonra polise yakalanırsan hapse düşersin.</p>
+      <p><b>Tag’ci:</b> Taksicilerin önünde yolcu alma ya da indirme. Yolcuyu geç götürürsen şikayet eder. Sivil çevirmeler görünmez. Polis aracını bağlarsa her şey sıfırlanır.</p>
+      <p class="hint">Ekranda parmağını kaydırarak yön ver. Klavyede ok tuşları ya da WASD, sorularda 1–4. Benzin, köprü ve tünel geçişleri kasadan düşer. Oyun ve karakterler kurgusaldır.</p></div>
+  </div>
+  <div class="overlay" id="end" hidden>
+    <div class="card">
+      <div class="newsbox"><img alt="" src="/assets/ui/news_head.jpg"><b>YOLCU KAPMACA</b><span>SON DAKİKA</span></div>
+      <h1 id="endTitle">Vardiya bitti</h1>
+      <p id="endWhy"></p>
+      <div class="big" id="endMoney">₺0</div>
+      <p id="endBest"></p>
+      <div class="founder" id="founder" hidden></div>
+      <div class="lb" id="lbEnd"></div>
+      <div class="row">
+        <button class="btn" id="again">Tekrar oyna</button>
+        <button class="btn alt" id="swap">Rol değiştir</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
