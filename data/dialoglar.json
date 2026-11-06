@@ -1,0 +1,1953 @@
+{
+ "_açıklama": "Yolcu Kapmaca diyalogları. Süslü parantezli yerleri oyun doldurur. d = şüphe etkisi (-0.15 = -15 puan). next = sonraki düğüm, end = sorguyu bitirir (fail = yandın, fight = dövüş, yield = teslim, discount = indirim). rnd = yazı tura: p ihtimalle g, değilse b.",
+ "reactions": {
+  "taxi": {
+   "good": [
+    "Hmm... öyle mi diyorsun?",
+    "Bakalım, bakalım."
+   ],
+   "mid": [
+    "Pek inanmadım ama...",
+    "Ciddi misin sen?"
+   ],
+   "bad": [
+    "Bana bak, yalan söyleme!",
+    "Hiç inandırıcı değil birader."
+   ]
+  },
+  "police": {
+   "good": [
+    "Not alıyorum.",
+    "Peki.",
+    "Anlaşıldı."
+   ],
+   "mid": [
+    "Hmm.",
+    "Emin misiniz?"
+   ],
+   "bad": [
+    "Bu ifadeler pek tutmuyor.",
+    "Hı hı. Devam edin."
+   ]
+  },
+  "durak": {
+   "good": [
+    "Hmm, peki.",
+    "Bakalım..."
+   ],
+   "mid": [
+    "Pek inanmadım.",
+    "Ciddi misin?"
+   ],
+   "bad": [
+    "Bizi enayi mi sandın?",
+    "Laf kalabalığı yapma!"
+   ]
+  },
+  "route": {
+   "good": [
+    "Hmm, olabilir.",
+    "Peki..."
+   ],
+   "mid": [
+    "Bilmiyorum ki...",
+    "Emin misin?"
+   ],
+   "bad": [
+    "Beni enayi mi sandın?",
+    "Turist miyim ben?"
+   ]
+  },
+  "taxiPolice": {
+   "good": [
+    "Not alıyorum.",
+    "Peki."
+   ],
+   "mid": [
+    "Hmm.",
+    "Emin misiniz?"
+   ],
+   "bad": [
+    "Bu ifadeler pek tutmuyor.",
+    "Hı hı. Devam edin."
+   ]
+  }
+ },
+ "late": [
+  "Niye bu kadar düşündün?",
+  "Cevap biraz geç geldi ama...",
+  "Hıh, düşüne düşüne mi söylüyorsun?"
+ ],
+ "timeout": [
+  "Ne o, dilin mi tutuldu?",
+  "Cevap versene!",
+  "Sessizlik her şeyi anlatıyor."
+ ],
+ "pretexts": [
+  "Ehliyet ruhsat tamam ama araçta yangın tüpü yok.",
+  "Arka lastikler kel, bu araç trafiğe çıkamaz.",
+  "Ön camdaki film yasak, sökülmesi lazım.",
+  "Zorunlu trafik sigortanız dün bitmiş.",
+  "İlk yardım çantası ve reflektör eksik."
+ ],
+ "tagTaxi": {
+  "speaker": "Taksici",
+  "react": "taxi",
+  "start": 0.3,
+  "perExtra": 0.07,
+  "caption": "{semt}, kaldırım kenarı. {kesen}",
+  "withPax": {
+   "relLines": {
+    "akrabam": "Tanıyorum tabii, akrabam.",
+    "yol arkadaşım": "Aynı yöne gidiyorduk, beni bırakıyor."
+   },
+   "nodes": {
+    "start": {
+     "q": "Hayırdır birader? Kaldırımdan el kaldırdı, bindi. Yolcu mu taşıyorsun?",
+     "opts": [
+      {
+       "t": "Akrabam, beni bekliyordu.",
+       "d": -0.05,
+       "next": "isim",
+       "set": {
+        "rel": "akrabam"
+       }
+      },
+      {
+       "t": "Aynı yöne gidiyoruz, benzini paylaşıyoruz. Yol arkadaşlığı.",
+       "d": 0.1,
+       "next": "para"
+      },
+      {
+       "t": "Ekmek parası abi, siz de çalışıyorsunuz ben de.",
+       "end": "fail",
+       "react": [
+        "Taksici",
+        "Korsancılık yapıyorsun bir de ekmek diyorsun! Bu plakaya kaç para verdik biliyor musun?"
+       ]
+      },
+      {
+       "t": "Sana ne kardeşim!",
+       "d": 0.25,
+       "next": "telefon",
+       "react": [
+        "Taksici",
+        "Bana ne mi? Senin yüzünden yevmiyeyi çıkaramıyoruz!"
+       ]
+      }
+     ]
+    },
+    "isim": {
+     "q": "Akraban mı? Adı ne o zaman?",
+     "opts": [
+      {
+       "gen": "names",
+       "good": {
+        "d": -0.15,
+        "next": "yolcu"
+       },
+       "bad": {
+        "end": "fail",
+        "react": [
+         "Yolcu",
+         "“{yanlış}” mı? Benim adım {yolcu}! Adımı bile bilmiyor, uygulamadan çağırdım ben bunu."
+        ]
+       }
+      }
+     ]
+    },
+    "para": {
+     "q": "Yol arkadaşı mı? Para alıyor musun ondan?",
+     "opts": [
+      {
+       "t": "Hiç para almıyorum, hayrına.",
+       "d": -0.05,
+       "next": "yolcu",
+       "set": {
+        "rel": "yol arkadaşım"
+       }
+      },
+      {
+       "t": "Sadece benzin payı veriyor.",
+       "d": 0.3,
+       "next": "telefon",
+       "react": [
+        "Taksici",
+        "Benzin payı! Biz ona taksi ücreti diyoruz."
+       ]
+      },
+      {
+       "t": "Ücreti uygulama belirliyor, ben karışmıyorum.",
+       "end": "fail",
+       "react": [
+        "Taksici",
+        "Uygulama ha? Tamam, anladık!"
+       ]
+      }
+     ]
+    },
+    "yolcu": {
+     "q": "{Ab}, sen söyle. Bunu tanıyor musun?",
+     "opts": [
+      {
+       "t": "(Yolcuya bak, sessizce rica et)",
+       "rnd": {
+        "p": 0.45,
+        "g": {
+         "d": -0.2,
+         "r": [
+          "Yolcu",
+          "{relLine}"
+         ]
+        },
+        "b": {
+         "end": "fail",
+         "r": [
+          "Yolcu",
+          "Ben uygulamadan çağırdım, beni karıştırmayın!"
+         ]
+        }
+       }
+      },
+      {
+       "t": "Araya gir: “Yolcuyu korkutma!”",
+       "d": 0.25,
+       "next": "telefon",
+       "react": [
+        "Taksici",
+        "Sen sus, ona soruyorum!"
+       ]
+      }
+     ]
+    },
+    "telefon": {
+     "q": "Ver telefonunu bakalım, sürücü uygulaması açık mı?",
+     "opts": [
+      {
+       "t": "Şarjım bitti abi, kapalı.",
+       "d": 0.12,
+       "react": [
+        "Taksici",
+        "Hep şarjı biter zaten sizin."
+       ]
+      },
+      {
+       "t": "Al bak, ne saklayacağım.",
+       "rnd": {
+        "p": 0.5,
+        "g": {
+         "d": -0.25,
+         "r": [
+          "Taksici",
+          "Uygulama kapalı. Hmm."
+         ]
+        },
+        "b": {
+         "end": "fail",
+         "r": [
+          "Telefon",
+          "“Yeni yolculuk talebi!” Bildirim tam o an düştü."
+         ]
+        }
+       }
+      },
+      {
+       "t": "Gaza bas!",
+       "escape": 0.4,
+       "d": 0.35,
+       "escFail": [
+        "Taksici",
+        "Nereye kaçıyorsun! Önünü kestik."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "noPax": {
+   "nodes": {
+    "start": {
+     "q": "Az önce yolcu {eylem}, gördük. Kaç para aldın?",
+     "opts": [
+      {
+       "t": "Para almadım, akrabamdı.",
+       "d": -0.05,
+       "next": "nerede"
+      },
+      {
+       "t": "Ne yolcusu? Yanlış araba.",
+       "d": 0.05,
+       "next": "plaka"
+      },
+      {
+       "t": "Benzin payı aldım sadece.",
+       "d": 0.3,
+       "next": "telefon",
+       "react": [
+        "Taksici",
+        "Benzin payı! Korsan taksinin kibarcası."
+       ]
+      },
+      {
+       "t": "Ekmek parası abi...",
+       "end": "fail",
+       "react": [
+        "Taksici",
+        "İtiraf ettin! Gel bakalım buraya!"
+       ]
+      }
+     ]
+    },
+    "plaka": {
+     "q": "Plakan, rengin aynı. Kör müyüz biz?",
+     "opts": [
+      {
+       "t": "Bu modelden çok var abi.",
+       "d": 0.1,
+       "next": "telefon"
+      },
+      {
+       "t": "Tamam, akrabamdı o.",
+       "d": 0.2,
+       "next": "nerede",
+       "react": [
+        "Taksici",
+        "Hah, şimdi de akraban oldu!"
+       ]
+      }
+     ]
+    },
+    "nerede": {
+     "q": "Akraban mı? {soruNerede} peki?",
+     "opts": [
+      {
+       "gen": "places",
+       "good": {
+        "d": -0.15
+       },
+       "bad": {
+        "d": 0.35,
+        "next": "telefon",
+        "react": [
+         "Taksici",
+         "{yer}? Seni {son} tarafında gördük!"
+        ]
+       }
+      },
+      {
+       "t": "Hatırlamıyorum, bir yerde işte.",
+       "d": 0.3,
+       "next": "telefon"
+      }
+     ]
+    },
+    "telefon": {
+     "q": "Ver telefonunu bakalım, sürücü uygulaması açık mı?",
+     "opts": [
+      {
+       "t": "Şarjım bitti abi, kapalı.",
+       "d": 0.12,
+       "react": [
+        "Taksici",
+        "Hep şarjı biter zaten sizin."
+       ]
+      },
+      {
+       "t": "Al bak, ne saklayacağım.",
+       "rnd": {
+        "p": 0.5,
+        "g": {
+         "d": -0.25,
+         "r": [
+          "Taksici",
+          "Uygulama kapalı. Hmm."
+         ]
+        },
+        "b": {
+         "end": "fail",
+         "r": [
+          "Telefon",
+          "“Yolculuğunuz tamamlandı, puan verin!”"
+         ]
+        }
+       }
+      },
+      {
+       "t": "Gaza bas!",
+       "escape": 0.4,
+       "d": 0.35,
+       "escFail": [
+        "Taksici",
+        "Nereye kaçıyorsun! Önünü kestik."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "outcomes": {
+   "escape": [
+    "Sen",
+    "Gaza bastım, arkamdan bakakaldılar!"
+   ],
+   "pass": [
+    "Taksici",
+    "Kusura bakma birader, karıştırdık. Hadi yoluna."
+   ],
+   "pretext": [
+    "Taksici",
+    "Anlattıkların tutuyor gibi ama yüzünden belli, korsancısın sen!"
+   ],
+   "homeNote": "Mahallendesin, mahalleli yardıma geldi!",
+   "win": [
+    "Sen",
+    "Saniyede {hız} vuruşla şansını %{şans}’e çıkardın, çark yeşilde durdu. Dövüşüp sıyrıldın!"
+   ],
+   "loseWithPax": [
+    "Yolcu",
+    "Ben iniyorum! Verdiğim parayı da geri ver!"
+   ],
+   "loseNoPax": [
+    "Taksici",
+    "Bir daha görmeyelim seni buralarda!"
+   ],
+   "summaryWithPax": [
+    "Sen",
+    "Şansın %{şans} idi ama çark kırmızıda durdu, yere serildin. Yolcu gitti, parası da gitti. −₺{kayıp}. Neyse ki araba sağlam."
+   ],
+   "summaryNoPax": [
+    "Sen",
+    "Şansın %{şans} idi ama çark kırmızıda durdu, yere serildin. Cüzdandan ₺{kayıp} eksildi. Neyse ki araba sağlam."
+   ],
+   "haydar": [
+    "Taksici",
+    "Haydari geceler, hayırlı geceler!"
+   ]
+  }
+ },
+ "tagPolice": {
+  "speaker": "Polis",
+  "speakerSivil": "Sivil polis",
+  "react": "police",
+  "start": 0.35,
+  "caption": "{semt}, korsan taşımacılık denetimi.",
+  "captionSivil": "{semt}, sivil trafik ekipleri. Hiç fark etmemiştin.",
+  "withPax": {
+   "relLines": {
+    "arkadaşım": "Arkadaşım, beraber çıktık.",
+    "kuzenim": "Kuzenimdir, beni bırakıyordu.",
+    "iş arkadaşım": "Aynı yerde çalışıyoruz, beni bırakıyor."
+   },
+   "nodes": {
+    "start": {
+     "q": "İyi günler, ehliyet ruhsat. Yanınızdaki kişiyle yakınlığınız ne?",
+     "opts": [
+      {
+       "t": "Arkadaşım.",
+       "d": -0.05,
+       "next": "isim",
+       "set": {
+        "rel": "arkadaşım"
+       }
+      },
+      {
+       "t": "Kuzenim.",
+       "d": -0.05,
+       "next": "isim",
+       "set": {
+        "rel": "kuzenim"
+       }
+      },
+      {
+       "t": "İş arkadaşım, aynı yöne gidiyoruz.",
+       "d": 0,
+       "next": "isim",
+       "set": {
+        "rel": "iş arkadaşım"
+       }
+      },
+      {
+       "t": "Uygulamada eşleştik ama para almıyorum.",
+       "d": 0.35,
+       "next": "para",
+       "react": [
+        "{polis}",
+        "Eşleştiniz demek. Not alıyorum."
+       ]
+      }
+     ]
+    },
+    "isim": {
+     "q": "Adı soyadı ne?",
+     "opts": [
+      {
+       "gen": "names",
+       "good": {
+        "d": -0.15,
+        "next": "çapraz"
+       },
+       "bad": {
+        "end": "fail",
+        "react": [
+         "{polis}",
+         "Yanınızdakinin adını bilmiyorsunuz. Kendisi “{yolcu}” diyor."
+        ]
+       }
+      }
+     ]
+    },
+    "çapraz": {
+     "q": "(Polis yolcuyu kenara alıp ayrı soruyor.) Sürücüyle nereden tanışıyorsunuz?",
+     "opts": [
+      {
+       "t": "(Sessizce bekle)",
+       "rnd": {
+        "p": 0.6,
+        "g": {
+         "d": -0.2,
+         "r": [
+          "Yolcu",
+          "{relLine}"
+         ]
+        },
+        "b": {
+         "end": "fail",
+         "r": [
+          "Yolcu",
+          "Uygulamadan çağırdım, tanımıyorum. Bana ceza yazmayın lütfen!"
+         ]
+        }
+       }
+      },
+      {
+       "t": "(Yolcuya belli etmeden göz kırp)",
+       "rnd": {
+        "p": 0.55,
+        "g": {
+         "d": -0.2,
+         "r": [
+          "Yolcu",
+          "{relLine}"
+         ]
+        },
+        "b": {
+         "end": "fail",
+         "r": [
+          "{polis}",
+          "Göz kırptığınızı gördüm. Yolcu da tanımadığını söylüyor."
+         ]
+        }
+       }
+      },
+      {
+       "t": "Araya gir: “O benim yakınım!”",
+       "d": 0.25,
+       "next": "para",
+       "react": [
+        "{polis}",
+        "Ayrı soruyoruz, karışmayın lütfen."
+       ]
+      }
+     ]
+    },
+    "para": {
+     "q": "Yolculuk için ücret alındı mı?",
+     "opts": [
+      {
+       "t": "Hayır, tanıdığımdan para mı alacağım?",
+       "d": -0.1,
+       "next": "tutanak"
+      },
+      {
+       "t": "Sadece benzin payı.",
+       "d": 0.3,
+       "next": "tutanak",
+       "react": [
+        "{polis}",
+        "Benzin payı da ücrettir."
+       ]
+      },
+      {
+       "t": "Kartından uygulama çekiyor...",
+       "end": "fail",
+       "react": [
+        "{polis}",
+        "Ücret alındığını kabul ettiniz."
+       ]
+      }
+     ]
+    },
+    "tutanak": {
+     "q": "Şu tutanağı imzalayın: “Ücret karşılığı yolcu taşıdım.”",
+     "opts": [
+      {
+       "t": "İmzalamam, ücret almadım.",
+       "d": 0.05,
+       "react": [
+        "{polis}",
+        "İmzalamamak hakkınız. Not ediyorum."
+       ]
+      },
+      {
+       "t": "Önce avukatımla görüşmek istiyorum.",
+       "d": 0.1,
+       "react": [
+        "{polis}",
+        "Peki, öyle yazıyorum."
+       ]
+      },
+      {
+       "t": "Tamam, imzalayayım bitsin.",
+       "end": "fail",
+       "react": [
+        "{polis}",
+        "Kendi ikrarınız. Bu kadarı yeter."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "noPax": {
+   "nodes": {
+    "start": {
+     "q": "Ehliyet ruhsat. Az önce yolcu {eylemSiz}, kimdi?",
+     "opts": [
+      {
+       "t": "Akrabam, ücretsiz bıraktım.",
+       "d": -0.05,
+       "next": "nerede"
+      },
+      {
+       "t": "Kimseyi indirmedim.",
+       "d": 0.15,
+       "next": "telefon"
+      },
+      {
+       "t": "Bir defalık oldu...",
+       "end": "fail",
+       "react": [
+        "{polis}",
+        "İtiraf ettiniz. Tutanak tutuyorum."
+       ]
+      }
+     ]
+    },
+    "nerede": {
+     "q": "Akrabanız {soruNeredeSiz}?",
+     "opts": [
+      {
+       "gen": "places",
+       "good": {
+        "d": -0.15,
+        "next": "tutanak"
+       },
+       "bad": {
+        "d": 0.35,
+        "next": "telefon",
+        "react": [
+         "{polis}",
+         "{yer}? Kayıtlarda {son} görünüyor."
+        ]
+       }
+      }
+     ]
+    },
+    "telefon": {
+     "q": "Telefonunuza bakabilir miyim?",
+     "opts": [
+      {
+       "t": "Buyurun.",
+       "rnd": {
+        "p": 0.5,
+        "g": {
+         "d": -0.2,
+         "next": "tutanak",
+         "r": [
+          "{polis}",
+          "Uygulama kapalı görünüyor."
+         ]
+        },
+        "b": {
+         "end": "fail",
+         "r": [
+          "Telefon",
+          "“Sürücü moduna hoş geldin!”"
+         ]
+        }
+       }
+      },
+      {
+       "t": "Şarjı bitti memur bey.",
+       "d": 0.15,
+       "next": "tutanak"
+      }
+     ]
+    },
+    "tutanak": {
+     "q": "Şu tutanağı imzalayın: “Ücret karşılığı yolcu taşıdım.”",
+     "opts": [
+      {
+       "t": "İmzalamam, ücret almadım.",
+       "d": 0.05,
+       "react": [
+        "{polis}",
+        "İmzalamamak hakkınız. Not ediyorum."
+       ]
+      },
+      {
+       "t": "Önce avukatımla görüşmek istiyorum.",
+       "d": 0.1,
+       "react": [
+        "{polis}",
+        "Peki, öyle yazıyorum."
+       ]
+      },
+      {
+       "t": "Tamam, imzalayayım bitsin.",
+       "end": "fail",
+       "react": [
+        "{polis}",
+        "Kendi ikrarınız. Bu kadarı yeter."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "outcomes": {
+   "pass": [
+    "{polis}",
+    "İfadeler tutarlı. İyi yolculuklar."
+   ],
+   "pretext": [
+    "{polis}",
+    "İfadeler tamam diyelim. {bahane} Aracı bağlıyoruz."
+   ],
+   "pretextReply": [
+    "Sen",
+    "Ama memur bey, şimdi bu..."
+   ],
+   "stamp": "ARAÇ BAĞLANDI",
+   "final": [
+    "{polis}",
+    "60 gün trafikten men, araç yediemin otoparkına. Ceza da yazıldı."
+   ]
+  },
+  "lawyer": {
+   "offer": "📺 Reklam izle: Avukatını ara",
+   "skip": "Kabul et",
+   "prompt": "Araç bağlanmak üzere. Son bir şansın var.",
+   "chance": 0.65,
+   "fee": 300,
+   "intro": [
+    "Sen",
+    "Bir dakika memur bey, avukatımı arıyorum."
+   ],
+   "call": [
+    "Avukat (telefonda)",
+    "Müvekkilimin ifadesi tutanağa eksik geçmiş! İlgili yönetmelik madde... şey, trafikteyim, beş dakikaya oradayım!"
+   ],
+   "success": [
+    "{polis}",
+    "Avukatınız haklı, tutanakta eksik var. Bu seferlik gidebilirsiniz."
+   ],
+   "fail": [
+    "{polis}",
+    "Avukatınız trafikte kalmış. Kusura bakmayın, işlem devam ediyor."
+   ],
+   "feeToast": "Avukat ücreti kesildi: −₺{ücret}"
+  }
+ },
+ "sting": {
+  "caption": "Arka koltukta bir hareketlenme...",
+  "line": [
+   "Yolcu",
+   "Ben taksiciyim kardeşim! Arkadaşlarım arkadan geliyor, kenara çek!"
+  ],
+  "run": "Hemen indir ve kaç!",
+  "beg": "Abi ekmek parası, bir şans ver...",
+  "begChance": 0.3,
+  "begOk": [
+   "Yolcu",
+   "Peki, bu seferlik. Bir daha görmeyeyim seni!"
+  ],
+  "begNo": [
+   "Yolcu",
+   "Ekmek parası diyor bir de! Gelin çocuklar!"
+  ],
+  "runLine": [
+   "Yolcu",
+   "Kaç bakalım, nereye kadar!"
+  ]
+ },
+ "pickup": {
+  "caption": "{semt}, kaldırımda el sallayan biri.",
+  "greet": "Merhaba {ab}, {hedefDat} gidecektim.",
+  "greetAgain": "Yine mi sen? {hedefDat} gidecektim, bu sefer düzgün götürür müsün?",
+  "info": "Mesafe: {km} km, tahmini ₺{ücret}",
+  "infoBridge": " (köprü dahil)",
+  "infoOwn": ". Kendi durağın, gönül rahatlığıyla al.",
+  "infoForeign": ". Burası {durak} durağı, senin değil.",
+  "infoRec": " Elinde telefon, kayıtta gibi.",
+  "take": "Buyur {ab}, atla.",
+  "excuses": [
+   {
+    "t": "Arabayı teslim edeceğim, değişim saati.",
+    "c": 0.3
+   },
+   {
+    "t": "Kısa mesafe gitmiyorum.",
+    "c": 0.6
+   },
+   {
+    "t": "Bozuk param yok, kart da geçmiyor.",
+    "c": 0.35
+   },
+   {
+    "t": "Yolcu almaya gidiyorum zaten.",
+    "c": 0.35
+   },
+   {
+    "t": "Oradan oraya yürü, daha hızlı.",
+    "c": 0.55
+   }
+  ],
+  "fun": [
+   {
+    "t": "Ben karşının taksisiyim, eheheh!",
+    "c": 0.3,
+    "line": "Karşının taksisi mi? Köprü senin değil mi kardeşim?"
+   },
+   {
+    "t": "Bu yakada navigasyonum çalışmıyor, sokakları bilmem.",
+    "c": 0.35,
+    "line": "Taksici sokak bilmiyor, bu da bir ilk."
+   },
+   {
+    "t": "{öğün} karşı yakada, köprüden dönmem lazım.",
+    "c": 0.3,
+    "line": "Afiyet olsun, ben de yürüyeyim bari."
+   },
+   {
+    "t": "Burası bana yurt dışı sayılır, pasaportum yok.",
+    "c": 0.2,
+    "line": "Hahaha, tamam ikna oldum. Başka taksi bulurum."
+   }
+  ],
+  "fixed": "Taksimetre bozuk, ₺{sabit} sabit.",
+  "longCross": {
+   "t": "Köprü trafiği var, gitmem.",
+   "c": 0.3
+  },
+  "longSame": {
+   "t": "Oralar bana ters, gitmem.",
+   "c": 0.3
+  },
+  "notMine": "Ben bu duraktan değilim {ab}, sıradaki durak taksisine buyur.",
+  "takeShort": "Kısacık yol ama sağ ol.",
+  "takeLong": "Süpersin, hadi gidelim.",
+  "fixedYes": "Of, pahalı ama acelem var. Tamam.",
+  "fixedNo": "Bu ne fiyat! Taksimetre bozuk demek, öyle mi?",
+  "notMineReply": "Haklısın, sıradaki taksiye bineyim o zaman.",
+  "notMineDurak": "Eyvallah meslektaş, kuralı bilen adamsın.",
+  "noComplaint": [
+   "Hep aynı bahane! Neyse, Tag çağırırım ben de.",
+   "Peki... yürürüm o zaman.",
+   "Bu şehirde taksi bulmak ayrı dert, turist olsam durursun ama."
+  ],
+  "complaint": [
+   "Plakanı aldım, Alo 153 Beyaz Masa’ya şikayet ediyorum!",
+   "Videoya aldım, sosyal medyaya koyuyorum! Plakan da görünüyor.",
+   "Yolcu seçmek yasak! Beyaz Masa’yı arıyorum."
+  ],
+  "zabita": [
+   "Zabıta",
+   "Yolcu seçmeden şikayet geldi, ceza kesildi. Bir dahakine dikkat."
+  ],
+  "infoEvent": " {etkinlik} kalabalığı, taksi bulmak zor: yüksek fiyata daha kolay razı olur.",
+  "fixedYesEvent": "Bu kalabalıkta başka taksi mi bulacağım? Tamam, gidelim.",
+  "lateComplain": "Mecbur kaldım diye kazıkladın! Beyaz Masa’ya yazıyorum."
+ },
+ "tourist": {
+  "caption": "{semt}, elinde haritayla bekleyen bir turist.",
+  "greet": [
+   "Merhaba! Ben... {hedef} gitmek. Lütfen?",
+   "Hello! {hedef}? Ne kadar... para?",
+   "Taksi! {hedef}, uzak mı? Teşekkür!"
+  ],
+  "info": "Taksimetreyle gerçek ücret yaklaşık ₺{ücret}.",
+  "infoVlog": " Telefonu havada, canlı yayın yapıyor gibi!",
+  "infoNormal": " Şehri hiç bilmiyor gibi.",
+  "honest": "Buyur, taksimetre açık. Welcome!",
+  "long": "Taksimetre açık ama yolu “biraz” uzatırım...",
+  "scams": [
+   {
+    "t": "Taksimetre bozuk. Yüz dolar!",
+    "mult": 6,
+    "acc": 0.4,
+    "no": "Yüz dolar?! Google diyor yirmi dolar!"
+   },
+   {
+    "t": "Gece tarifesi, yüz elli euro. Very special.",
+    "mult": 9,
+    "acc": 0.25,
+    "no": "Gece tarifesi? Taksimetre zaten gece tarifesi yazar. No no no!",
+    "when": "night"
+   },
+   {
+    "t": "Bayram tarifesi, yüz elli euro. Very special.",
+    "mult": 9,
+    "acc": 0.25,
+    "no": "Bayram? Bugün bayram yok ki! No no no.",
+    "when": "day"
+   },
+   {
+    "t": "Köprü parası ayrı, elli dolar ekstra.",
+    "mult": 4,
+    "acc": 0.55,
+    "no": "Köprü... elli dolar? Ben yürümek."
+   },
+   {
+    "t": "VIP araç, üç bin lira. Türk kahvesi bedava!",
+    "mult": 7,
+    "acc": 0.35,
+    "no": "Kahve güzel ama ben fakir öğrenci!"
+   }
+  ],
+  "honestYes": "Teşekkür! Türk insan çok iyi!",
+  "longYes": "Okay! İstanbul çok büyük, ben bilmek yok.",
+  "scamYes": [
+   "Çok pahalı... ama tamam, ben yorgun.",
+   "Hmm... İstanbul pahalı şehir. Okay.",
+   "Ah... bizim ülkede bu fiyat uçak bileti. Neyse."
+  ],
+  "complainVlog": "Ben bunu kaydetmek! Followers, bakın bu taksici!",
+  "complainNormal": "Ben turizm polisi aramak!",
+  "police": [
+   "Turizm polisi",
+   "Turiste fahiş ücret teklif etmekten tutanak tutuldu."
+  ],
+  "viralCaption": "{hedef}, turist inerken telefonu sana çevirdi.",
+  "viral": [
+   [
+    "{turist}",
+    "Hello followers! Bakın, bu taksici benden ₺{ücret} aldı, taksimetre yok!"
+   ],
+   [
+    "Yorumlar",
+    "“Ayıp!”, “İstanbul’da yine aynı hikâye”, “Plakası görünüyor, ihbar ettim.” Video bir saatte milyon izlendi."
+   ]
+  ],
+  "viralStamp": "RUHSAT İPTAL",
+  "viralFinal": [
+   "Polis",
+   "Görüntüler üzerine soruşturma başlatıldı. Fahiş ücret ve dolandırıcılık: ruhsatınız iptal, aracınız bağlandı."
+  ],
+  "infoEvent": " {etkinlik} kalabalığı, taksi bulmak zor."
+ },
+ "turf": {
+  "speaker": "Durakçı",
+  "react": "durak",
+  "start": 0.35,
+  "caption": "{durak}, taksi durağı. Durakçılar önünü kesti.",
+  "nodes": {
+   "start": {
+    "q": "Buradan yolcu alamazsın kardeşim, bu durağın sırası var!",
+    "opts": [
+     {
+      "t": "Yolcu beni telefonla çağırdı.",
+      "d": -0.05,
+      "next": "arama"
+     },
+     {
+      "t": "Ben de bu duraktanım, yeni geldim.",
+      "d": 0,
+      "next": "yeni"
+     },
+     {
+      "t": "Yol herkesin abi.",
+      "end": "fight",
+      "react": [
+       "Durakçı",
+       "Herkesin mi? Gösterelim sana kimin olduğunu!"
+      ]
+     },
+     {
+      "t": "Kusura bakma, yolcuyu size bırakayım.",
+      "end": "yield"
+     }
+    ]
+   },
+   "arama": {
+    "q": "Telefonla mı? Göster arama kaydını.",
+    "opts": [
+     {
+      "t": "Al bak.",
+      "rnd": {
+       "p": 0.45,
+       "g": {
+        "d": -0.2,
+        "r": [
+         "Durakçı",
+         "Hmm, bir arama var gerçekten."
+        ]
+       },
+       "b": {
+        "d": 0.4,
+        "r": [
+         "Durakçı",
+         "Kayıtta öyle bir arama yok!"
+        ]
+       }
+      }
+     },
+     {
+      "t": "Yolcuya sor.",
+      "rnd": {
+       "p": 0.5,
+       "g": {
+        "d": -0.2,
+        "r": [
+         "Yolcu",
+         "Evet, ben çağırdım."
+        ]
+       },
+       "b": {
+        "d": 0.4,
+        "r": [
+         "Yolcu",
+         "Ben çağırmadım ki, el salladım sadece."
+        ]
+       }
+      }
+     },
+     {
+      "t": "Sildim abi, yer kaplıyordu.",
+      "d": 0.3,
+      "react": [
+       "Durakçı",
+       "Arama kaydı mı yer kaplıyor? Bizi enayi mi sandın?"
+      ]
+     }
+    ]
+   },
+   "yeni": {
+    "q": "Yeni misin? Kimin yanında başladın, duraktaki büyüğün kim?",
+    "opts": [
+     {
+      "t": "Remzi abinin yanında.",
+      "rnd": {
+       "p": 0.4,
+       "g": {
+        "d": -0.2,
+        "r": [
+         "Durakçı",
+         "Remzi’nin yanında mı? Peki..."
+        ]
+       },
+       "b": {
+        "d": 0.4,
+        "r": [
+         "Durakçı",
+         "Burada Remzi diye biri yok!"
+        ]
+       }
+      }
+     },
+     {
+      "t": "Kooperatif başkanı gönderdi.",
+      "d": 0.05,
+      "react": [
+       "Durakçı",
+       "Başkan mı? Arayıp sorarım ama."
+      ]
+     },
+     {
+      "t": "Hatırlamıyorum şimdi.",
+      "end": "fight",
+      "react": [
+       "Durakçı",
+       "Büyüğünü hatırlamıyorsun ha? Gel buraya!"
+      ]
+     }
+    ]
+   }
+  },
+  "outcomes": {
+   "yield": [
+    "Durakçı",
+    "Aferin, böyle öğren. Bir dahakine sıraya gir."
+   ],
+   "pass": [
+    "Durakçı",
+    "Peki, bu seferlik. Ama bir dahakine sıraya gir!"
+   ],
+   "takePax": [
+    "Durakçı",
+    "Yolcu bizim. Hadi {ab}, bizim arabaya geç."
+   ],
+   "takeNoPax": [
+    "Durakçı",
+    "Bas git buradan."
+   ],
+   "win": [
+    "Sen",
+    "Saniyede {hız} vuruşla şansın %{şans} oldu, çark yeşilde durdu. Durakçıları savuşturdun, yolcu hâlâ seninle!"
+   ],
+   "lose": [
+    "Durakçı",
+    "Burası bizim durak!"
+   ],
+   "loseSummary": [
+    "Sen",
+    "Şansın %{şans} idi ama çark kırmızıda durdu. Hem dayak yedin hem yolcu gitti. −₺150"
+   ],
+   "haydar": [
+    "Durakçı",
+    "Haydari geceler, hayırlı geceler!"
+   ]
+  }
+ },
+ "route": {
+  "react": "route",
+  "caption": "{hedef}, varış noktası. Yolcu taksimetreye bakıyor.",
+  "nodes": {
+   "start": {
+    "q": "Neden buradan geldik? Yol çok uzadı!",
+    "opts": [
+     {
+      "t": "Ana yol kapalıydı, kaza vardı.",
+      "d": -0.05,
+      "next": "kaza"
+     },
+     {
+      "t": "Navigasyon böyle gösterdi.",
+      "d": 0,
+      "next": "navi"
+     },
+     {
+      "t": "Trafiğe girmeyelim dedim, kestirme.",
+      "d": -0.05,
+      "next": "kestirme"
+     },
+     {
+      "t": "Haklısın {ab}, normal ücreti ver yeter.",
+      "end": "discount"
+     }
+    ]
+   },
+   "kaza": {
+    "q": "Kaza mı? Ben hiçbir şey görmedim. Nerede oldu?",
+    "opts": [
+     {
+      "t": "Köprü çıkışında, sen telefona bakıyordun.",
+      "d": -0.1
+     },
+     {
+      "t": "Radyoda söylediler.",
+      "d": 0.05,
+      "react": [
+       "{yolcu}",
+       "Radyo açık değildi ki?"
+      ]
+     },
+     {
+      "t": "Şey... ileride bir yerde.",
+      "d": 0.35,
+      "next": "taksimetre"
+     }
+    ]
+   },
+   "navi": {
+    "q": "Göster navigasyonu o zaman.",
+    "opts": [
+     {
+      "t": "Al bak.",
+      "rnd": {
+       "p": 0.4,
+       "g": {
+        "d": -0.2,
+        "r": [
+         "{yolcu}",
+         "Hmm, gerçekten böyle gösteriyor."
+        ]
+       },
+       "b": {
+        "d": 0.4,
+        "next": "taksimetre",
+        "r": [
+         "{yolcu}",
+         "Navigasyon düz yolu gösteriyor!"
+        ]
+       }
+      }
+     },
+     {
+      "t": "Kapattım, şarj gidiyordu.",
+      "d": 0.2,
+      "next": "taksimetre"
+     }
+    ]
+   },
+   "kestirme": {
+    "q": "Kestirme mi? Taksimetre ₺{taksimetre} yazıyor!",
+    "opts": [
+     {
+      "t": "Trafikte bekleseydik daha çok yazardı.",
+      "d": -0.08
+     },
+     {
+      "t": "Taksimetre mühürlü, doğru yazar.",
+      "d": 0.05
+     },
+     {
+      "t": "Bilmem, kendi kendine artıyor.",
+      "end": "fail",
+      "react": [
+       "{yolcu}",
+       "Dalga mı geçiyorsun benimle!"
+      ]
+     }
+    ]
+   },
+   "taksimetre": {
+    "q": "Taksimetre neden ₺{taksimetre} yazıyor peki?",
+    "opts": [
+     {
+      "t": "Bekleme ücreti işliyor, trafik.",
+      "d": -0.05
+     },
+     {
+      "t": "Tamam {ab}, normal ücreti ver.",
+      "end": "discount"
+     },
+     {
+      "t": "Bilmem, kendi kendine artıyor.",
+      "end": "fail",
+      "react": [
+       "{yolcu}",
+       "Dalga mı geçiyorsun benimle!"
+      ]
+     }
+    ]
+   }
+  },
+  "outcomes": {
+   "discount": [
+    "{yolcu}",
+    "Teşekkürler, iyi günler."
+   ],
+   "pass": [
+    "{yolcu}",
+    "Tamam, peki. Buyur."
+   ],
+   "fail": [
+    "{yolcu}",
+    "Sadece normal ücreti veriyorum, ₺{normal}. Plakanı da polise bildiriyorum!"
+   ],
+   "stamp": "ŞİKAYET: −₺600",
+   "police": [
+    "Polis",
+    "Yolu uzatmaktan şikayet var. Ceza kesildi."
+   ]
+  }
+ },
+ "catchTag": {
+  "speaker": "Tag’ci",
+  "caption": "{semt}, önünü kestin. Sorguyu sen yapıyorsun.",
+  "captionHelp": "{semt}, meslektaşlara yetiştin, Tag’i birlikte sıkıştırdınız.",
+  "helpLine": [
+   "Meslektaş",
+   "Sağ ol kardeşim, yetiştin! Duraktan yolcu kaptı bu, gördük."
+  ],
+  "open": "Abi ne oluyor, niye önümü kestin?",
+  "again": "Başka bir şey var mı abi?",
+  "done": "Yeter, karar verdim.",
+  "decide": "Eminlik %{eminlik}. Ne yapacaksın?",
+  "pool": [
+   {
+    "t": "Yanındaki kim?",
+    "need": "pax",
+    "real": [
+     {
+      "p": 0.5,
+      "lines": [
+       [
+        "Tag’ci",
+        "Kuzenim abi... şey, eniştemin oğlu."
+       ]
+      ],
+      "d": 0.15
+     },
+     {
+      "lines": [
+       [
+        "Tag’ci",
+        "Kuzenim abi, yemin ederim."
+       ]
+      ],
+      "d": -0.05
+     }
+    ],
+    "innocent": {
+     "lines": [
+      [
+       "Tag’ci",
+       "Kuzenim abi, düğüne götürüyorum."
+      ]
+     ],
+     "d": -0.05
+    }
+   },
+   {
+    "t": "Yolcuya sor: “Bunu tanıyor musun?”",
+    "need": "pax",
+    "real": [
+     {
+      "p": 0.6,
+      "lines": [
+       [
+        "{yolcu}",
+        "Valla tanımıyorum, uygulamadan çağırdım."
+       ]
+      ],
+      "d": 0.4
+     },
+     {
+      "lines": [
+       [
+        "{yolcu}",
+        "Tanıyorum tabii, akrabam."
+       ]
+      ],
+      "d": -0.1
+     }
+    ],
+    "innocent": {
+     "lines": [
+      [
+       "{yolcu}",
+       "Tabii, kuzenim o benim!"
+      ]
+     ],
+     "d": -0.3
+    }
+   },
+   {
+    "t": "Telefonunu göster.",
+    "need": "any",
+    "real": [
+     {
+      "p": 0.55,
+      "lines": [
+       [
+        "Telefon",
+        "“Yeni yolculuk talebi!” Ekran yanıp sönüyor."
+       ]
+      ],
+      "d": 0.45
+     },
+     {
+      "lines": [
+       [
+        "Tag’ci",
+        "Şarjım bitti abi."
+       ]
+      ],
+      "d": 0.1
+     }
+    ],
+    "innocent": {
+     "lines": [
+      [
+       "Tag’ci",
+       "Al bak abi, aile grubundan başka bir şey yok."
+      ]
+     ],
+     "d": -0.35
+    }
+   },
+   {
+    "t": "Yolcunun adı ne?",
+    "need": "pax",
+    "real": [
+     {
+      "p": 0.5,
+      "lines": [
+       [
+        "Tag’ci",
+        "Şey... {yanlış}?"
+       ],
+       [
+        "{yolcu}",
+        "Benim adım {yolcu}!"
+       ]
+      ],
+      "d": 0.35
+     },
+     {
+      "lines": [
+       [
+        "Tag’ci",
+        "{yolcu}."
+       ]
+      ],
+      "d": -0.05
+     }
+    ],
+    "innocent": {
+     "lines": [
+      [
+       "Tag’ci",
+       "{yolcu}."
+      ]
+     ],
+     "d": -0.25
+    }
+   },
+   {
+    "t": "Nereye gidiyorsunuz?",
+    "need": "pax",
+    "real": [
+     {
+      "p": 0.5,
+      "lines": [
+       [
+        "Tag’ci",
+        "{yerDat}."
+       ],
+       [
+        "{yolcu}",
+        "Ne alakası var, ben {hedefDat} gidiyorum!"
+       ]
+      ],
+      "d": 0.3
+     },
+     {
+      "lines": [
+       [
+        "Tag’ci",
+        "{hedefDat}."
+       ]
+      ],
+      "d": 0
+     }
+    ],
+    "innocent": {
+     "lines": [
+      [
+       "Tag’ci",
+       "{hedefDat}."
+      ]
+     ],
+     "d": -0.2
+    }
+   },
+   {
+    "t": "Az önce kaldırımdan yolcu aldın, gördüm!",
+    "need": "nopax",
+    "real": [
+     {
+      "p": 0.5,
+      "lines": [
+       [
+        "Tag’ci",
+        "Abi bir defalık, ekmek parası..."
+       ]
+      ],
+      "d": 0.4
+     },
+     {
+      "lines": [
+       [
+        "Tag’ci",
+        "Teyzemi bıraktım abi, yanlış anladın."
+       ]
+      ],
+      "d": -0.05
+     }
+    ],
+    "innocent": {
+     "lines": [
+      [
+       "Tag’ci",
+       "Teyzemi bıraktım abi, yanlış anladın."
+      ]
+     ],
+     "d": -0.2
+    }
+   }
+  ],
+  "decisions": {
+   "beat": "Pataklayalım!",
+   "talk": "Yolcuya: “{Ab}, taksiyle gidelim.”",
+   "let": "Bu seferlik git."
+  },
+  "letReal": [
+   "Tag’ci",
+   "Sağ ol abi, Allah razı olsun!"
+  ],
+  "letInnocent": [
+   "Tag’ci",
+   "Sağ ol abi, ben zaten akrabamı götürüyordum."
+  ],
+  "talkYes": [
+   "{yolcu}",
+   "Tamam, taksiyle gideyim bari, olay çıkmasın."
+  ],
+  "talkNoReal": [
+   "{yolcu}",
+   "Ben bununla giderim, sana ne!"
+  ],
+  "talkNoInnocent": [
+   "{yolcu}",
+   "O benim kuzenim, ne taksisi!"
+  ],
+  "fightNote": "Şüpheli karşılık veriyor!",
+  "fightNoteHelp": "Meslektaşın da yanında!",
+  "lost": [
+   "Sen",
+   "Şansın %{şans} idi ama çark kırmızıda durdu. Şüpheli sıyrılıp kaçtı."
+  ],
+  "won": [
+   "Sen",
+   "Al sana kuzen!"
+  ],
+  "innocentHit": [
+   "{kurban}",
+   "O gerçekten kuzenimdi! Polisi arıyorum!"
+  ],
+  "paxJoins": [
+   "{yolcu}",
+   "Tamam tamam, sizinle geliyorum..."
+  ]
+ },
+ "taxiPolice": {
+  "speaker": "Polis",
+  "speakerSivil": "Sivil polis",
+  "react": "taxiPolice",
+  "start": 0.4,
+  "caption": "{semt}, ekip otosu yolu kesti.",
+  "captionSivil": "{semt}, sivil polis çevirmesi! {kavgaYeri} civarındaki kavgayı ihbar etmişler.",
+  "nodes": {
+   "start": {
+    "q": "Biraz önce {kavgaYeri} civarında kavga eden siz miydiniz?",
+    "opts": [
+     {
+      "t": "Kavga mı? Sarılıyorduk memur bey.",
+      "d": 0,
+      "next": "sarılma"
+     },
+     {
+      "t": "Tag’ci yolcumu kaptı, sinirlendim.",
+      "d": 0.2,
+      "next": "itiraf"
+     },
+     {
+      "t": "Ben mi? Ben barış güvercini.",
+      "d": 0.1,
+      "next": "eller"
+     }
+    ]
+   },
+   "sarılma": {
+    "q": "Sarılmak mı? Neden yerde yuvarlanıyordunuz o zaman?",
+    "opts": [
+     {
+      "t": "Ayağı kaydı, tuttum.",
+      "rnd": {
+       "p": 0.45,
+       "g": {
+        "d": -0.12,
+        "next": "eller",
+        "r": [
+         "{polis}",
+         "Hmm, olabilir."
+        ]
+       },
+       "b": {
+        "d": 0.3,
+        "next": "eller",
+        "r": [
+         "{polis}",
+         "Kamera kayıtları başka söylüyor."
+        ]
+       }
+      }
+     },
+     {
+      "t": "Bizde kucaklaşma böyle olur.",
+      "d": 0.2,
+      "next": "eller"
+     }
+    ]
+   },
+   "itiraf": {
+    "q": "Yani darp ettiğinizi kabul ediyor musunuz?",
+    "opts": [
+     {
+      "t": "Hayır, sadece bağırdım.",
+      "d": -0.05,
+      "next": "eller"
+     },
+     {
+      "t": "Hak etmişti.",
+      "end": "fail",
+      "react": [
+       "{polis}",
+       "Bu bir itiraftır. Kelepçeyi takıyorum."
+      ]
+     }
+    ]
+   },
+   "eller": {
+    "q": "Elinizdeki çizikler ne?",
+    "opts": [
+     {
+      "t": "Kapıya sıkıştırdım.",
+      "d": -0.1
+     },
+     {
+      "t": "Kedi tırmaladı.",
+      "d": 0.05
+     },
+     {
+      "t": "Sen asıl onun yüzünü gör.",
+      "end": "fail",
+      "react": [
+       "{polis}",
+       "Görürüz. Siz de bizimle geliyorsunuz."
+      ]
+     }
+    ]
+   }
+  },
+  "outcomes": {
+   "pass": [
+    "{polis}",
+    "Şahit çıkmadı, bu seferlik gidebilirsiniz."
+   ],
+   "pretext": [
+    "{polis}",
+    "Anlattıklarınız tutarlı ama karşı taraf darp raporu almış. İfadeniz için karakola gidiyoruz."
+   ],
+   "stamp": "HAPİS",
+   "final": [
+    "{polis}",
+    "Darp ve kamu düzenini bozmaktan nezarete. Gerisini hakim bey bilir."
+   ]
+  },
+  "torpil": {
+   "offer": "📺 Reklam izle: “Sen benim kim olduğumu biliyor musun?”",
+   "skip": "Kabul et",
+   "prompt": "Nezarete gitmek üzeresin. Son bir şansın var.",
+   "chance": 0.7,
+   "patrons": [
+    "Mahmut Abi",
+    "Odadaki dayın",
+    "Belediyedeki eniştem"
+   ],
+   "intro": [
+    "Sen",
+    "Memur bey, sen benim kim olduğumu biliyor musun? Bir telefon açayım."
+   ],
+   "call": [
+    "Telefondaki ses",
+    "Alo evladım... Ben {torpil}. O bizim çocuk, bir yanlışlık olmuş herhalde."
+   ],
+   "success": [
+    "{polis}",
+    "Ha... Tabii efendim, anlaşıldı efendim. Bir yanlış anlaşılma olmuş, buyurun gidin."
+   ],
+   "fail": [
+    "{polis}",
+    "Kim olursan ol, tutanak tutanaktır."
+   ],
+   "debt": "{torpil} bu iyiliği unutmayacak: sonraki 2 yolcunun yarısı onun."
+  }
+ },
+ "ads": {
+  "title": "Reklam",
+  "body": "Gerçek uygulamada burada ödüllü bir video oynar.",
+  "once": "Bu hakkı bu oyunda zaten kullandın."
+ },
+ "intel": {
+  "button": "📻",
+  "offer": "Reklam izle: telsizden yoğun bölgeleri öğren (60 sn)",
+  "active": "Telsiz istihbaratı açık: yolcu dalgaları haritada işaretli.",
+  "wave": "📻 {etkinlik}: {semt} civarında yolcu dalgası!",
+  "events": [
+   {
+    "t": "Konser çıkışı",
+    "mekan": [
+     "Harbiye Açıkhava",
+     "KüçükÇiftlik Park",
+     "Volkswagen Arena",
+     "Zorlu PSM"
+    ],
+    "adet": 18
+   },
+   {
+    "t": "Maç çıkışı",
+    "mekan": [
+     "Rams Park",
+     "Tüpraş Stadyumu",
+     "Şükrü Saracoğlu Stadyumu",
+     "Atatürk Olimpiyat Stadı",
+     "Başakşehir Fatih Terim Stadyumu"
+    ],
+    "adet": 18
+   },
+   {
+    "t": "Derbi çıkışı",
+    "mekan": [
+     "Rams Park",
+     "Tüpraş Stadyumu",
+     "Şükrü Saracoğlu Stadyumu"
+    ],
+    "adet": 30
+   },
+   {
+    "t": "Uçak indi",
+    "semt": [
+     "İstanbul Havalimanı",
+     "Sabiha Gökçen"
+    ],
+    "adet": 18
+   },
+   {
+    "t": "AVM kapanışı",
+    "semt": [
+     "Ataşehir",
+     "Bakırköy",
+     "Levent"
+    ],
+    "adet": 18
+   },
+   {
+    "t": "Vapur yanaştı",
+    "semt": [
+     "Kadıköy",
+     "Eminönü",
+     "Üsküdar",
+     "Karaköy"
+    ],
+    "adet": 18
+   },
+   {
+    "t": "Mezuniyet töreni",
+    "semt": [
+     "Sarıyer",
+     "Beşiktaş",
+     "Kavacık"
+    ],
+    "adet": 18
+   },
+   {
+    "t": "Otobüs indi",
+    "semt": [
+     "Esenler Otogarı"
+    ],
+    "adet": 18
+   }
+  ]
+ },
+ "fuel": {
+  "button": "⛽",
+  "offer": "Reklam izle: 60 saniye bedava benzin",
+  "active": "Benzin kartı aktif: 60 saniye benzin bedava!"
+ },
+ "shop": {
+  "title": "Mağaza",
+  "note": "Prototipte hepsi bedava; ileride mağazada satılacak.",
+  "ornTitle": "Araç süsleri",
+  "wpnTitle": "Kavga eşyaları (kazanma şansına eklenir)",
+  "weapons": [
+   {
+    "id": "none",
+    "t": "Çıplak el",
+    "bonus": 0
+   },
+   {
+    "id": "tespih",
+    "t": "Tespih",
+    "bonus": 0.04,
+    "price": "19,99 TL"
+   },
+   {
+    "id": "gloves",
+    "t": "Boks eldiveni",
+    "bonus": 0.06,
+    "price": "29,99 TL"
+   },
+   {
+    "id": "bat",
+    "t": "Beyzbol sopası",
+    "bonus": 0.1,
+    "price": "49,99 TL"
+   },
+   {
+    "id": "haydar",
+    "t": "Haydar",
+    "bonus": 0.16,
+    "price": "79,99 TL"
+   }
+  ],
+  "fightLine": "Elinde: {eşya} (+%{bonus})",
+  "ornaments": [
+   {
+    "id": "none",
+    "t": "Süs yok"
+   },
+   {
+    "id": "nazar",
+    "t": "Nazar boncuğu",
+    "price": "9,99 TL"
+   },
+   {
+    "id": "crown",
+    "t": "Taç",
+    "price": "19,99 TL"
+   },
+   {
+    "id": "star",
+    "t": "Yıldız",
+    "price": "9,99 TL"
+   },
+   {
+    "id": "fes",
+    "t": "Fes",
+    "price": "14,99 TL"
+   },
+   {
+    "id": "dice",
+    "t": "Tüylü zarlar",
+    "price": "9,99 TL"
+   },
+   {
+    "id": "tree",
+    "t": "Çam kokusu",
+    "price": "4,99 TL"
+   },
+   {
+    "id": "dog",
+    "t": "Başı sallanan köpek",
+    "price": "14,99 TL"
+   },
+   {
+    "id": "flag",
+    "t": "Bayrak",
+    "price": "9,99 TL"
+   },
+   {
+    "id": "eagle",
+    "t": "Kartal arması",
+    "price": "24,99 TL"
+   },
+   {
+    "id": "lashes",
+    "t": "Far kirpiği",
+    "price": "9,99 TL"
+   },
+   {
+    "id": "carpet",
+    "t": "Tavanda halı",
+    "price": "19,99 TL"
+   },
+   {
+    "id": "flames",
+    "t": "Alev çıkartması",
+    "price": "19,99 TL"
+   },
+   {
+    "id": "checker",
+    "t": "Dama şerit",
+    "price": "14,99 TL"
+   },
+   {
+    "id": "horn",
+    "t": "Altın korna",
+    "price": "24,99 TL"
+   },
+   {
+    "id": "disco",
+    "t": "Disko topu",
+    "price": "29,99 TL"
+   },
+   {
+    "id": "led",
+    "t": "Neon ışık",
+    "price": "29,99 TL"
+   }
+  ],
+  "enemyWeapons": [
+   {
+    "id": "bat",
+    "t": "Beyzbol sopası",
+    "malus": 0.08,
+    "p": 0.25
+   },
+   {
+    "id": "haydar",
+    "t": "Haydar",
+    "malus": 0.12,
+    "p": 0.2
+   }
+  ],
+  "enemyLine": "Rakibin elinde: {eşya} (−%{ceza})"
+ },
+ "tagLevels": {
+  "intro": "Aracın: {arac} · Seviye {seviye}",
+  "up": "Seviye atladın! Artık {arac} kullanıyorsun. Yolcular daha memnun, ücretler daha yüksek.",
+  "tip": "{yolcu}: “{soz}” Bahşiş +₺{bahsis}",
+  "happy": [
+   "Araç tertemiz, ne güzel yolculuk!",
+   "Klima harika, teşekkürler.",
+   "Bir dahakine yine sizi çağıracağım.",
+   "Böyle şoför bulunmaz."
+  ],
+  "levels": [
+   {
+    "ad": "emektar bir hatchback",
+    "xp": 0,
+    "fare": 1.0,
+    "pat": 1.0,
+    "tip": 0.0,
+    "renk": "#8a7f72"
+   },
+   {
+    "ad": "kompakt bir sedan",
+    "xp": 8,
+    "fare": 1.1,
+    "pat": 1.15,
+    "tip": 0.08,
+    "renk": "#4f5bd5"
+   },
+   {
+    "ad": "yeni bir hatchback",
+    "xp": 20,
+    "fare": 1.2,
+    "pat": 1.3,
+    "tip": 0.14,
+    "renk": "#2f9e8f"
+   },
+   {
+    "ad": "kompakt bir SUV",
+    "xp": 38,
+    "fare": 1.3,
+    "pat": 1.45,
+    "tip": 0.2,
+    "renk": "#3b5f8f"
+   },
+   {
+    "ad": "siyah lüks bir sedan",
+    "xp": 60,
+    "fare": 1.5,
+    "pat": 1.7,
+    "tip": 0.35,
+    "renk": "#22252b"
+   }
+  ]
+ }
+}
