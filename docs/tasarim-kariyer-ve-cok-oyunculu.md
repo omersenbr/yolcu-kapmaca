@@ -25,13 +25,17 @@ Sıfır sermayeyle, başkasının aracında başlarsın. Her gün kazandığın�
 
 ## 3. Taksici kariyeri
 
-| Basamak | Durum | Para akışı (ilk tahmin) |
+**Gerçek çapa (kullanıcıdan):** şoför 12 saatlik vardiya için plaka sahibine **₺3 000** öder, kalanı şoförün. Güncel taksi plakası **75 000–80 000** (para birimi netleşecek: TL mi, dolar mı).
+
+| Basamak | Durum | Para akışı |
 | --- | --- | --- |
-| 1. **Şoför** | **Araç ve plaka plaka sahibinin** | **Kazancın bir kısmı plaka sahibine.** Öneri: %50. Risk yok, sıfır sermaye. |
-| 2. **Plaka kiracısı** | **Plakayı kiralayıp kendi aracınla** | Günlük sabit kira (öneri ₺2 500). Kalan kazanç tamamen senin. Kötü gün = zarar. Risk/ödül kararı burada başlar. |
-| 3. **Plaka sahibi** | **Plaka satın alırsın** | Plaka değerli bir varlık (öneri ₺150 000, ~30–40 günlük kazanç). Değeri yavaşça artar, gerekirse satılır. |
-| 4. Filo | Birden çok plaka | Plakaları NPC şoförlere ya da **arkadaşlarına** kiralarsın. Oyunda değilken de gelir akar (en fazla 8 saatlik birikim). |
+| 1. **Şoför** | **Araç ve plaka plaka sahibinin** | **Vardiya ücreti ₺3 000 (12 saat), kalanı senin.** Benzin şoförden. Kötü günde zarar edebilirsin; ilk günler için “çırak” indirimi önerilir (ilk 3 gün ₺1 500). |
+| 2. **Plaka kiracısı** | **Kendi aracınla, plakayı kiralarsın** | Plaka kirası vardiya ücretinden düşük (öneri ₺1 800/vardiya), ama araç senin: önce eski bir taksi alırsın (bakım, arıza, benzin). |
+| 3. **Plaka sahibi** | **Plaka satın alırsın** | 75 000–80 000. Değeri piyasayla oynar (gazete manşetleri), gerekirse satılır. |
+| 4. Filo | Birden çok plaka | Plakaları (araçla ya da araçsız) NPC şoförlere ya da **arkadaşlarına** kiralarsın; artık ₺3 000’ü alan sensin. Oyunda değilken de birikir (en fazla 8 saat). |
 | 5. **Durak sahibi / Plaka Ağası** | Durak satın alırsın | Duraktaki herkesten aidat, bölge kontrolü, sezon sıralaması. |
+
+**Ölçek:** bir oyun günü (05:00’ten 05:00’e, orta zorlukta 8 dakika) = bir vardiya sayılır. Ücretler gerçeğe yakın tutulursa bugünkü taksimetre (30 + 11 × mesafe) bir oyun gününde ₺3 000’ü zor çıkarır; ücretler ve yolcu yoğunluğu ortalama bir şoför günde ₺6 000–8 000 brüt, ₺3 000–5 000 net kazanacak şekilde ayarlanmalı.
 
 ## 4. Tag’ci kariyeri
 
