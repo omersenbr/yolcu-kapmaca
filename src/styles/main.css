@@ -1902,3 +1902,42 @@ body.inmenu .hud {
   color: #c92a2a;
   min-height: 0;
 }
+
+/* yolcuyla sohbet */
+.talkBtn {
+  position: absolute;
+  left: 14px;
+  bottom: 16px;
+  width: 74px;
+  height: 74px;
+  border: 0;
+  padding: 0;
+  background: url('../../assets/ui/round_cream.webp') center/100% 100% no-repeat;
+  color: #141414;
+  font-family: var(--fh);
+  font-size: 17px;
+  letter-spacing: 1px;
+  z-index: 3;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+}
+.talkBtn img {
+  width: 30px;
+  height: 30px;
+}
+.talkBtn[hidden] {
+  display: none;
+}
+.chatlog {
+  font-family: var(--fb, 'Grandstander', system-ui, sans-serif);
+  font-size: 14px;
+  color: #333;
+  text-align: right;
+  min-height: 1.2em;
+  padding: 0 4px;
+  font-style: italic;
+}

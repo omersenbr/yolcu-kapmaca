@@ -6,6 +6,9 @@ import * as tagScenes from '../dialog/tagScenes';
 import * as taxiScenes from '../dialog/taxiScenes';
 import { endGame } from './endscreen';
 import { rideEvent } from '../dialog/rideEvents';
+import { paxChat } from '../dialog/paxChat';
+import { freeformOn } from '../dialog/voice';
+import { cinematic } from '../sim/game';
 import { radio, toast, updHud } from './hud';
 
 const SCENES = {
@@ -19,9 +22,14 @@ const SCENES = {
   tagVsTaxi: tagScenes.tagVsTaxi,
   stingDialog: tagScenes.stingDialog,
   rideEvent,
+  paxChat,
 };
 
 export function initBindings() {
+  $('talkBtn').addEventListener('click', () => {
+    const c = G && G.player.carry;
+    if (c && !G.busy && !G.over) cinematic(G.player.x, G.player.y, 0.35, 'paxChat', c);
+  });
   bindBus({
     toast,
     hud: updHud,
@@ -39,6 +47,8 @@ export function initBindings() {
       $('nitroLbl').textContent = G.nitroCD > 0 ? Math.ceil(G.nitroCD) + ' sn' : 'NİTRO';
       $('intelBtn').classList.toggle('on', G.intelT > 0);
       $('fuelBtn').classList.toggle('on', G.freeFuel > 0);
+      const c = G.player.carry;
+      $('talkBtn').hidden = !(c && !G.busy && !G.over && freeformOn());
     },
     scene(name, ...args) {
       (SCENES[name] as (...a: any[]) => unknown)(...args);

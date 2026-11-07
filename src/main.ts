@@ -19,6 +19,7 @@ import { initMp } from './net/mp';
 import * as tagScenes from './dialog/tagScenes';
 import * as taxiScenes from './dialog/taxiScenes';
 import * as rideEvents from './dialog/rideEvents';
+import { board } from './sim/game';
 import * as mp from './net/mp';
 /* ================= GİRİŞ NOKTASI: veri ve görselleri yükle, modülleri başlat, döngüyü çalıştır ================= */
 import './styles/main.css';
@@ -76,6 +77,7 @@ export async function boot() {
       taxiScenes,
       rideEvents,
       mp,
+      board,
     };
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildMap);
 }

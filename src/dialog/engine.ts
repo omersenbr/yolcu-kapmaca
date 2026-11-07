@@ -2,7 +2,7 @@
 import { DLG, ECO } from '../sim/content';
 import { DF, G } from '../sim/state';
 import { T, clamp, rnd, shuffle } from '../sim/util';
-import { ask, meter, say, setBubble } from './comic';
+import { ask, meter, say } from './comic';
 import { toast, updHud } from '../ui/hud';
 import { DAT, DISTS, district } from '../sim/grid';
 import { FN, MN } from '../sim/passengers';
@@ -77,22 +77,31 @@ export async function interrogate(cfg) {
     return [T(arr[0], vv), T(arr[1], vv)];
   };
   let key = 'start',
-    guard = 0;
+    guard = 0,
+    kacamak = 0,
+    pre = '';
   while (key && guard++ < 10) {
     const Q = cfg.nodes[key];
     if (!Q) break;
     const opts = expandOpts(Q.opts, v, cfg.ctx || {}).map((o) => ({ ...o, t: T(o.t, { ...v, ...(o.vars || {}) }) }));
-    // serbest konuşma: anlaşılmazsa şüphe biraz artar ve karakter tekrar sorar
+    // serbest konuşma: seçeneklere uymayan cevap kaçamak sayılır, şüphe biraz artar ve soru tekrar gelir
     const tur = KONUSAN[cfg.react] || 'polis',
       SS = DLG.serbestSohbet,
       E = ECO.serbestSohbet;
-    const o = await ask(who(), T(Q.q, v), opts, null, DF().timer, {
-      onMiss: () => {
-        sus = clamp(sus + E.anlamadimSupheArtisi, 0, 1);
-        meter(sus);
-        setBubble(who(), SS.anlamadim[tur] + ' ' + T(Q.q, v));
-      },
-    });
+    const o = await ask(who(), (pre ? pre + ' ' : '') + T(Q.q, v), opts, null, DF().timer, { serbest: true });
+    pre = '';
+    if (o.kacamak) {
+      kacamak++;
+      sus = clamp(sus + E.kacamakSupheArtisi, 0, 1);
+      meter(sus);
+      if (kacamak > E.kacamakSiniri) {
+        await say(who(), rnd(DLG.timeout));
+        break;
+      }
+      pre = SS.kacamak[tur];
+      guard--;
+      continue;
+    }
     if (o.kufur) {
       // küfür: hafifse şüphe artar ve sorgu sürer; ağırsa polis karakola, taksici/durakçı kavgaya, yolcu şikayete
       const tepki = SS.tepki[tur][o.kufur];

@@ -22,6 +22,7 @@ export function toMenu() {
   mpStop();
   pageTurn();
   $('nitroBtn').hidden = true;
+  $('talkBtn').hidden = true;
   $('adbtns').hidden = true;
   $('adOv').hidden = true;
   if (G) G.over = true;

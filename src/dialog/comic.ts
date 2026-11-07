@@ -103,9 +103,9 @@ export function setBubble(who: string, text: string, info?: string) {
   ui.bubble.innerHTML = `<b>${esc(who)}</b>${esc(text)}${info ? `<small>${esc(info)}</small>` : ''}`;
   speak(who, text);
 }
-/** serbest konuşma seçenekleri (sorgular): eşleşmeyince onMiss, sürede ek pay */
+/** serbest konuşma seçenekleri (sorgular): yazı kutusu açılır, sürede ek pay */
 export interface FreeOpts {
-  onMiss?: () => void;
+  serbest?: boolean;
 }
 export let timerIv = 0;
 export function stopTimer() {
@@ -136,7 +136,7 @@ export function buttons(list: Choice[], timed?: number, free?: FreeOpts): Promis
       b.addEventListener('click', () => finish(o));
       ui.answers.appendChild(b);
     });
-    if (serbest) addFreeform(list, finish, free);
+    if (serbest) addFreeform(list, finish);
     if (timed) {
       ui.tbar.style.width = '100%';
       ui.tbar.style.background = '#111';
@@ -179,12 +179,12 @@ export function closePanel() {
   updHud();
 }
 
-/* ---- serbest konuşma satırı: yazı kutusu + mikrofon ---- */
-function addFreeform(list: Choice[], finish: (o: Choice) => void, free: FreeOpts) {
+/* ---- serbest konuşma satırı: yazı kutusu + mikrofon; her cümle onText’e gider (geri çevrilmez) ---- */
+export function freeRow(onText: (text: string) => void, placeholder?: string) {
   const U = DLG.serbestSohbet.ui;
   const row = document.createElement('div');
   row.className = 'freeform';
-  row.innerHTML = `<input type="text" autocomplete="off" placeholder="${esc(U.yer)}"><button class="mic" type="button" aria-label="${esc(U.mikrofon)}"></button><button class="send" type="button">${esc(U.gonder)}</button><small></small>`;
+  row.innerHTML = `<input type="text" autocomplete="off" placeholder="${esc(placeholder || U.yer)}"><button class="mic" type="button" aria-label="${esc(U.mikrofon)}"></button><button class="send" type="button">${esc(U.gonder)}</button><small></small>`;
   ui.answers.appendChild(row);
   const inp = row.querySelector('input') as HTMLInputElement,
     hint = row.querySelector('small') as HTMLElement,
@@ -192,16 +192,9 @@ function addFreeform(list: Choice[], finish: (o: Choice) => void, free: FreeOpts
   mic.style.backgroundImage = `url(${assetUrl(MANIFEST.ui.i_radio)})`;
   const submit = (text: string) => {
     if (!text.trim()) return;
-    const k = profanity(text);
-    if (k) return finish({ kufur: k, said: text });
-    const m = bestOption(
-      text,
-      list.filter((o) => !o.go && !o.decide),
-    );
-    if (m.option) return finish({ ...m.option, said: text });
-    hint.textContent = U.anlasilmadi;
-    inp.select();
-    if (free.onMiss) free.onMiss();
+    inp.value = '';
+    hint.textContent = '';
+    onText(text.trim());
   };
   row.querySelector('.send').addEventListener('click', () => submit(inp.value));
   inp.addEventListener('keydown', (e) => {
@@ -219,8 +212,6 @@ function addFreeform(list: Choice[], finish: (o: Choice) => void, free: FreeOpts
       (t) => (inp.value = t),
       (t) => {
         mic.classList.remove('on');
-        inp.value = t;
-        hint.textContent = '';
         submit(t);
       },
       (code) => {
@@ -228,5 +219,18 @@ function addFreeform(list: Choice[], finish: (o: Choice) => void, free: FreeOpts
         hint.textContent = code === 'izin' ? U.izinYok : code === 'yok' ? U.sesYok : '';
       },
     );
+  });
+  return { row, inp };
+}
+/** sorgu cevabı: küfür → kufur; seçeneğe uyarsa o seçenek; uymazsa kaçamak cevap (yine gönderilir) */
+function addFreeform(list: Choice[], finish: (o: Choice) => void) {
+  freeRow((text) => {
+    const k = profanity(text);
+    if (k) return finish({ kufur: k, said: text });
+    const m = bestOption(
+      text,
+      list.filter((o) => !o.go && !o.decide),
+    );
+    finish(m.option ? { ...m.option, said: text } : { kacamak: true, said: text });
   });
 }

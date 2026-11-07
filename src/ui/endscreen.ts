@@ -15,6 +15,7 @@ export function endGame(why) {
   mpStop();
   pageTurn();
   $('nitroBtn').hidden = true;
+  $('talkBtn').hidden = true;
   $('adbtns').hidden = true;
   $('adOv').hidden = true;
   if (G.over) return;

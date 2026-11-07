@@ -374,6 +374,14 @@
     "_not": "Serbest konuşmanın oyun etkileri.",
     "hakaretCezasi": 2000,
     "hafifSupheArtisi": 0.3,
-    "anlamadimSupheArtisi": 0.08
+    "anlamadimSupheArtisi": 0.08,
+    "kacamakSupheArtisi": 0.12,
+    "kacamakSiniri": 2
+  },
+  "sohbet": {
+    "_not": "Yolcuyla sohbet: yıldıza toplam etki sınırı, ağır küfürde yolcu iner (ücret yok, şikayet).",
+    "puanUst": 1,
+    "puanAlt": -2,
+    "inisCezasi": 400
   }
 }

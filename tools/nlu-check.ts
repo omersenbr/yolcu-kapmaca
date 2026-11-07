@@ -2,6 +2,7 @@
 import fs from 'node:fs';
 import { setContent } from '../src/sim/content';
 import { bestOption, profanity } from '../src/sim/nlu';
+import { chatReply, teamIn } from '../src/sim/chat';
 
 const json = (p: string) => JSON.parse(fs.readFileSync(new URL('../' + p, import.meta.url), 'utf8'));
 const D = json('data/dialoglar.json');
@@ -48,5 +49,33 @@ const walk = (x: any) => {
 };
 walk(D);
 ok(self === total, `seçenek metni kendi seçeneğine eşlenir (${self}/${total})`);
+// yolcuyla sohbet: her cümleye bir cevap, konu ve taraftar atışması
+const pax = (prof: string) => ({ look: { prof, name: 'Ayşe', fem: true } }) as any;
+const konu = (s: string, prof = 'plaza') => chatReply(s, pax(prof)).konu;
+const chatCases: [string, string][] = [
+  ['merhaba abla', 'selam'],
+  ['nasılsınız', 'nasilsin'],
+  ['trafik bugün berbat', 'trafik'],
+  ['yağmur yağacak galiba', 'hava'],
+  ['ne iş yapıyorsunuz', 'is'],
+  ['müzik açayım mı', 'muzik'],
+  ['kaç para tutar sence', 'para'],
+  ['sana bir fıkra anlatayım', 'saka'],
+  ['çok teşekkür ederim', 'iltifat'],
+  ['nereye gidiyorduk', 'nereye'],
+  ['dün akşam pizza yedim', 'dolgu'],
+  ['asdfgh', 'dolgu'],
+];
+for (const [s, want] of chatCases) ok(konu(s) === want, `sohbet “${s}” → ${konu(s)}`);
+ok(teamIn('ben fenerliyim') === 'fb', 'takım: “fenerliyim” → fb');
+ok(konu('cimbom bugün kazandı mı', 'gs') === 'taraftar', 'GS taraftarına “cimbom” → aynı takım');
+ok(konu('kartal yine uçtu', 'fb') === 'taraftar-rakip', 'FB taraftarına “kartal” → rakip');
+{
+  const p = pax('turist');
+  const a = chatReply('teşekkürler', p), b = chatReply('teşekkür ederim', p);
+  ok(a.puan > 0 && b.puan === 0, 'aynı konudan ikinci kez puan yok');
+  ok(chatReply('siktir', p).kufur === 'agir', 'sohbette ağır küfür');
+  ok(p.sohbet.puan >= -2, `sohbet puanı alt sınırda (${p.sohbet.puan})`);
+}
 console.log(fail ? `\n${fail} test başarısız` : '\nSerbest konuşma testleri geçti');
 process.exit(fail ? 1 : 0);

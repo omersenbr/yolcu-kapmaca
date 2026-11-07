@@ -196,3 +196,22 @@ export function profanity(input: string): 'agir' | 'hafif' | null {
   if (hit(S().kufur.hafif)) return 'hafif';
   return null;
 }
+
+/** kaç anahtar kelime geçiyor (eş anlamlılar toplamda en fazla yarım puan): çok kelimeli anahtarın bütün kelimeleri geçmeli (ör. “kaç para”) */
+export function keywordHits(input: string, keywords: string[]): number {
+  const said = stems(input);
+  if (!said.length) return 0;
+  let n = 0,
+    syn = 0;
+  for (const k of keywords) {
+    const ks = normalize(k)
+      .split(' ')
+      .filter((w) => w.length > 1)
+      .map(stem);
+    if (!ks.length) continue;
+    if (ks.every((kw) => said.some((w) => similar(w, kw)))) n++;
+    else if (ks.every((kw) => synonymsOf(kw).some((sy) => said.some((w) => similar(w, sy))))) syn++;
+  }
+  // doğrudan geçen her kelime 1; eş anlamlılar hepsi birden en fazla 0,5
+  return n + (syn ? 0.5 : 0);
+}
