@@ -5,7 +5,7 @@ import { DLG, ECO } from '../sim/content';
 import * as K from '../sim/career';
 import type { Career } from '../sim/career';
 import { ZONES } from '../sim/grid';
-import { G } from '../sim/state';
+import { G, UNAME } from '../sim/state';
 import { load, save } from '../sim/storage';
 import { T, esc, rnd } from '../sim/util';
 import { toast } from './hud';
@@ -184,7 +184,7 @@ function render() {
     </div>
     <p class="cmeta">${esc(T(s.ozet, { gun: c.gun + 1, haftaGunu: K.weekday(c) }))} · ${esc(T(s.durak, { durak: c.durak }))}${
       K.isBusyDay(c) ? `<br><span class="busy">${esc(s.yogunGun)}</span>` : ''
-    }${c.manset ? `<br><b class="manset">${esc(s.manset)}:</b> ${esc(s.mansetler[c.manset])}` : ''}<br>${esc(s.rolNotu)}</p>
+    }<br>${esc(T(s.servet, { servet: money(K.wealth(c)) }))}${c.manset ? `<br><b class="manset">${esc(s.manset)}:</b> ${esc(s.mansetler[c.manset])}` : ''}<br>${esc(s.rolNotu)}</p>
     <section class="csec"><h4>${esc(s.toplaBaslik)}</h4><p>${
       hasAssets
         ? esc(
@@ -272,10 +272,31 @@ function act(a: string) {
   }
   if (!ok) toast(s.yetersiz, true);
   else if (msg) toast(msg);
+  announceMilestones();
   saveCareer();
   render();
 }
 
+/** yeni kilometre taşlarını sırayla duyur */
+function announceMilestones() {
+  K.checkMilestones(C).forEach((k, i) =>
+    setTimeout(() => toast(T(S().tasToast, { tas: S().taslar[k] })), 1800 * (i + 1)),
+  );
+}
+/** Sıralama sayfasındaki kariyer bölümü */
+export function careerBoardHtml() {
+  if (!C) return '';
+  const s = S(),
+    c = C;
+  const taslar = Object.entries(c.taslar)
+    .sort((a, b) => a[1] - b[1])
+    .map(([k, g]) => `<li>${esc(s.taslar[k] || k)} <span>${g}. gün</span></li>`)
+    .join('');
+  return `<section class="cboard"><h3>${esc(s.siralamaBaslik)} · ${esc(UNAME || 'Misafir')}</h3>
+    <p class="boss">${esc(T(s.servet, { servet: money(K.wealth(c)) }))} <span>(${esc(s.servetNot)})</span></p>
+    ${c.enIyi ? `<p class="boss">${esc(T(s.enIyiVardiya, { net: money(c.enIyi.net), rol: c.enIyi.rol === 'tag' ? s.tagBolum : s.taksiBolum, gun: c.enIyi.gun }))}</p>` : ''}
+    <p class="boss">${esc(s.taslarBaslik)}</p>${taslar ? `<ol>${taslar}</ol>` : `<p class="empty">${esc(s.tasYok)}</p>`}</section>`;
+}
 let lastRole: K.Role = 'taxi';
 function startShift(role: K.Role, id: string) {
   lastRole = role;
@@ -307,6 +328,7 @@ export function careerEndScreen(why: string) {
   const c = C,
     s = S();
   const r = K.endShift(c, G.money, why, G.role, Date.now(), G.usd || 0);
+  announceMilestones();
   saveCareer();
   $('endTitle').textContent = s.vardiyaBitti;
   const lines = [T(s.sonucBrut, { brut: money(r.brut) })];

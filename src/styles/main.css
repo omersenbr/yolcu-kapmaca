@@ -1743,3 +1743,10 @@ body.inmenu .hud {
   letter-spacing: 0.5px;
   color: #c92a2a;
 }
+.lb .cboard {
+  grid-column: 1/-1;
+}
+.lb .cboard .boss span {
+  font-weight: 600;
+  opacity: 0.6;
+}

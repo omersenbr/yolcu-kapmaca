@@ -2053,6 +2053,27 @@
   "hisseSat": "1/8 hisse sat · ₺{fiyat}",
   "hisseSatildi": "Hisseni sattın: +₺{fiyat}",
   "hisseSatilamaz": "Satamazsın: kredi borcun var ya da araçların için plakaya ihtiyacın var.",
-  "manset": "Manşet"
+  "manset": "Manşet",
+  "siralamaBaslik": "Kariyer",
+  "servet": "Servet: {servet}",
+  "servetNot": "kasa + dolar + araçlar + plaka payı − borç",
+  "enIyiVardiya": "En iyi vardiya: {net} ({rol}, {gun}. gün)",
+  "taslarBaslik": "Kilometre taşları",
+  "tasYok": "Henüz yok. İlk vardiyana çık!",
+  "tasToast": "Kilometre taşı: {tas}!",
+  "taslar": {
+   "ilkVardiya": "İlk vardiya",
+   "ilkTaksi": "İlk kendi taksin",
+   "ilkHisse": "İlk plaka hissesi",
+   "ilkPlaka": "İlk tam plaka",
+   "plakaAgasi": "Plaka Ağası (5 plaka)",
+   "ilkTag": "İlk kendi Tag aracın",
+   "lukSedan": "Siyah lüks sedan",
+   "tagFilo": "Mahalle patronu (4 araç)",
+   "servet1": "Servet ₺1 milyon",
+   "servet10": "Servet ₺10 milyon",
+   "servet50": "Servet ₺50 milyon",
+   "ilkDolar": "İlk turist doları"
+  }
  }
 }

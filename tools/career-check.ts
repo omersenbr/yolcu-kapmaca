@@ -121,5 +121,15 @@ eq(K.claimDaily(c, t0) ? 1 : 0, 0, 'aynı gün ikinci ödül yok');
 eq(K.claimDaily(c, t0 + 86400e3).seri, 2, 'ertesi gün seri 2');
 eq(K.claimDaily(c, t0 + 4 * 86400e3).seri, 1, 'gün atlanırsa seri başa döner');
 
+// servet ve kilometre taşları
+c = K.newCareer(t0);
+c.kasa = 1e6;
+eq(K.wealth(c), 1e6, 'servet = kasa');
+K.buyCar(c, 'eski');
+eq(K.wealth(c), 1e6 - ECO.filo.eskiTaksi * (1 - ECO.kariyer.ikinciElOrani), 'araç ikinci el değeriyle sayılır');
+const taslar = K.checkMilestones(c);
+eq(+(taslar.includes('ilkTaksi') && !taslar.includes('ilkVardiya')), 1, 'ilk taksi taşı, vardiya taşı yok');
+eq(K.checkMilestones(c).length, 0, 'aynı taş iki kez verilmez');
+
 console.log(fail ? `\n${fail} test başarısız` : '\nKariyer hesapları doğru');
 process.exit(fail ? 1 : 0);

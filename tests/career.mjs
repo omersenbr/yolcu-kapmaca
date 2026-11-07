@@ -109,6 +109,14 @@ check(/Kendi aracın \(emektar bir hatchback\)/.test(tagTxt) && /benzin ×1,6/.t
 await page.evaluate(() => document.getElementById('cs-tag').scrollIntoView());
 await page.screenshot({ path: `${out}/05-tag-garaj.png` });
 
+// sıralama sayfasında kariyer bölümü ve kilometre taşları
+await page.click('#sh-career .sx');
+await page.click('#start [data-sheet="lbs"]');
+await page.waitForTimeout(300);
+const lbTxt = await page.$eval('#lb', (e) => e.innerText);
+check(/Servet: ₺/.test(lbTxt) && /İlk kendi taksin/.test(lbTxt) && /İlk kendi Tag aracın/.test(lbTxt), 'sıralamada kariyer serveti ve kilometre taşları');
+await page.screenshot({ path: `${out}/06-siralama.png` });
+
 console.log(errors.length ? '\nHATALAR:\n' + errors.join('\n') : '\nKariyer testi geçti');
 await browser.close();
 process.exit(errors.length ? 1 : 0);

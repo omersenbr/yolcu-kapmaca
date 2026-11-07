@@ -35,6 +35,10 @@ export interface Career {
   /** plaka piyasa (satış) fiyatı ve son gazete manşeti (olay kimliği) */
   plakaFiyat: number;
   manset: string;
+  /** kilometre taşları: kimlik → takvim günü */
+  taslar: Record<string, number>;
+  /** en iyi vardiya (net) */
+  enIyi?: { net: number; rol: Role; gun: number };
   /** Tag garajı; mahalle: ilk Tag vardiyasında seçilen ev karesi */
   tag: { araclar: TagCar[]; mahalle?: [number, number] };
   /** son vardiyanın dökümü (gün sonu ekranı için) */
@@ -58,6 +62,7 @@ export function migrate(c: Career) {
   if (!c.tag) c.tag = { araclar: [] };
   if (!c.plakaFiyat) c.plakaFiyat = ECO.taksi.plakaSatis;
   if (c.manset === undefined) c.manset = '';
+  if (!c.taslar) c.taslar = {};
   return c;
 }
 
@@ -86,6 +91,7 @@ export function newCareer(now: number): Career {
     tag: { araclar: [] },
     plakaFiyat: ECO.taksi.plakaSatis,
     manset: '',
+    taslar: {},
   };
 }
 
@@ -204,6 +210,7 @@ export function endShift(
   c.dolar += dolar;
   c.vardiya++;
   if (c.vardiya % 2 === 0) newDay(c);
+  if (!c.enIyi || net > c.enIyi.net) c.enIyi = { net, rol: role, gun: c.gun + 1 };
   c.son = { rol: role, brut, ucret, arkadas, komisyon, dolar, net, ceza, neden: why };
   return c.son;
 }
@@ -396,4 +403,42 @@ export function sellCar(c: Career, i: number) {
   c.kasa += Math.round(carPrice(a.tip) * ECO.kariyer.ikinciElOrani);
   c.araclar.splice(i, 1);
   return true;
+}
+
+/* ---- servet ve kilometre taşları ---- */
+export function wealth(c: Career) {
+  const R = ECO.kariyer.ikinciElOrani;
+  return Math.round(
+    c.kasa +
+      c.dolar * fx(c).satis +
+      c.araclar.reduce((t, a) => t + carPrice(a.tip) * R, 0) +
+      c.tag.araclar.reduce((t, a) => t + tagCarPrice(a.seviye) * R, 0) +
+      c.plakaPay * c.plakaFiyat * (1 - ECO.piyasa.satisMakasi) -
+      c.borc,
+  );
+}
+/** yeni ulaşılan taşları kaydeder ve döndürür */
+export function checkMilestones(c: Career): string[] {
+  const w = wealth(c),
+    has: Record<string, boolean> = {
+      ilkVardiya: c.vardiya > 0,
+      ilkTaksi: c.araclar.length > 0,
+      ilkHisse: c.plakaPay > 0,
+      ilkPlaka: c.plakaPay >= 1,
+      plakaAgasi: c.plakaPay >= 5,
+      ilkTag: c.tag.araclar.length > 0,
+      lukSedan: c.tag.araclar.some((a) => a.seviye === 4),
+      tagFilo: c.tag.araclar.length >= ECO.tag.filoLimiti,
+      servet1: w >= 1e6,
+      servet10: w >= 1e7,
+      servet50: w >= 5e7,
+      ilkDolar: c.dolar > 0,
+    };
+  const yeni: string[] = [];
+  for (const k in has)
+    if (has[k] && c.taslar[k] === undefined) {
+      c.taslar[k] = c.gun + 1;
+      yeni.push(k);
+    }
+  return yeni;
 }
