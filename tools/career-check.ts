@@ -131,5 +131,42 @@ const taslar = K.checkMilestones(c);
 eq(+(taslar.includes('ilkTaksi') && !taslar.includes('ilkVardiya')), 1, 'ilk taksi taşı, vardiya taşı yok');
 eq(K.checkMilestones(c).length, 0, 'aynı taş iki kez verilmez');
 
+// günlük görevler, yolcu puanı, hava
+c = K.newCareer(t0);
+eq(+K.refreshTasks(c, t0), 1, 'günlük görevler çekildi');
+eq(c.gorevler.liste.length, ECO.gorevler.gunluk, '3 günlük görev');
+eq(+K.refreshTasks(c, t0 + 3600e3), 0, 'aynı gün görev yenilenmez');
+c.gorevler.liste = [
+  { id: 'teslim5', ilerleme: 3, tamam: false },
+  { id: 'brut15', ilerleme: 0, tamam: false },
+];
+const st = {
+  teslim: 2,
+  temiz: 2,
+  turist: 0,
+  kopru: 0,
+  havalimani: 0,
+  kombo: 2,
+  besYildiz: 1,
+  puanlar: [5, 3],
+  mudavim: { nuri: 1 },
+};
+const kasa0 = c.kasa;
+r = K.endShift(c, 9000, 'time', 'taxi', t0, 0, st);
+eq(r.gorevOdul, 15000, 'teslim5 tamam (3+2), brut15 değil (₺9 000)');
+eq(c.kasa - kasa0, 9000 - 1500 + 15000, 'görev ödülü kasaya');
+eq(K.ratingAvg(c), 4, 'puan ortalaması 4');
+eq(K.ratingMul(c), 1, 'ortalama 4: ücret etkisi yok');
+c.puanlar = [5, 5, 5];
+eq(K.ratingMul(c), 1 + ECO.puan.ucretEtkisi, '5 yıldız ortalaması: ücret +%4');
+eq(c.mudavim.nuri, 1, 'müdavim ilişkisi kaydedildi');
+c.hava = 'kar';
+eq(K.shiftMods(c, 'taxi', t0).speedMul, 0.75, 'karda araçlar yavaşlar');
+eq(
+  Math.round(K.shiftMods(c, 'taxi', t0).fareMul * 1000),
+  Math.round(ECO.vardiya.ucretCarpani * 1.2 * (1 + ECO.puan.ucretEtkisi) * 1000),
+  'kar ücreti ve puan çarpanı',
+);
+
 console.log(fail ? `\n${fail} test başarısız` : '\nKariyer hesapları doğru');
 process.exit(fail ? 1 : 0);

@@ -14,6 +14,7 @@ import { clearChases, startChase } from '../sim/ai';
 import { board, fx } from '../sim/game';
 import { FN, LOOK, MN } from '../sim/passengers';
 import type { Vars } from '../sim/types';
+import { rideDone } from '../sim/ridelife';
 // </auto-imports>
 /* ================= TAKSİCİ SAHNELERİ ================= */
 /* ---- Taksici: turist ---- */
@@ -225,6 +226,7 @@ export async function refuse(p, chance, line) {
     ]);
     await say(L.name, (line ? line + ' ' : '') + rnd(S.complaint));
     const fine = 400;
+    if (G.career) G.combo = 0; // şikayet komboyu bozar
     G.money -= fine;
     ui.cast.innerHTML = `<div class="stamp">ŞİKAYET: −₺${fine}</div>`;
     await sayL(S.zabita, {});
@@ -360,6 +362,7 @@ export async function routeDialog(p, meter, normal) {
   const res = await interrogate({ speaker: '{yolcu}', react: S.react, start, nodes: S.nodes, v, ctx: {} });
   if (res === 'discount') {
     G.money += normal;
+    rideDone(p, normal, false);
     setCast([
       { svg: face(LOOK.taxi1, 'neutral'), name: 'Sen' },
       { svg: face(L, 'smile'), name: L.name },
@@ -371,6 +374,7 @@ export async function routeDialog(p, meter, normal) {
   }
   if (res === 'pass') {
     G.money += meter;
+    rideDone(p, meter, false);
     setCast([
       { svg: face(LOOK.taxi1, 'smile'), name: 'Sen' },
       { svg: face(L, 'neutral'), name: L.name },
@@ -382,6 +386,7 @@ export async function routeDialog(p, meter, normal) {
   }
   const fine = 600;
   G.money += normal - fine;
+  rideDone(p, normal - fine, true);
   setCast([
     { svg: face(LOOK.taxi1, 'nervous'), name: 'Sen' },
     { svg: face({ ...L, rec: true }, 'angry'), name: L.name },

@@ -10,6 +10,7 @@ import { clearWant } from './movement';
 import { pickDest, spawnPax, taximeter } from './passengers';
 import { randFar } from './pathfinding';
 import { bus } from './bus';
+import { newStats, rideDone, rideStart } from './ridelife';
 import type { SceneName } from './bus';
 // </auto-imports>
 /* ================= OYUN: yeni gün, yolcu alma/indirme, ücretler, kontrol noktaları ================= */
@@ -19,7 +20,18 @@ export interface ShiftOpts {
   startH: number;
   /** süre (saat); gün uzunluğu buna göre kısalır */
   span: number;
-  mods: { fareMul: number; demandMul: number; complaintMul: number; fuelMul: number };
+  mods: {
+    fareMul: number;
+    demandMul: number;
+    complaintMul: number;
+    fuelMul: number;
+    speedMul: number;
+    oldCar: boolean;
+  };
+  /** kariyer: günün havası (çizim için) */
+  hava?: string;
+  /** kariyer: müdavimlerle ilişki (kimlik → puan) */
+  mudavim?: Record<string, number>;
   /** kariyer: günün dolar kuru (turist doları için) */
   kur?: number;
   /** kariyer Tag’ci: sürülen aracın seviyesi (0–4) */
@@ -40,6 +52,10 @@ export function newGame(role, shift?: ShiftOpts) {
           mods: shift.mods,
           tagLevel: shift.tagLevel,
           kur: shift.kur,
+          hava: shift.hava,
+          mudavimRel: shift.mudavim || {},
+          stats: newStats(),
+          combo: 0,
         }
       : {}),
     role,
@@ -203,6 +219,7 @@ export function board(e, p) {
     pickDest(p, zz && zz.w >= 2 ? 'long' : 'any');
   }
   const P = G.player;
+  if (e.isPlayer) rideStart(p);
   if (e.isPlayer) {
     if (G.role === 'tag') {
       G.lastAct = 'aldın';
@@ -235,6 +252,7 @@ export function deliver(e) {
     G.money += f;
     fx(e.x, e.y, '+₺' + f, '#2f9e44');
     G.lastAct = 'indirdin';
+    rideDone(p, f, !!p.complained);
     if (!p.complained && Math.random() < L.tip) {
       const tp = 20 + Math.floor(Math.random() * 4) * 10;
       G.money += tp;
@@ -273,7 +291,9 @@ export function deliver(e) {
         G.money += p.fare;
         fx(e.x, e.y, '+₺' + p.fare, '#2f9e44');
       }
-      if (Math.random() < 0.2) {
+      const otelSikayet = Math.random() < 0.2;
+      rideDone(p, usd ? 0 : p.fare, otelSikayet);
+      if (otelSikayet) {
         G.money -= 1500;
         bus.toast(`Turist otelden şikayet etti! Taksimetresiz fahiş ücret cezası −₺1500`, true);
       } else
@@ -285,6 +305,7 @@ export function deliver(e) {
     } else if (p.fixed) {
       G.money += p.fare;
       fx(e.x, e.y, '+₺' + p.fare, '#2f9e44');
+      rideDone(p, p.fare, !!p.lateComplain);
       if (p.lateComplain) {
         G.money -= 400;
         bus.toast(`${p.look.name}: “${DLG.pickup.lateComplain}” −₺400`, true);
@@ -311,6 +332,7 @@ export function deliver(e) {
         bus.toast(`Turist bahşiş bıraktı: “Teşekkür, çok iyi!” +₺${tip}`);
       }
       G.money += meter;
+      rideDone(p, meter, false);
       fx(e.x, e.y, '+₺' + meter, '#2f9e44');
       if (!p.honest)
         bus.toast(

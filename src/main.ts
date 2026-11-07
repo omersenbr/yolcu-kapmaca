@@ -17,6 +17,7 @@ import { initCareer } from './ui/career';
 // </auto-imports>
 import * as tagScenes from './dialog/tagScenes';
 import * as taxiScenes from './dialog/taxiScenes';
+import * as rideEvents from './dialog/rideEvents';
 /* ================= GİRİŞ NOKTASI: veri ve görselleri yükle, modülleri başlat, döngüyü çalıştır ================= */
 import './styles/main.css';
 import mapUrl from '/data/harita.json?url';
@@ -70,6 +71,7 @@ export async function boot() {
       },
       tagScenes,
       taxiScenes,
+      rideEvents,
     };
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildMap);
 }

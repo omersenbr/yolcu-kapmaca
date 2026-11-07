@@ -5,6 +5,7 @@ import { G } from '../sim/state';
 import * as tagScenes from '../dialog/tagScenes';
 import * as taxiScenes from '../dialog/taxiScenes';
 import { endGame } from './endscreen';
+import { rideEvent } from '../dialog/rideEvents';
 import { radio, toast, updHud } from './hud';
 
 const SCENES = {
@@ -17,6 +18,7 @@ const SCENES = {
   tagVsPolice: tagScenes.tagVsPolice,
   tagVsTaxi: tagScenes.tagVsTaxi,
   stingDialog: tagScenes.stingDialog,
+  rideEvent,
 };
 
 export function initBindings() {

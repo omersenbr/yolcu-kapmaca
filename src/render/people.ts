@@ -1,6 +1,7 @@
 // <auto-imports>
 import { img, ready } from '../core/assets';
-import { MANIFEST } from '../sim/content';
+import { DLG, MANIFEST } from '../sim/content';
+import { T } from '../sim/util';
 import { G } from '../sim/state';
 import { TS, ctx, px, rr, star } from './view';
 // </auto-imports>
@@ -182,6 +183,24 @@ export function drawPax(p, t) {
     ctx.fillStyle = '#111';
     ctx.fillText(lab, bx, by + 1);
     return;
+  }
+  // kariyer: müdavim etiketi
+  if (p.mudavim) {
+    const bx = x + TS * 0.18,
+      by = y - s * 0.95;
+    ctx.font = `700 ${Math.round(TS * 0.26)}px "Grandstander","Archivo",system-ui,sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const lab = T(DLG.kariyer.mudavimEtiket, { ad: p.look.name }),
+      w = ctx.measureText(lab).width + TS * 0.3;
+    ctx.fillStyle = '#2f9e44';
+    ctx.strokeStyle = '#111';
+    ctx.lineWidth = 2;
+    rr(ctx, bx - w / 2, by - TS * 0.19, w, TS * 0.38, TS * 0.12);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.fillText(lab, bx, by + 1);
   }
   if (G.role === 'taxi') {
     if ((t + p.ph) % 3 < 1.6) {

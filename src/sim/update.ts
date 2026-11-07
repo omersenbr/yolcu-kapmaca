@@ -10,6 +10,7 @@ import { move } from './movement';
 import { spawnPax } from './passengers';
 import { randFar } from './pathfinding';
 import { bus } from './bus';
+import { maybeRideEvent } from './ridelife';
 // </auto-imports>
 /* ================= GÜNCELLEME: her kare dünya, kovalama, çarpışma ve olaylar ================= */
 export function update(dt) {
@@ -120,6 +121,8 @@ export function update(dt) {
     if (G.role === 'tag' && c && c.look.sting && !G.busy && c.rideT > 3.5) {
       cinematic(P.x, P.y, 0.5, 'stingDialog', c);
     }
+    // kariyer: yolculuk sırasında bir kez olay kartı (müzik, simitçi, kestirme...)
+    if (c && G.career && !G.busy && maybeRideEvent(c)) cinematic(P.x, P.y, 0.4, 'rideEvent', c);
     if (G.role === 'tag' && c) {
       c.rideT += w;
       const exp = (((c.m / 4.5) * 1.5 + 6) * DF().patience * TL().pat) / DF().world;

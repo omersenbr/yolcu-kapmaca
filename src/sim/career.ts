@@ -4,6 +4,7 @@
    ECO.tempo.cevrimdisiBirikimSaat kadar birikir; “kasayı topla” ile tahsil edilir. */
 import { ECO } from './content';
 import { clamp } from './util';
+import type { ShiftStats } from './ridelife';
 
 export type CarTier = 'eski' | 'yeni';
 export type Role = 'taxi' | 'tag';
@@ -35,6 +36,14 @@ export interface Career {
   /** plaka piyasa (satış) fiyatı ve son gazete manşeti (olay kimliği) */
   plakaFiyat: number;
   manset: string;
+  /** günün havası (ECO.hava.durumlar id) */
+  hava: string;
+  /** son teslimlerin yıldızları */
+  puanlar: number[];
+  /** müdavimlerle ilişki */
+  mudavim: Record<string, number>;
+  /** günlük görevler (gerçek gün) */
+  gorevler: { gun: string; liste: { id: string; ilerleme: number; tamam: boolean }[] };
   /** kilometre taşları: kimlik → takvim günü */
   taslar: Record<string, number>;
   /** en iyi vardiya (net) */
@@ -53,6 +62,11 @@ export interface ShiftResult {
   komisyon: number;
   /** turistlerden alınan dolar */
   dolar: number;
+  /** bu vardiyada tamamlanan günlük görevler ve ödülleri */
+  gorevOdul?: number;
+  gorevler?: string[];
+  /** bu vardiyanın yıldız ortalaması */
+  puan?: number | null;
   net: number;
   ceza: number;
   neden: string;
@@ -63,6 +77,10 @@ export function migrate(c: Career) {
   if (!c.plakaFiyat) c.plakaFiyat = ECO.taksi.plakaSatis;
   if (c.manset === undefined) c.manset = '';
   if (!c.taslar) c.taslar = {};
+  if (!c.hava) c.hava = 'acik';
+  if (!c.puanlar) c.puanlar = [];
+  if (!c.mudavim) c.mudavim = {};
+  if (!c.gorevler) c.gorevler = { gun: '', liste: [] };
   return c;
 }
 
@@ -92,6 +110,10 @@ export function newCareer(now: number): Career {
     plakaFiyat: ECO.taksi.plakaSatis,
     manset: '',
     taslar: {},
+    hava: 'acik',
+    puanlar: [],
+    mudavim: {},
+    gorevler: { gun: '', liste: [] },
   };
 }
 
@@ -143,25 +165,43 @@ export function tagLevelFor(c: Career, now: number) {
 }
 const tagSpec = (seviye: number) => ECO.tag.araclar[seviye];
 
+/** günün havası */
+export const weather = (c: Career) => ECO.hava.durumlar.find((h) => h.id === c.hava) || ECO.hava.durumlar[0];
+/** yolcu puanı ortalaması (yoksa null) */
+export const ratingAvg = (c: Career) =>
+  c.puanlar.length ? c.puanlar.reduce((a, b) => a + b, 0) / c.puanlar.length : null;
+/** puanın ücrete etkisi: ortalama 4’ün üstü/altı */
+export function ratingMul(c: Career) {
+  const P = ECO.puan,
+    a = ratingAvg(c);
+  return a === null ? 1 : clamp(1 + (a - 4) * P.ucretEtkisi, P.alt, P.ust);
+}
 /** vardiya sırasındaki oyun çarpanları */
 export function shiftMods(c: Career, role: Role, now: number) {
   const V = ECO.vardiya,
-    busy = isBusyDay(c);
-  const yogun = busy ? V.yogunUcretCarpani : 1;
+    busy = isBusyDay(c),
+    h = weather(c);
+  const yogun = busy ? V.yogunUcretCarpani : 1,
+    talep = (busy ? V.yogunTalepCarpani : 1) * h.talep,
+    puan = ratingMul(c);
   if (role === 'tag') {
     const i = tagCarIndex(c, now);
     return {
-      fareMul: ECO.tag.ucretCarpani * yogun,
-      demandMul: busy ? V.yogunTalepCarpani : 1,
+      fareMul: ECO.tag.ucretCarpani * yogun * h.ucret * puan,
+      demandMul: talep,
       complaintMul: 1,
       fuelMul: i < 0 ? 1 : tagSpec(c.tag.araclar[i].seviye).benzin,
+      speedMul: h.hiz,
+      oldCar: i >= 0 && c.tag.araclar[i].seviye === 0,
     };
   }
   return {
-    fareMul: V.ucretCarpani * yogun,
-    demandMul: busy ? V.yogunTalepCarpani : 1,
+    fareMul: V.ucretCarpani * yogun * h.ucret * puan,
+    demandMul: talep,
     complaintMul: playerCarOld(c) ? ECO.araclar.eskiAracSikayetCarpani : 1,
     fuelMul: 1,
+    speedMul: h.hiz,
+    oldCar: playerCarOld(c),
   };
 }
 /** vardiya sonu: kazancı kasaya işle, takvimi ve kuru ilerlet */
@@ -172,6 +212,7 @@ export function endShift(
   role: Role = 'taxi',
   now = Date.now(),
   usd = 0,
+  stats?: ShiftStats,
 ): ShiftResult {
   const K = ECO.kariyer,
     TG = ECO.tag;
@@ -210,8 +251,24 @@ export function endShift(
   c.dolar += dolar;
   c.vardiya++;
   if (c.vardiya % 2 === 0) newDay(c);
+  // yolcu puanı, müdavim ilişkileri, günlük görevler
+  let gorevOdul = 0,
+    gorevler: string[] = [],
+    puan: number | null = null;
+  if (stats) {
+    const P = ECO.puan,
+      M = ECO.mudavim;
+    if (stats.puanlar.length) {
+      puan = stats.puanlar.reduce((a, b) => a + b, 0) / stats.puanlar.length;
+      c.puanlar = c.puanlar.concat(stats.puanlar).slice(-P.son);
+    }
+    for (const id in stats.mudavim) c.mudavim[id] = clamp((c.mudavim[id] || 0) + stats.mudavim[id], M.alt, M.ust);
+    const g = applyTasks(c, stats, brut, role);
+    gorevOdul = g.odul;
+    gorevler = g.tamam;
+  }
   if (!c.enIyi || net > c.enIyi.net) c.enIyi = { net, rol: role, gun: c.gun + 1 };
-  c.son = { rol: role, brut, ucret, arkadas, komisyon, dolar, net, ceza, neden: why };
+  c.son = { rol: role, brut, ucret, arkadas, komisyon, dolar, net, ceza, neden: why, gorevOdul, gorevler, puan };
   return c.son;
 }
 
@@ -231,6 +288,16 @@ export function newDay(c: Career) {
     c.manset = o.id;
   }
   c.kur = clamp(kur, D.kurAlt, D.kurUst);
+  // hava: ağırlıklı rastgele
+  const H = ECO.hava.durumlar;
+  let x = Math.random() * H.reduce((t, h) => t + h.agirlik, 0);
+  c.hava = H[H.length - 1].id;
+  for (const h of H) {
+    if ((x -= h.agirlik) < 0) {
+      c.hava = h.id;
+      break;
+    }
+  }
   c.plakaFiyat = Math.round(clamp(plaka, base * M.plakaAlt, base * M.plakaUst) / 1000) * 1000;
 }
 
@@ -441,4 +508,39 @@ export function checkMilestones(c: Career): string[] {
       yeni.push(k);
     }
   return yeni;
+}
+
+/* ---- günlük görevler (gerçek gün başına) ---- */
+export function refreshTasks(c: Career, now: number) {
+  const today = day(now);
+  if (c.gorevler.gun === today) return false;
+  const G = ECO.gorevler,
+    havuz = G.havuz.slice();
+  const liste = [];
+  for (let i = 0; i < G.gunluk && havuz.length; i++) {
+    const k = Math.floor(Math.random() * havuz.length);
+    liste.push({ id: havuz[k].id, ilerleme: 0, tamam: false });
+    havuz.splice(k, 1);
+  }
+  c.gorevler = { gun: today, liste };
+  return true;
+}
+export const taskDef = (id: string) => ECO.gorevler.havuz.find((g) => g.id === id);
+function applyTasks(c: Career, stats: ShiftStats, brut: number, role: Role) {
+  let odul = 0;
+  const tamam: string[] = [];
+  for (const t of c.gorevler.liste) {
+    const d = taskDef(t.id);
+    if (!d || t.tamam || (d.rol && d.rol !== role)) continue;
+    if (d.sayac === 'brut') t.ilerleme = Math.max(t.ilerleme, Math.max(0, brut));
+    else if (d.sayac === 'kombo') t.ilerleme = Math.max(t.ilerleme, stats.kombo);
+    else t.ilerleme += stats[d.sayac] || 0;
+    if (t.ilerleme >= d.hedef) {
+      t.tamam = true;
+      odul += d.odul;
+      tamam.push(t.id);
+    }
+  }
+  c.kasa += odul;
+  return { odul, tamam };
 }

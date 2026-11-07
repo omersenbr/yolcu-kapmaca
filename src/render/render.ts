@@ -361,6 +361,7 @@ export function render(t, dt) {
         }
       }
     }
+    if (G.hava && G.hava !== 'acik') drawWeather(G.hava, t, cx - hw, cy - hh, hw * 2, hh * 2);
     for (const f of G.fx) {
       const kk = 1 - f.t / 1.3;
       ctx.globalAlpha = Math.min(1, f.t * 2);
@@ -473,4 +474,37 @@ export function drawMini() {
   if (G.player.carry) dot(G.player.carry.dx, G.player.carry.dy, '#2f9e44', 2.4);
   dot(G.player.x, G.player.y, '#fff', 2.6);
   dot(G.player.x, G.player.y, G.role === 'taxi' ? '#ffc20e' : '#4f5bd5', 1.7);
+}
+
+/** kariyer havası: yağmur çizgileri, kar taneleri, sis; dünya koordinatında görünen alana çizilir */
+function drawWeather(h: string, t: number, x0: number, y0: number, w: number, hgt: number) {
+  ctx.save();
+  if (h === 'sis') {
+    ctx.fillStyle = 'rgba(236,238,240,.38)';
+    ctx.fillRect(x0, y0, w, hgt);
+  } else if (h === 'yagmur') {
+    ctx.strokeStyle = 'rgba(40,70,110,.45)';
+    ctx.lineWidth = Math.max(1, TS * 0.04);
+    ctx.beginPath();
+    for (let i = 0; i < 90; i++) {
+      const px0 = x0 + ((i * 97.3 + t * 40) % w),
+        py0 = y0 + ((i * 53.7 + t * 520) % hgt);
+      ctx.moveTo(px0, py0);
+      ctx.lineTo(px0 - TS * 0.12, py0 + TS * 0.45);
+    }
+    ctx.stroke();
+  } else if (h === 'kar') {
+    ctx.fillStyle = 'rgba(255,255,255,.85)';
+    ctx.strokeStyle = 'rgba(27,26,23,.35)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 70; i++) {
+      const px0 = x0 + ((((i * 89.1 + Math.sin(t + i) * 18) % w) + w) % w),
+        py0 = y0 + ((i * 61.3 + t * 70) % hgt);
+      ctx.beginPath();
+      ctx.arc(px0, py0, TS * (0.05 + (i % 3) * 0.02), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
 }

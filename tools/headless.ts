@@ -65,7 +65,13 @@ bindBus({
 
 newGame(
   role,
-  CAREER ? { startH: 5, span: 12, mods: { fareMul: 1, demandMul: 1, complaintMul: 1, fuelMul: 1 } } : undefined,
+  CAREER
+    ? {
+        startH: 5,
+        span: 12,
+        mods: { fareMul: 1, demandMul: 1, complaintMul: 1, fuelMul: 1, speedMul: 1, oldCar: false },
+      }
+    : undefined,
 );
 let lastRideAt = -1;
 for (let i = 0; i < extra; i++) {
@@ -100,6 +106,12 @@ for (; f < frames && !G.over; f++) {
   if (G.lastRide && lastRideAt < 0) lastRideAt = f;
 }
 const ms = performance.now() - t0;
+if (CAREER && G.stats) {
+  const st = G.stats;
+  console.log(
+    `kariyer sayaçları: teslim ${st.teslim}, şikayetsiz ${st.temiz}, köprü ${st.kopru}, havalimanı ${st.havalimani}, en uzun kombo ${st.kombo}, yıldızlar ${st.puanlar.join(' ')}`,
+  );
+}
 console.log(
   `rol ${role} · ${G.ents.length} araç · ${f} kare (${((f * dt) / 60).toFixed(1)} dk oyun) · kare başına ${(ms / f).toFixed(3)} ms` +
     ` · kasa ₺${G.money} · bekleyen yolcu ${G.pax.filter((p) => p.state === 'wait').length}` +

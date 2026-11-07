@@ -50,6 +50,7 @@ function paintMode() {
 /* ---- kariyer sayfası ---- */
 /** rol: hangi bölüm görünsün (ana ekranda basılan rol düğmesi) */
 export function openCareer(role?: string) {
+  if (K.refreshTasks(C, Date.now())) saveCareer();
   const r = K.claimDaily(C, Date.now());
   if (r) {
     toast(T(S().girisOdul, { seri: r.seri, odul: tl(r.odul) }));
@@ -72,6 +73,30 @@ const pctChange = (x: number) =>
     .replace('.', ',');
 const carName = (seviye: number) => DLG.tagLevels.levels[seviye].ad;
 
+function tasksSection(c: Career) {
+  const s = S(),
+    avg = K.ratingAvg(c),
+    mul = K.ratingMul(c);
+  const rows = c.gorevler.liste
+    .map((t) => {
+      const d = K.taskDef(t.id);
+      if (!d) return '';
+      const txt = T(s.gorevSatir, {
+        gorev: s.gorevler[t.id],
+        ilerleme: tl(Math.min(t.ilerleme, d.hedef)),
+        hedef: tl(d.hedef),
+        odul: tl(d.odul),
+      });
+      return `<li class="${t.tamam ? 'done' : ''}">${esc(txt)}</li>`;
+    })
+    .join('');
+  const puan =
+    avg === null
+      ? s.puanYok
+      : T(s.puanMetin, { puan: avg.toFixed(1).replace('.', ','), n: c.puanlar.length, etki: pctChange(mul - 1) });
+  return `<section class="csec"><h4>${esc(s.gorevBaslik)}</h4><ul class="ctasks">${rows}</ul>
+    <h4>${esc(s.puanBaslik)}</h4><p>${esc(puan)}</p></section>`;
+}
 function taxiSection(c: Career) {
   const s = S(),
     fee = K.shiftFee(c),
@@ -184,7 +209,7 @@ function render() {
     </div>
     <p class="cmeta">${esc(T(s.ozet, { gun: c.gun + 1, haftaGunu: K.weekday(c) }))} · ${esc(T(s.durak, { durak: c.durak }))}${
       K.isBusyDay(c) ? `<br><span class="busy">${esc(s.yogunGun)}</span>` : ''
-    }<br>${esc(T(s.servet, { servet: money(K.wealth(c)) }))}${c.manset ? `<br><b class="manset">${esc(s.manset)}:</b> ${esc(s.mansetler[c.manset])}` : ''}<br>${esc(s.rolNotu)}</p>
+    }<br>${esc(T(s.servet, { servet: money(K.wealth(c)) }))}<br>${esc(s.havaBaslik)}: ${esc(s.hava[c.hava])}${c.manset ? `<br><b class="manset">${esc(s.manset)}:</b> ${esc(s.mansetler[c.manset])}` : ''}<br>${esc(s.rolNotu)}</p>
     <section class="csec"><h4>${esc(s.toplaBaslik)}</h4><p>${
       hasAssets
         ? esc(
@@ -196,6 +221,7 @@ function render() {
           )
         : esc(s.toplaBos)
     }</p>${hasAssets ? `<div class="row">${btn('topla', s.toplaDugme, acc.gelir > 0 || acc.taksit > 0)}</div>` : ''}</section>
+    ${tasksSection(c)}
     ${taxiSection(c)}
     ${tagSection(c, now)}
     <h3 class="crole">${esc(s.dovizBaslik)}</h3>
@@ -312,7 +338,10 @@ function startShift(role: K.Role, id: string) {
     tagLevel: role === 'tag' ? K.tagLevelFor(C, now) : undefined,
     home: C.tag.mahalle,
     kur: C.kur,
+    hava: C.hava,
+    mudavim: C.mudavim,
   });
+  if (C.hava !== 'acik') setTimeout(() => toast(S().hava[C.hava]), 1600);
   if (role === 'tag' && !C.tag.mahalle) {
     C.tag.mahalle = [G.home.x, G.home.y];
     saveCareer();
@@ -327,7 +356,7 @@ export function nextShift() {
 export function careerEndScreen(why: string) {
   const c = C,
     s = S();
-  const r = K.endShift(c, G.money, why, G.role, Date.now(), G.usd || 0);
+  const r = K.endShift(c, G.money, why, G.role, Date.now(), G.usd || 0, G.stats);
   announceMilestones();
   saveCareer();
   $('endTitle').textContent = s.vardiyaBitti;
@@ -337,6 +366,11 @@ export function careerEndScreen(why: string) {
     if (r.komisyon) lines.push(T(s.sonucKomisyon, { tutar: tl(r.komisyon) }));
   } else lines.push(T(s.sonucUcret, { ucret: tl(r.ucret) }));
   if (r.dolar) lines.push(T(s.sonucDolar, { usd: tl(r.dolar) }));
+  if (r.puan) lines.push(T(s.sonucPuan, { puan: r.puan.toFixed(1).replace('.', ',') }));
+  if (r.gorevOdul)
+    lines.push(
+      T(s.sonucGorev, { odul: tl(r.gorevOdul) }) + ' (' + r.gorevler.map((g) => s.gorevler[g]).join(', ') + ')',
+    );
   if (r.ceza) lines.push(T(s.sonucCeza, { ceza: tl(r.ceza) }));
   if (why === 'hapis' || why === 'ruhsat' || why === 'baglandi') lines.unshift(s[why]);
   $('endWhy').innerHTML = `<span class="endlines">${lines.map(esc).join('<br>')}</span>`;

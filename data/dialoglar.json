@@ -2074,6 +2074,269 @@
    "servet10": "Servet ₺10 milyon",
    "servet50": "Servet ₺50 milyon",
    "ilkDolar": "İlk turist doları"
+  },
+  "hava": {
+   "acik": "Açık hava",
+   "yagmur": "Yağmurlu: herkes taksi arıyor, yollar kaygan",
+   "kar": "Karlı: yolcu bol, trafik kaplumbağa",
+   "sis": "Sisli: görüş düşük, dikkatli sür"
+  },
+  "havaKisa": {
+   "acik": "Açık",
+   "yagmur": "Yağmur",
+   "kar": "Kar",
+   "sis": "Sis"
+  },
+  "havaBaslik": "Hava",
+  "gorevBaslik": "Günlük görevler",
+  "gorevTamam": "Görev tamam: {gorev} · +₺{odul}",
+  "gorevSatir": "{gorev} ({ilerleme}/{hedef}) · ₺{odul}",
+  "puanBaslik": "Yolcu puanın",
+  "puanMetin": "Ortalama {puan} ★ (son {n} yolculuk) · ücret etkisi {etki}",
+  "puanYok": "Henüz puanın yok.",
+  "puanToast": "{yolcu}: {yildiz}",
+  "komboToast": "Kombo ×{kat}! +₺{ek}",
+  "komboBitti": "Kombo bozuldu.",
+  "sonucGorev": "Görev ödülleri: +₺{odul}",
+  "sonucPuan": "Bu vardiyanın puanı: {puan} ★",
+  "mudavimEtiket": "Müdavim: {ad}",
+  "mudavimDondu": "{ad} seni hatırladı: “{soz}”",
+  "mudavimBahsis": "{ad} bahşiş bıraktı: +₺{bahsis}",
+  "mudavimKustu": "{ad} sana küstü. Bir daha zor biner.",
+  "gorevler": {
+   "teslim5": "5 yolcu teslim et",
+   "teslim12": "12 yolcu teslim et",
+   "kopru2": "Boğaz’ı 2 kez geç",
+   "turist1": "Bir turist taşı",
+   "havalimani1": "Havalimanından yolcu al",
+   "temiz4": "Şikayetsiz 4 teslimat",
+   "kombo3": "3’lü kombo yap",
+   "yildiz5": "3 kez 5 yıldız al",
+   "brut15": "Bir vardiyada ₺15 000 kazan",
+   "tagGizli4": "Tag’de 4 yolcu teslim et"
+  },
+  "olayBaslik": "Yolculukta",
+  "olayBahsis": "(+₺{bahsis} bahşiş)"
+ },
+ "yolculukOlaylari": [
+  {
+   "id": "muzik",
+   "rol": "any",
+   "soru": "{Ab}, şu radyoyu bir açsana. Arabesk mi olsun, pop mu?",
+   "secenekler": [
+    {
+     "t": "Arabesk aç, damardan",
+     "bahsis": 0,
+     "puan": 0.5,
+     "cevap": "Ah be abi, tam yerine geldi!"
+    },
+    {
+     "t": "Pop koyayım, neşelenelim",
+     "bahsis": 0,
+     "puan": 0.3,
+     "cevap": "Süper, bunu çok seviyorum!"
+    },
+    {
+     "t": "Radyo bozuk, kusura bakma",
+     "bahsis": 0,
+     "puan": -0.5,
+     "cevap": "Hıh. Peki."
+    }
+   ]
+  },
+  {
+   "id": "simit",
+   "rol": "any",
+   "soru": "Kahvaltı yapmadım, şu simitçinin önünde bir saniye dursak?",
+   "secenekler": [
+    {
+     "t": "Tabii, bekliyorum",
+     "bahsis": 120,
+     "puan": 0.7,
+     "cevap": "Sağ ol {ab}, bir de sana aldım!"
+    },
+    {
+     "t": "Duramam, trafik var",
+     "bahsis": 0,
+     "puan": -0.3,
+     "cevap": "Neyse, açlıktan ölmem herhalde."
+    }
+   ]
+  },
+  {
+   "id": "kestirme",
+   "rol": "taxi",
+   "soru": "Ben bir kestirme biliyorum, sağdan girsek?",
+   "secenekler": [
+    {
+     "t": "Siz bilirsiniz, girelim",
+     "bahsis": 0,
+     "puan": 0.5,
+     "cevap": "Gördün mü, beş dakika kazandık!"
+    },
+    {
+     "t": "Ben bu yolları ezbere bilirim",
+     "bahsis": 0,
+     "puan": -0.2,
+     "cevap": "Peki usta, sen bilirsin."
+    }
+   ]
+  },
+  {
+   "id": "telefon",
+   "rol": "any",
+   "soru": "(Yolcu telefonda bağırıyor) ...YOK ÖYLE BİR ŞEY! Pardon {ab}, sesi kısar mısın?",
+   "secenekler": [
+    {
+     "t": "Kıstım, rahat konuşun",
+     "bahsis": 50,
+     "puan": 0.4,
+     "cevap": "Eksik olma."
+    },
+    {
+     "t": "Arabada bağırmak yasak!",
+     "bahsis": 0,
+     "puan": -0.6,
+     "cevap": "Ne yasağı ya!"
+    }
+   ]
+  },
+  {
+   "id": "klima",
+   "rol": "any",
+   "soru": "Çok sıcak burası, klimayı açabilir miyiz?",
+   "secenekler": [
+    {
+     "t": "Hemen açıyorum",
+     "bahsis": 0,
+     "puan": 0.4,
+     "cevap": "Oh be, dünya varmış."
+    },
+    {
+     "t": "Cam açalım, klima yakıyor",
+     "bahsis": 0,
+     "puan": -0.2,
+     "cevap": "Saçım dağılacak ama neyse."
+    }
+   ]
+  },
+  {
+   "id": "uygulama",
+   "rol": "tag",
+   "soru": "Uygulamada araba başka görünüyor, bu sen misin?",
+   "secenekler": [
+    {
+     "t": "Benim, araba yeni değişti",
+     "bahsis": 0,
+     "puan": 0.2,
+     "cevap": "Tamam, sadece sordum."
+    },
+    {
+     "t": "Kardeşimin arabası, o hasta",
+     "bahsis": 0,
+     "puan": -0.4,
+     "cevap": "Hmm, biraz garip ama..."
+    }
+   ]
+  },
+  {
+   "id": "para",
+   "rol": "any",
+   "soru": "Bozuk param yok, IBAN’dan atsam olur mu?",
+   "secenekler": [
+    {
+     "t": "Olur, at",
+     "bahsis": 0,
+     "puan": 0.4,
+     "cevap": "Süper, hemen gönderiyorum."
+    },
+    {
+     "t": "Nakit lazım, ATM’de duralım",
+     "bahsis": 80,
+     "puan": -0.2,
+     "cevap": "Peki, üstü kalsın o zaman."
+    }
+   ]
   }
- }
+ ],
+ "mudavimler": [
+  {
+   "id": "nuri",
+   "ad": "Nuri Bey",
+   "prof": "kenar",
+   "pidx": 0,
+   "fem": false,
+   "semt": "Fatih",
+   "soz": {
+    "iyi": "Yine sen mi? Bugün şanslı günüm!",
+    "orta": "Merhaba usta, yine yollar bizi buluşturdu.",
+    "kotu": "Sen misin... Geçen sefer beni yolda bırakmıştın."
+   }
+  },
+  {
+   "id": "sevgul",
+   "ad": "Sevgül Hanım",
+   "prof": "zengin",
+   "pidx": 2,
+   "fem": true,
+   "semt": "Beşiktaş",
+   "soz": {
+    "iyi": "Ay canım, seni görünce içim rahatladı.",
+    "orta": "Merhabalar, Bebek’e gideceğiz.",
+    "kotu": "Bu sefer taksimetreyi açarsın umarım."
+   }
+  },
+  {
+   "id": "kaan",
+   "ad": "Kaan",
+   "prof": "ogrenci",
+   "pidx": 1,
+   "fem": false,
+   "semt": "Sarıyer",
+   "soz": {
+    "iyi": "Abi selam! Final haftası, uçur beni!",
+    "orta": "Selam abi, okula yetişmem lazım.",
+    "kotu": "Abi bu sefer düz git lütfen."
+   }
+  },
+  {
+   "id": "melek",
+   "ad": "Melek Abla",
+   "prof": "kenar",
+   "pidx": 3,
+   "fem": true,
+   "semt": "Bağcılar",
+   "soz": {
+    "iyi": "Oğlum sen geldin ya, kurban olayım!",
+    "orta": "Pazara gidiyoruz evladım.",
+    "kotu": "Hı, sen misin? Hadi neyse."
+   }
+  },
+  {
+   "id": "tarik",
+   "ad": "Tarık Bey",
+   "prof": "plaza",
+   "pidx": 2,
+   "fem": false,
+   "semt": "Levent",
+   "soz": {
+    "iyi": "Hep sen gel artık, toplantıya yetiştirirsin.",
+    "orta": "Levent, acil. Hızlı olursa memnun olurum.",
+    "kotu": "Bir dahakine başka araç çağırırım."
+   }
+  },
+  {
+   "id": "hans",
+   "ad": "Hans",
+   "prof": "turist",
+   "pidx": 1,
+   "fem": false,
+   "semt": "Sultanahmet",
+   "soz": {
+    "iyi": "My friend! Good driver, very good!",
+    "orta": "Hello again, Taksim please.",
+    "kotu": "You again... no tricks this time, okay?"
+   }
+  }
+ ]
 }

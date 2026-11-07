@@ -232,5 +232,135 @@
         "kur": -0.02
       }
     ]
+  },
+  "hava": {
+    "_not": "Her takvim günü bir hava durumu. talep: yolcu çarpanı, hiz: bütün araçların hız çarpanı, ucret: ücret çarpanı.",
+    "durumlar": [
+      {
+        "id": "acik",
+        "agirlik": 60,
+        "talep": 1,
+        "hiz": 1,
+        "ucret": 1
+      },
+      {
+        "id": "yagmur",
+        "agirlik": 22,
+        "talep": 1.4,
+        "hiz": 0.9,
+        "ucret": 1.1
+      },
+      {
+        "id": "kar",
+        "agirlik": 8,
+        "talep": 1.6,
+        "hiz": 0.75,
+        "ucret": 1.2
+      },
+      {
+        "id": "sis",
+        "agirlik": 10,
+        "talep": 1.1,
+        "hiz": 0.85,
+        "ucret": 1
+      }
+    ]
+  },
+  "gorevler": {
+    "_not": "Her gerçek gün 3 görev (havuzdan rastgele). hedef: sayaç değeri; odul: TL. Metinler dialoglar.json → kariyer.gorevler.",
+    "gunluk": 3,
+    "havuz": [
+      {
+        "id": "teslim5",
+        "sayac": "teslim",
+        "hedef": 5,
+        "odul": 15000
+      },
+      {
+        "id": "teslim12",
+        "sayac": "teslim",
+        "hedef": 12,
+        "odul": 40000
+      },
+      {
+        "id": "kopru2",
+        "sayac": "kopru",
+        "hedef": 2,
+        "odul": 12000
+      },
+      {
+        "id": "turist1",
+        "sayac": "turist",
+        "hedef": 1,
+        "odul": 10000,
+        "rol": "taxi"
+      },
+      {
+        "id": "havalimani1",
+        "sayac": "havalimani",
+        "hedef": 1,
+        "odul": 15000
+      },
+      {
+        "id": "temiz4",
+        "sayac": "temiz",
+        "hedef": 4,
+        "odul": 20000
+      },
+      {
+        "id": "kombo3",
+        "sayac": "kombo",
+        "hedef": 3,
+        "odul": 20000
+      },
+      {
+        "id": "yildiz5",
+        "sayac": "besYildiz",
+        "hedef": 3,
+        "odul": 18000
+      },
+      {
+        "id": "brut15",
+        "sayac": "brut",
+        "hedef": 15000,
+        "odul": 25000
+      },
+      {
+        "id": "tagGizli4",
+        "sayac": "teslim",
+        "hedef": 4,
+        "odul": 20000,
+        "rol": "tag"
+      }
+    ]
+  },
+  "puan": {
+    "_not": "Her teslimde 1–5 yıldız; son 30 teslimin ortalaması sonraki vardiyaların ücretine çarpan olur.",
+    "son": 30,
+    "ucretEtkisi": 0.04,
+    "_etkiNot": "ortalama 4’ün her puan üstü/altı için ±%4 (en fazla ±%6, en az −%8)",
+    "alt": 0.92,
+    "ust": 1.06,
+    "eskiAracCeza": 0.5
+  },
+  "kombo": {
+    "_not": "Şikayetsiz teslimatlar arası en fazla pencereSaat oyun saati geçerse kombo büyür; her adım ücrete +%5, en fazla +%25.",
+    "pencereSaat": 1.0,
+    "adim": 0.05,
+    "azami": 0.25
+  },
+  "olay": {
+    "_not": "Yolculuk sırasında (kariyer) bir kez, birkaç kare yol gidildikten sonra bu ihtimalle olay kartı açılır.",
+    "ihtimal": 0.22,
+    "mesafe": 4
+  },
+  "mudavim": {
+    "_not": "Tekrar eden karakterler: yolcu doğarken bu ihtimalle (aktif değilse) semtinde bir müdavim çıkar. İlişki −5…+10; bahşiş = ilişki × bahsisBasina (pozitifse).",
+    "ihtimal": 0.03,
+    "bahsisBasina": 300,
+    "artis": 1,
+    "sikayetCeza": 2,
+    "alt": -5,
+    "ust": 10
   }
 }

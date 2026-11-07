@@ -14,7 +14,8 @@ export type SceneName =
   | 'tagVsTaxi'
   | 'stingDialog'
   | 'turfDialog'
-  | 'taxiCatchTag';
+  | 'taxiCatchTag'
+  | 'rideEvent';
 
 export interface Bus {
   /** kısa bildirim; bad: kırmızı */

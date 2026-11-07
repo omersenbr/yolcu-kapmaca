@@ -5,6 +5,7 @@ import { rnd } from './util';
 import { ASIA, DIRS, KIYI, MERKEZ, STREETS, TARIHI, WORK, ZONES, district, tch, zoneAt } from './grid';
 import { randNear } from './pathfinding';
 import type { Pax } from './types';
+import { maybeSpawnMudavim } from './ridelife';
 // </auto-imports>
 /* ================= YOLCULAR: görünüş, profil, doğma, hedef ================= */
 export const SKINS = ['#f1c9a5', '#e0ac7e', '#c68a5a', '#8d5a3b', '#f6d6bd'];
@@ -166,6 +167,12 @@ export function ZONE_POOL(z) {
   return _zonePools[z.name];
 }
 export function spawnPax() {
+  // kariyer: ara sıra bir müdavim kendi semtinde çıkar
+  const md = maybeSpawnMudavim();
+  if (md) {
+    G.pax.push(md);
+    return;
+  }
   let tc = 0;
   for (const q of G.pax) if (q.look.tourist && q.state === 'wait') tc++;
   const tour = G.role === 'taxi' && Math.random() < 0.1 && tc < 40;

@@ -1750,3 +1750,15 @@ body.inmenu .hud {
   font-weight: 600;
   opacity: 0.6;
 }
+.ctasks {
+  margin: 0 0 6px;
+  padding-left: 18px;
+  font:
+    600 13px/1.4 'Grandstander',
+    'Archivo',
+    sans-serif;
+}
+.ctasks li.done {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
