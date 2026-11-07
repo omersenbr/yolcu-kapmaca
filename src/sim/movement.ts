@@ -1,7 +1,7 @@
 // <auto-imports>
-import { DF, G } from '../core/state';
-import { rnd } from '../core/util';
-import { DIRS, isRoad, tch } from '../map/grid';
+import { DF, G, mods } from './state';
+import { rnd } from './util';
+import { DIRS, isRoad, tch } from './grid';
 import { fleeDir, npcGoal } from './ai';
 import { arrive, fx } from './game';
 import { bfs } from './pathfinding';
@@ -80,7 +80,7 @@ export function move(e, dt) {
     const step = Math.min(d, left);
     if (e.isPlayer) {
       if (e.carry) e.carry.driven = (e.carry.driven || 0) + step;
-      if (G.freeFuel <= 0) G.fuel += step * 0.8;
+      if (G.freeFuel <= 0) G.fuel += step * 0.8 * mods().fuelMul; // eski araç çok yakar (kariyer)
       if (G.fuel >= 10) {
         G.fuel -= 10;
         G.money -= 10;

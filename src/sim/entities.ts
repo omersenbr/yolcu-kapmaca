@@ -1,5 +1,5 @@
 // <auto-imports>
-import type { Ent } from '../core/types';
+import type { Ent } from './types';
 // </auto-imports>
 export let uid = 0;
 export function mkEnt(kind: Ent['kind'], c: number, r: number, isPlayer?: boolean): Ent {

@@ -1,7 +1,7 @@
 // <auto-imports>
-import { DLG } from '../core/content';
-import { G } from '../core/state';
-import { T, dist, esc, rnd } from '../core/util';
+import { DLG } from '../sim/content';
+import { G } from '../sim/state';
+import { T, dist, esc, rnd } from '../sim/util';
 import { rescue } from './ads';
 import { ask, closePanel, openPanel, setCast, ui } from './comic';
 import { baseVars, interrogate, rollEnemyWeapon, sayL } from './engine';
@@ -9,10 +9,10 @@ import { burstSVG, face } from './portraits';
 import { fight } from '../fight/fight';
 import { endGame } from '../ui/endscreen';
 import { toast, updHud } from '../ui/hud';
-import { clearChases, onPlayer, startChase } from '../world/ai';
-import { inHome } from '../world/game';
-import { LOOK } from '../world/passengers';
-import type { Vars } from '../core/types';
+import { clearChases, onPlayer, startChase } from '../sim/ai';
+import { inHome } from '../sim/game';
+import { LOOK } from '../sim/passengers';
+import type { Vars } from '../sim/types';
 // </auto-imports>
 /* ================= TAG’Cİ SAHNELERİ ================= */
 /* ---- Tag sürücüsü taksicilere yakalandı ---- */

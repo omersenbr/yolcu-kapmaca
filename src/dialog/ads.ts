@@ -1,8 +1,8 @@
 // <auto-imports>
-import { DLG } from '../core/content';
+import { DLG } from '../sim/content';
 import { $ } from '../core/dom';
-import { G } from '../core/state';
-import { esc } from '../core/util';
+import { G } from '../sim/state';
+import { esc } from '../sim/util';
 import { buttons, setBubble, setCast, ui } from './comic';
 import { sayL } from './engine';
 import { charImg } from './portraits';

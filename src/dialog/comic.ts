@@ -1,11 +1,12 @@
 // <auto-imports>
 import { $ } from '../core/dom';
-import { G } from '../core/state';
-import { esc, reduce } from '../core/util';
+import { G } from '../sim/state';
+import { reduce } from '../core/dom';
+import { esc } from '../sim/util';
 import { cv } from '../render/view';
 import { updHud } from '../ui/hud';
 import { pageTurn } from '../ui/pageflip';
-import type { Choice } from '../core/types';
+import type { Choice } from '../sim/types';
 // </auto-imports>
 export interface CastMember {
   svg: string;

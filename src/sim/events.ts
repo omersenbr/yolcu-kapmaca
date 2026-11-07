@@ -1,12 +1,12 @@
 // <auto-imports>
-import { DLG } from '../core/content';
-import { G } from '../core/state';
-import { T, rnd } from '../core/util';
-import { STREETS, VENUES, district, zoneAt } from '../map/grid';
-import { toast } from '../ui/hud';
+import { DLG } from './content';
+import { G } from './state';
+import { T, rnd } from './util';
+import { STREETS, VENUES, district, zoneAt } from './grid';
+import { bus } from './bus';
 import { assignProf, mkLook, mkTourist } from './passengers';
 import { randFar } from './pathfinding';
-import type { Pax } from '../core/types';
+import type { Pax } from './types';
 // </auto-imports>
 export function newCheck() {
   const t = randFar(
@@ -53,7 +53,7 @@ export function waveTick(w) {
     G.wave = G.nextWave;
     G.nextWave = pickWave();
     G.waveT = 40 + Math.random() * 20;
-    if (G.wave && G.intelT > 0) toast(T(DLG.intel.wave, { etkinlik: G.wave.t, semt: G.wave.semt }));
+    if (G.wave && G.intelT > 0) bus.toast(T(DLG.intel.wave, { etkinlik: G.wave.t, semt: G.wave.semt }));
   }
 }
 export function spawnPaxAt(tiles, ev, venue) {

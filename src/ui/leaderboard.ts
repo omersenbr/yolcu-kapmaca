@@ -1,7 +1,7 @@
 // <auto-imports>
-import { DF, UNAME } from '../core/state';
-import { load, save } from '../core/storage';
-import { esc } from '../core/util';
+import { DF, UNAME } from '../sim/state';
+import { load, save } from '../sim/storage';
+import { esc } from '../sim/util';
 // </auto-imports>
 /* ================= SIRALAMA: şimdilik yerel, rol başına ilk 10 ================= */
 export function loadLB() {

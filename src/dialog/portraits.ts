@@ -1,8 +1,9 @@
 // <auto-imports>
 import { assetUrl } from '../core/assets';
-import { MANIFEST } from '../core/content';
-import { esc, reduce } from '../core/util';
-import type { Look } from '../core/types';
+import { MANIFEST } from '../sim/content';
+import { reduce } from '../core/dom';
+import { esc } from '../sim/util';
+import type { Look } from '../sim/types';
 // </auto-imports>
 /* ================= KARAKTER PORTRELERİ (karikatür paneli) =================
    Çizimler assets/characters ve assets/passengers altında; çizimi olmayan karakterler için SVG yüz. */

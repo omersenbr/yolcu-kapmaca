@@ -1,8 +1,8 @@
 // <auto-imports>
 import { img } from '../core/assets';
-import { MANIFEST } from '../core/content';
-import { hsh } from '../core/util';
-import { COLS, LABELS, LMK, MAP, ROWS, TT, isBog, styleOf, tch } from './grid';
+import { MANIFEST } from '../sim/content';
+import { hsh } from '../sim/util';
+import { COLS, LABELS, LMK, MAP, ROWS, TT, isBog, styleOf, tch } from '../sim/grid';
 import { DPR, TS, mini } from '../render/view';
 // </auto-imports>
 export const PAL_WALK = { light: ['#ddd5c4', 'rgba(120,105,85,.18)'], dark: ['#4a4640', 'rgba(0,0,0,.22)'] };

@@ -1,8 +1,10 @@
 // <auto-imports>
+import { DLG } from '../sim/content';
 import { $ } from '../core/dom';
-import { DF, G, TL, demand, hourNow } from '../core/state';
-import { clamp } from '../core/util';
-import { district } from '../map/grid';
+import { DF, G, TL, demand, hourNow } from '../sim/state';
+import { taximeter } from '../sim/passengers';
+import { clamp } from '../sim/util';
+import { district } from '../sim/grid';
 // </auto-imports>
 /* ---- telsiz: yakındaki meslektaşlar Tag kovalıyor (taksici rolü) ---- */
 export let radioT = 0;
@@ -42,7 +44,7 @@ export function updHud() {
       mm = Math.floor((h - hh) * 4) * 15;
     $('time').textContent = String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
     const dm = demand();
-    $('timeLbl').textContent = dm.tag ? 'Saat, ' + dm.tag : 'Saat';
+    $('timeLbl').textContent = G.lastRide ? DLG.kariyer.sonYolcuEtiket : dm.tag ? 'Saat, ' + dm.tag : 'Saat';
   }
   const c = G.player.carry;
   $('pax').textContent = c
@@ -50,7 +52,7 @@ export function updHud() {
     : 'Boş';
   let lbl = 'Yolcu';
   if (c && G.role === 'taxi')
-    lbl = c.fixed ? `Pazarlık ₺${c.fare}` : `Taksimetre ₺${30 + 11 * Math.round(c.driven || 0) + (c.cross ? 40 : 0)}`;
+    lbl = c.fixed ? `Pazarlık ₺${c.fare}` : `Taksimetre ₺${taximeter(Math.round(c.driven || 0), c.cross)}`;
   if (c && G.role === 'tag') {
     const exp = (((c.m / 4.5) * 1.5 + 6) * 1.5 * DF().patience * TL().pat) / DF().world,
       k = clamp(Math.ceil(5 * (1 - (c.rideT || 0) / exp)), 0, 5);

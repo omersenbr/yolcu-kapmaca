@@ -1,19 +1,19 @@
 // <auto-imports>
-import { DLG } from '../core/content';
-import { G, hourNow } from '../core/state';
-import { T, clamp, dist, esc, rnd, shuffle } from '../core/util';
+import { DLG } from '../sim/content';
+import { G, hourNow, mods } from '../sim/state';
+import { T, clamp, dist, esc, rnd, shuffle } from '../sim/util';
 import { rescue } from './ads';
 import { ask, closePanel, openPanel, say, setCast, ui } from './comic';
 import { baseVars, interrogate, rollEnemyWeapon, sayL } from './engine';
 import { burstSVG, face } from './portraits';
 import { fight } from '../fight/fight';
-import { ASIA, DAT, DISTS, ZONES, district, zoneAt } from '../map/grid';
+import { ASIA, DAT, DISTS, ZONES, district, zoneAt } from '../sim/grid';
 import { endGame } from '../ui/endscreen';
 import { toast } from '../ui/hud';
-import { clearChases, startChase } from '../world/ai';
-import { board, fx } from '../world/game';
-import { FN, LOOK, MN } from '../world/passengers';
-import type { Vars } from '../core/types';
+import { clearChases, startChase } from '../sim/ai';
+import { board, fx } from '../sim/game';
+import { FN, LOOK, MN } from '../sim/passengers';
+import type { Vars } from '../sim/types';
 // </auto-imports>
 /* ================= TAKSİCİ SAHNELERİ ================= */
 /* ---- Taksici: turist ---- */
@@ -217,7 +217,8 @@ export async function refuse(p, chance, line) {
   p.claim = null;
   p.cool = G.clock + 5;
   p.refused = (p.refused || 0) + 1;
-  if (Math.random() < Math.min(0.95, chance)) {
+  // eski araçta yolcular homurdanır: şikayet ihtimali artar (kariyer)
+  if (Math.random() < Math.min(0.95, chance * mods().complaintMul)) {
     setCast([
       { svg: face(LOOK.taxi1, 'nervous'), name: 'Sen' },
       { svg: face({ ...L, rec: true }, 'angry'), name: L.name },

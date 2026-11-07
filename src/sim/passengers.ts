@@ -1,10 +1,10 @@
 // <auto-imports>
-import { MANIFEST } from '../core/content';
-import { G, demand } from '../core/state';
-import { rnd } from '../core/util';
-import { ASIA, DIRS, KIYI, MERKEZ, STREETS, TARIHI, WORK, ZONES, district, tch, zoneAt } from '../map/grid';
+import { MANIFEST } from './content';
+import { G, demand, mods } from './state';
+import { rnd } from './util';
+import { ASIA, DIRS, KIYI, MERKEZ, STREETS, TARIHI, WORK, ZONES, district, tch, zoneAt } from './grid';
 import { randNear } from './pathfinding';
-import type { Pax } from '../core/types';
+import type { Pax } from './types';
 // </auto-imports>
 /* ================= YOLCULAR: görünüş, profil, doğma, hedef ================= */
 export const SKINS = ['#f1c9a5', '#e0ac7e', '#c68a5a', '#8d5a3b', '#f6d6bd'];
@@ -199,6 +199,12 @@ export function spawnPax() {
     return;
   }
 }
+/** taksimetre: açılış 30 + kare başına 11 + Boğaz geçişi 40; kariyerde vardiya çarpanıyla */
+export function taximeter(dist: number, cross: boolean) {
+  const base = 30 + 11 * dist + (cross ? 40 : 0),
+    k = mods().fareMul;
+  return k === 1 ? base : Math.round(base * k);
+}
 export function pickDest(p, kind) {
   const rush = demand().rush;
   let best = null;
@@ -224,7 +230,7 @@ export function pickDest(p, kind) {
   p.dy = best[1];
   p.m = Math.round((Math.abs(p.dx - p.x) + Math.abs(p.dy - p.y)) * 1.15);
   p.cross = p.x >= ASIA !== p.dx >= ASIA;
-  p.fare = 30 + 11 * p.m + (p.cross ? 40 : 0);
+  p.fare = taximeter(p.m, p.cross);
   p.dest = district(p.dx, p.dy);
   p.short = p.m <= 10 && !p.cross;
 }

@@ -4,9 +4,12 @@
    Kod metin içermez; bütün diyaloglar DLG’den gelir. */
 export let MAPDATA = null,
   DLG = null,
-  MANIFEST = null;
-export function setContent(map, dlg, manifest) {
+  MANIFEST = null,
+  /** kariyer ekonomisi: data/ekonomi.json */
+  ECO = null;
+export function setContent(map, dlg, manifest, eco?) {
   MAPDATA = map;
   DLG = dlg;
   MANIFEST = manifest;
+  if (eco) ECO = eco;
 }

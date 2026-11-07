@@ -1,12 +1,12 @@
 // <auto-imports>
-import { DLG } from '../core/content';
+import { DLG } from '../sim/content';
 import { $ } from '../core/dom';
-import { DF, weapon } from '../core/state';
-import { T, clamp, esc, rnd } from '../core/util';
+import { DF, weapon } from '../sim/state';
+import { T, clamp, esc, rnd } from '../sim/util';
 import { setBubble, stopTimer, ui } from '../dialog/comic';
 import { face } from '../dialog/portraits';
-import { LOOK } from '../world/passengers';
-import type { Look } from '../core/types';
+import { LOOK } from '../sim/passengers';
+import type { Look } from '../sim/types';
 // </auto-imports>
 export interface FightOpts {
   bonus?: number;

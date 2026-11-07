@@ -1,10 +1,10 @@
 // <auto-imports>
-import { DF, G } from '../core/state';
-import { dist } from '../core/util';
-import { DIRS, isRoad, zoneAt } from '../map/grid';
-import { radio, toast } from '../ui/hud';
+import { DF, G } from './state';
+import { dist } from './util';
+import { DIRS, isRoad, zoneAt } from './grid';
+import { bus } from './bus';
 import { randNear } from './pathfinding';
-import type { Ent } from '../core/types';
+import type { Ent } from './types';
 // </auto-imports>
 /* ================= YAPAY ZEKÂ: hedef seçimi, kaçış, kovalama, tanıklar ================= */
 export function npcGoal(e, cx, cy) {
@@ -64,7 +64,7 @@ export function npcWitness(t) {
   }
   if (n) {
     if (t.innocent === undefined) t.innocent = Math.random() < 0.15;
-    if (G.role === 'taxi' && !G.assist && dist(t, G.player) <= 5.7 && dist(t, G.player) > 0.8) radio(t, z);
+    if (G.role === 'taxi' && !G.assist && dist(t, G.player) <= 5.7 && dist(t, G.player) > 0.8) bus.radio(t, z);
   }
   return n;
 }
@@ -85,9 +85,9 @@ export function witness(P, verb) {
       po++;
     }
   }
-  if (po) toast(`Polis yolcu ${verb === 'aldın' ? 'aldığını' : 'indirdiğini'} gördü! Kaç!`, true);
+  if (po) bus.toast(`Polis yolcu ${verb === 'aldın' ? 'aldığını' : 'indirdiğini'} gördü! Kaç!`, true);
   else if (tx)
-    toast(
+    bus.toast(
       z && z.w >= 2
         ? 'Durak taksicileri seni gördü! Kaç!'
         : tx > 1
