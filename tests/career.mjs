@@ -73,7 +73,7 @@ await page.click('#careerBody button[data-act="eski"]');
 await page.waitForTimeout(300);
 const c = await page.evaluate(() => JSON.parse(localStorage.getItem('yk-kariyer')));
 check(c.araclar.length === 1 && c.kasa === 1550000 && c.vardiya === 1, `eski taksi alındı ve kayıt kalıcı (araç ${c.araclar.length}, kasa ₺${c.kasa}, vardiya ${c.vardiya})`);
-const fee = await page.$eval('#cs-taxi + .csec p', (e) => e.textContent);
+const fee = await page.$eval('#cs-taxi ~ .csec p', (e) => e.textContent);
 check(/Kendi aracın/.test(fee) && /eski/.test(fee), `kendi araçla vardiya ücreti ve eski araç uyarısı (${fee.slice(0, 80)})`);
 await page.screenshot({ path: `${out}/03-garaj.png` });
 
