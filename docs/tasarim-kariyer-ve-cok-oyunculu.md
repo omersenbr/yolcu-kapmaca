@@ -163,11 +163,13 @@ Tag’ci:
 - **Filo:** sen ve mahalleden en fazla 3 arkadaş, yani 4 araç. En iyi aracı sen sürersin, diğerlerini arkadaşların. Araç başına 12 saatte ~₺265 bin getirir, ama araç başına ~%24 ihtimalle bağlanır: ₺90 bin ceza ve 24 saat otopark. Taksi filosu (~₺210 bin) daha az getirir ama risksizdir ve plakayla büyür. Tag kârlı ama riskli, taksi güvenli ve kalıcı.
 - **Araç bağlanırsa** (vardiyada): kazanç gider, ₺90 bin ceza, kendi aracınsa 24 saat otoparkta; o sırada arkadaşının aracına dönülür.
 
+**Son yolcu kuralı:** vardiya süresi dolduğunda arabada yolcu varsa vardiya o yolcu teslim edilince biter. Saat durur, bilgi şeridinde “Son yolcu” yazar ve yeni yolcu alınmaz (`npm run sim -- --career --bot` ile doğrulandı).
+
 **Testler:**
 - `npm run test:kariyer`: kariyer hesapları, Node’da.
 - `tests/career.mjs`: tarayıcıda taksi vardiyası, rol değiştirip Tag vardiyası, araç alma, kalıcı kayıt.
 
-**Sırada:** turistten dolar; vardiya bitince arabadaki yolcu; plaka değerinin piyasayla oynaması; Tag tarafının tempo simülasyonu.
+**Sırada:** turistten dolar; plaka değerinin piyasayla oynaması; Tag tarafının tempo simülasyonu.
 
 ## 10. Yol haritası
 

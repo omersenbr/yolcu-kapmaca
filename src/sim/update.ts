@@ -1,4 +1,5 @@
 // <auto-imports>
+import { DLG } from './content';
 import { DF, G, TL, demand } from './state';
 import { dist } from './util';
 import { onPlayer, startChase } from './ai';
@@ -33,9 +34,18 @@ export function update(dt) {
   G.time -= w;
   if (G.time <= 0) {
     G.time = 0;
-    bus.hud();
-    bus.end('time');
-    return;
+    // kariyer: süre dolduğunda arabada yolcu varsa vardiya o yolcu teslim edilince biter
+    if (G.career && G.player.carry) {
+      if (!G.lastRide) {
+        G.lastRide = true;
+        bus.toast(DLG.kariyer.sonYolcu);
+        bus.hud();
+      }
+    } else {
+      bus.hud();
+      bus.end('time');
+      return;
+    }
   }
   G.invuln = Math.max(0, G.invuln - w);
   if (G.nitro > 0) G.nitro -= w;

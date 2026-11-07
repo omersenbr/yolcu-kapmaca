@@ -21,6 +21,8 @@ const arg = (k: string, d: string) => {
 };
 const role = arg('role', 'taxi') as 'taxi' | 'tag';
 const BOT = process.argv.includes('--bot');
+// --career: 12 saatlik kariyer vardiyası (çarpanlar 1); süre dolunca son yolcu kuralı
+const CAREER = process.argv.includes('--career');
 let rides = 0;
 const minutes = +arg('minutes', '2'),
   extra = +arg('extra', '0');
@@ -59,7 +61,11 @@ bindBus({
   },
 });
 
-newGame(role);
+newGame(
+  role,
+  CAREER ? { startH: 5, span: 12, mods: { fareMul: 1, demandMul: 1, complaintMul: 1, fuelMul: 1 } } : undefined,
+);
+let lastRideAt = -1;
 for (let i = 0; i < extra; i++) {
   const t = ROADS[Math.floor(Math.random() * ROADS.length)];
   G.ents.push(mkEnt(i % 3 === 0 ? 'police' : i % 3 === 1 ? 'taxi' : 'tag', t[0], t[1]));
@@ -89,10 +95,14 @@ for (; f < frames && !G.over; f++) {
     }
   }
   update(dt);
+  if (G.lastRide && lastRideAt < 0) lastRideAt = f;
 }
 const ms = performance.now() - t0;
 console.log(
   `rol ${role} · ${G.ents.length} araç · ${f} kare (${((f * dt) / 60).toFixed(1)} dk oyun) · kare başına ${(ms / f).toFixed(3)} ms` +
     ` · kasa ₺${G.money} · bekleyen yolcu ${G.pax.filter((p) => p.state === 'wait').length}` +
-    ` · yolculuk ${rides} · sahneler ${JSON.stringify(counts)}${ended ? ' · gün bitti: ' + ended : ''}`,
+    ` · yolculuk ${rides} · sahneler ${JSON.stringify(counts)}${ended ? ' · gün bitti: ' + ended : ''}` +
+    (lastRideAt >= 0
+      ? ` · son yolcu: süre ${lastRideAt}. karede doldu, yolcu ${f - lastRideAt} kare sonra teslim edildi`
+      : ''),
 );

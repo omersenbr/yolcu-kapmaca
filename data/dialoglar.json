@@ -2033,6 +2033,8 @@
   "baglananToast": "{n} aracın arkadaşın sürerken bağlandı! Ceza −₺{ceza}, araç 24 saat otoparkta.",
   "sonucArkadas": "Arkadaş payı: −₺{tutar}",
   "sonucKomisyon": "Tag komisyonu: −₺{tutar}",
-  "baglandi": "Araç bağlandı: kazanç gitti, ceza kasadan; kendi aracınsa 24 saat otoparkta."
+  "baglandi": "Araç bağlandı: kazanç gitti, ceza kasadan; kendi aracınsa 24 saat otoparkta.",
+  "sonYolcu": "Vardiya süresi doldu. Son yolcunu bırak, vardiya biter; yeni yolcu alma.",
+  "sonYolcuEtiket": "Son yolcu"
  }
 }

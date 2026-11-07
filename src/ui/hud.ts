@@ -1,4 +1,5 @@
 // <auto-imports>
+import { DLG } from '../sim/content';
 import { $ } from '../core/dom';
 import { DF, G, TL, demand, hourNow } from '../sim/state';
 import { taximeter } from '../sim/passengers';
@@ -43,7 +44,7 @@ export function updHud() {
       mm = Math.floor((h - hh) * 4) * 15;
     $('time').textContent = String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
     const dm = demand();
-    $('timeLbl').textContent = dm.tag ? 'Saat, ' + dm.tag : 'Saat';
+    $('timeLbl').textContent = G.lastRide ? DLG.kariyer.sonYolcuEtiket : dm.tag ? 'Saat, ' + dm.tag : 'Saat';
   }
   const c = G.player.carry;
   $('pax').textContent = c

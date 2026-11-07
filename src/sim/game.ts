@@ -163,6 +163,7 @@ export function arrive(e) {
     return;
   }
   if (e.chase) return;
+  if (e.isPlayer && G.lastRide) return; // son yolcu: yeni yolcu alınmaz
   const p = G.pax.find((p) => p.state === 'wait' && p.x === cx && p.y === cy && !(e.isPlayer && p.cool > G.clock));
   if (!p) return;
   if (e.isPlayer && G.role === 'taxi') {

@@ -63,7 +63,7 @@ K.buyTagCar(c, 0);
 const a = K.accrued(c, t0 + 12 * 3600e3);
 const per = ECO.tag.ortalamaVardiyaBrut * ECO.tag.arkadasSoforPayi - ECO.tag.aracBakimVardiya;
 eq(a.tagAraci, 1, 'en iyi aracı sen sürersin, diğerini arkadaşın');
-eq(a.gelir, Math.floor((12 * 60) / ECO.tempo.vardiyaDakika * per), '12 saatlik filo geliri');
+eq(a.gelir, Math.floor(((12 * 60) / ECO.tempo.vardiyaDakika) * per), '12 saatlik filo geliri');
 eq(K.accrued(c, t0 + 48 * 3600e3).gelir, a.gelir, 'birikim 12 saatte durur');
 
 // taksi filosu, plaka hissesi, kredi
