@@ -24,6 +24,7 @@
   <div class="adbtns" id="adbtns" hidden><button id="intelBtn" aria-label="Telsiz istihbaratı"><img alt="" src="/assets/ui/i_radio.webp"></button><button id="fuelBtn" aria-label="Benzin kartı"><img alt="" src="/assets/ui/i_fuel.webp"></button></div>
   <button class="nitroBtn" id="nitroBtn" hidden aria-label="Nitro"><img alt="" src="/assets/ui/i_bolt.webp"><span id="nitroLbl">NİTRO</span></button>
   <div class="flash" id="flash"></div>
+  <button class="mphelp" id="mpHelp" hidden></button>
   <div class="overlay" id="adOv" hidden><div class="card" id="adCard"></div></div>
   <div class="radio" id="radio" hidden><b><img alt="" src="/assets/ui/i_radio.webp">Telsiz</b><p id="radioTxt"></p><div><button id="radioYes">Yardıma git</button><button class="no" id="radioNo">Boş ver</button></div></div>
 
@@ -63,6 +64,8 @@
     <div class="sheet" id="sh-lbs" hidden><div class="shead"><b>Sıralama</b><button class="sx" aria-label="Kapat">✕</button></div><div class="lb" id="lb"></div></div>
     <div class="sheet" id="sh-prof" hidden><div class="shead"><b>Profil</b><button class="sx" aria-label="Kapat">✕</button></div>
       <label class="nm" id="nmWrap">Kullanıcı adın<input id="uname" maxlength="16" autocomplete="nickname" placeholder="ör. Kadıköylü Reis"></label>
+      <div class="mpset"><b id="mpTitle">Çevrimiçi (deneme)</b><label class="mpchk"><input type="checkbox" id="mpOn"> <span id="mpOnLbl">Kariyerde çevrimiçi oyna</span></label>
+        <label class="nm"><span id="mpUrlLbl">Sunucu adresi</span><input id="mpUrl" placeholder="ws://192.168.1.20:8787" autocomplete="off"></label><small id="mpNote"></small></div>
       <button class="btn" id="profOk">Kaydet</button></div>
     <div class="sheet" id="sh-career" hidden><div class="shead"><b id="careerTitle">Kariyer</b><button class="sx" aria-label="Kapat">✕</button></div><div id="careerBody"></div></div>
     <div class="sheet" id="sh-help" hidden><div class="shead"><b>Nasıl oynanır</b><button class="sx" aria-label="Kapat">✕</button></div>

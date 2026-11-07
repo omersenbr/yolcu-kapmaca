@@ -75,7 +75,13 @@ export function drawRemotes(t: number, inView: (x: number, y: number) => boolean
       for (let i = 0; i < 6; i++) {
         const a = (i / 6) * Math.PI * 2 + t * 4;
         ctx.beginPath();
-        ctx.arc(x + Math.cos(a) * TS * 0.35, y - TS * 0.2 + Math.sin(a) * TS * 0.22, TS * (0.3 + 0.06 * Math.sin(t * 20 + i)), 0, Math.PI * 2);
+        ctx.arc(
+          x + Math.cos(a) * TS * 0.35,
+          y - TS * 0.2 + Math.sin(a) * TS * 0.22,
+          TS * (0.3 + 0.06 * Math.sin(t * 20 + i)),
+          0,
+          Math.PI * 2,
+        );
         ctx.fill();
         ctx.stroke();
       }

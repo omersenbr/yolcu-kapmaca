@@ -171,6 +171,43 @@ Tag’ci:
 
 **Sırada:** turistten dolar; plaka değerinin piyasayla oynaması; Tag tarafının tempo simülasyonu.
 
+## Uygulama durumu: kariyer eklemeleri
+
+- **Turist doları:** kariyerde kazıklanan turistlerin yarısı dolarla öder (ücret / kur); hapis, ruhsat iptali ya da bağlanmada gider.
+- **Plaka piyasası:**
+  - Plaka fiyatı her gün ±%1,2 oynar, başlangıç fiyatının %80–135’i arasında kalır.
+  - Günde %25 ihtimalle gazete manşeti çıkar: yeni plaka (−%8), taksiye zam (+%6), Tag’e ceza (+%4), Tag yasallaşıyor (−%6), dolar rekor (kur +%6)…
+  - Hisse bayi alış fiyatından (~%3,5 aşağı) satılır.
+- **Sıralama sayfasında “Kariyer”:** servet (kasa + dolar + araçlar + plaka payı − borç), en iyi vardiya, kilometre taşları (hangi gün).
+- **Hava** (her gün): açık, yağmur (yolcu ×1,4, hız ×0,9, ücret ×1,1), kar (×1,6, ×0,75, ×1,2), sis (×1,1, ×0,85). Haritada yağmur, kar ve sis çizilir.
+- **Günlük görevler:** her gerçek gün 3 görev (5/12 teslim, Boğaz’ı 2 kez geç, turist, havalimanı, şikayetsiz 4, 3’lü kombo, 3 kez 5 yıldız, ₺15 bin vardiya, Tag’de 4 teslim). Ödül vardiya sonunda kasaya.
+- **Yolcu puanı:**
+  - Her teslimde 1–5 yıldız. Takside yol uzatma oranına, Tag’de süreye göre; şikayet 1 yıldız; eski araç −0,5; olay kartı ±.
+  - Son 30 teslimin ortalaması ücreti etkiler: 4’ün üstü/altı her puan için ±%4, en fazla +%6 / −%8.
+- **Sürüş kombosu:** şikayetsiz teslimler arası en fazla 1 oyun saati geçerse kombo büyür; her adım +%5, en fazla +%25. Şikayet komboyu bozar.
+- **Yolculuk içi olaylar:** yol gidildikçe %22 ihtimalle bir kart açılır (müzik, simitçi, kestirme, telefon, klima, uygulama, IBAN). Seçim bahşişi ve yıldızı etkiler.
+- **Müdavimler:**
+  - 6 tekrar eden karakter: Nuri Bey (Fatih), Sevgül Hanım (Beşiktaş), Kaan (Sarıyer), Melek Abla (Bağcılar), Tarık Bey (Levent), Hans (Sultanahmet).
+  - Kendi semtlerinde arada bir çıkarlar, yeşil “Müdavim” etiketiyle görünürler. İlişkiye göre selam verirler (iyi/orta/kötü).
+  - İlişki şikayetsiz teslimde +1, şikayette −2; bahşiş ilişki × ₺300.
+- Hepsi yalnızca kariyerde; hızlı gün modu prototiple birebir aynı kalıyor (eşitlik testi).
+
+## Uygulama durumu: çok oyunculu ilk adım (ortak oturum)
+
+- **Sunucu:** `server/index.mjs` (Node + WebSocket, `npm run server`, port 8787).
+  - Gerçek oyuncuları taşır: konum, yön, rol, ekip, durum (sürüş/sorgu/kavga) ve yardım çağrısı.
+  - Ekip sınırı 3 (aynı durak ya da mahalle). Yardım yalnızca aynı ekipten, 6 kare içinden ve sorgu/kavgadaki arkadaşa.
+- **İstemci:** `src/net/mp.ts`, `src/render/remotes.ts`.
+  - **Ayar:** Profil → “Çevrimiçi (deneme)” ve sunucu adresi. Kariyer vardiyasında bağlanır; ekip kariyerdeki durak ya da mahalle, kariyer sayfasından seçilir.
+  - **Görüntü:** uzak oyuncular kendi araçlarıyla ve ad etiketiyle çizilir. Arkadaş yeşil, rakip rol kırmızı, başka ekip gri halka.
+  - **Sorgu ve kavga:** sorgudaki oyuncunun aracı donar, üstünde “?” balonu çıkar; kavgadakinin üstünde duman ve “PAT! KÜT!”.
+  - **Yardım:** yakında sıkışan ekip arkadaşı için “Yardıma git” düğmesi. Basılınca arkadaşın kavgasına müttefik olarak katılırsın (+%20 şans).
+- **Sınırlar:**
+  - Trafik (NPC’ler) her telefonda ayrı simüle edilir; oyuncular arası doğrudan sorgu/kavga (oyuncu oyuncuyu yakalar) henüz yok.
+  - Sunucu yetkili değil, hile korumasız; para ve kariyer hâlâ telefonda.
+  - GitHub Pages https olduğu için `ws://` adresine bağlanamaz. Şimdilik yerel ağda `npm run dev` + `npm run server` ile denenir; yayın için sunucunun wss (TLS) ile bir barındırmada (ör. Fly.io, Render) çalışması gerekir.
+- **Test:** `npm run test:mp`: sunucu + 4 oyuncu; görme, sorgu durumu, yardım, ekip dolu.
+
 ## 10. Yol haritası
 
 1. ~~Simülasyonu ekrandan ayır~~ (yapıldı; davranış eşitlik testiyle doğrulandı).

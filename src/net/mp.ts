@@ -100,8 +100,9 @@ function onMsg(m) {
     upsert(m.oyuncu);
     toast(T(s.katildi, { ad: m.oyuncu.ad, ekip: m.oyuncu.ekip }));
   } else if (m.t === 'leave') remotes.delete(m.id);
-  else if (m.t === 'states') for (const o of m.liste) if (o.id !== myId) upsert(o);
-  else if (m.t === 'helped') {
+  else if (m.t === 'states') {
+    for (const o of m.liste) if (o.id !== myId) upsert(o);
+  } else if (m.t === 'helped') {
     // bir arkadaş yardıma geldi: kavgada müttefik olur
     if (G) G.mpAlly = m.ad;
     toast(T(s.yardimaGeldi, { ad: m.ad }));
@@ -123,7 +124,11 @@ function checkHelp() {
   const P = G.player,
     ekip = G.role === 'taxi' ? G.stand && G.stand.name : G.home && G.home.name;
   const f = [...remotes.values()].find(
-    (r) => r.rol === G.role && r.ekip === ekip && r.durum !== 'surus' && Math.abs(r.x - P.x) + Math.abs(r.y - P.y) <= ECO.cokOyunculu.yardimMesafe,
+    (r) =>
+      r.rol === G.role &&
+      r.ekip === ekip &&
+      r.durum !== 'surus' &&
+      Math.abs(r.x - P.x) + Math.abs(r.y - P.y) <= ECO.cokOyunculu.yardimMesafe,
   );
   if (!f) {
     b.hidden = true;

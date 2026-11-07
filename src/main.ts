@@ -14,10 +14,12 @@ import { initPathfinding } from './sim/pathfinding';
 import { update } from './sim/update';
 import { initBindings } from './ui/bindings';
 import { initCareer } from './ui/career';
+import { initMp } from './net/mp';
 // </auto-imports>
 import * as tagScenes from './dialog/tagScenes';
 import * as taxiScenes from './dialog/taxiScenes';
 import * as rideEvents from './dialog/rideEvents';
+import * as mp from './net/mp';
 /* ================= GİRİŞ NOKTASI: veri ve görselleri yükle, modülleri başlat, döngüyü çalıştır ================= */
 import './styles/main.css';
 import mapUrl from '/data/harita.json?url';
@@ -57,6 +59,7 @@ export async function boot() {
   initBindings();
   initMenu();
   initCareer();
+  initMp();
   initInput();
   resize();
   cam.x = COLS * TS * 0.55;
@@ -72,6 +75,7 @@ export async function boot() {
       tagScenes,
       taxiScenes,
       rideEvents,
+      mp,
     };
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildMap);
 }

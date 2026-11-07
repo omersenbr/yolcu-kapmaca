@@ -362,5 +362,12 @@
     "sikayetCeza": 2,
     "alt": -5,
     "ust": 10
+  },
+  "cokOyunculu": {
+    "_not": "Ortak oturum (ilk adım). Sunucu: server/index.mjs. Ekip sınırı sunucuda (3).",
+    "port": 8787,
+    "gonderimHz": 10,
+    "yardimMesafe": 6,
+    "yardimBonus": 0.2
   }
 }

@@ -14,9 +14,11 @@ import { pageTurn } from './pageflip';
 import { newGame, nitro } from '../sim/game';
 import type { ShiftOpts } from '../sim/game';
 import { careerMode, nextShift, openCareer } from './career';
+import { mpEnabled, mpStart, mpStop, mpUrl, setMp } from '../net/mp';
 // </auto-imports>
 /* ================= ANA EKRAN: kapak, profil, rol düğmeleri, alttan açılan sayfalar ================= */
 export function toMenu() {
+  mpStop();
   pageTurn();
   $('nitroBtn').hidden = true;
   $('adbtns').hidden = true;
@@ -112,9 +114,20 @@ export function startRole(r, shift?: ShiftOpts) {
       ? `Durağın: ${G.stand.name}. Burada yolcu alabilirsin, başka duraklarda dikkat!`
       : `Mahallen: ${G.home.name}. Taksiciler peşine düşerse buraya getir!`,
   );
+  mpStart(UNAME);
 }
 export function initMenu() {
   $('uname').value = UNAME;
+  // çevrimiçi (deneme) ayarı
+  const MPT = DLG.cokOyunculu;
+  $('mpTitle').textContent = MPT.profilBaslik;
+  $('mpOnLbl').textContent = MPT.profilAcik;
+  $('mpUrlLbl').textContent = MPT.profilAdres;
+  $('mpNote').textContent = MPT.profilNot;
+  $('mpOn').checked = mpEnabled();
+  $('mpUrl').value = mpUrl();
+  $('mpOn').addEventListener('change', () => setMp($('mpOn').checked, $('mpUrl').value));
+  $('mpUrl').addEventListener('change', () => setMp($('mpOn').checked, $('mpUrl').value));
   $('uname').addEventListener('input', () => {
     $('nmWrap').classList.remove('err');
   });

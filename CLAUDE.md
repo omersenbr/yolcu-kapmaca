@@ -50,7 +50,7 @@ Yeni görseller gelince kesme işini betikle yap: arka plan rengini köşelerden
 
 ## Proje yapısı (1. adım tamamlandı)
 
-Vite + TypeScript + düz canvas. Kod `src/` altında modüllere bölündü; ayrıntı `docs/mimari.md`. `npm run dev` ile çalışır, `npm run build` tip denetimi yapar, `npm test` (dev sunucusu açıkken) Playwright ile oyunu otomatik oynatır. Prototip referans olarak `prototip/` altında duruyor. Oyun mantığı `src/sim/` altında ve ekrandan bağımsız (`npm run sim` ile Node’da koşar); kariyer ve çok oyunculu tasarım `docs/tasarim-kariyer-ve-cok-oyunculu.md` içinde. Tek oyunculu kariyer (taksici + Tag’ci, aynı kasayla rol değiştirilebilir) çalışıyor: `src/sim/career.ts` (kurallar), `src/ui/career.ts` (ekran), sayılar `data/ekonomi.json`, metinler `data/dialoglar.json` → `kariyer`.
+Vite + TypeScript + düz canvas. Kod `src/` altında modüllere bölündü; ayrıntı `docs/mimari.md`. `npm run dev` ile çalışır, `npm run build` tip denetimi yapar, `npm test` (dev sunucusu açıkken) Playwright ile oyunu otomatik oynatır. Prototip referans olarak `prototip/` altında duruyor. Oyun mantığı `src/sim/` altında ve ekrandan bağımsız (`npm run sim` ile Node’da koşar); kariyer ve çok oyunculu tasarım `docs/tasarim-kariyer-ve-cok-oyunculu.md` içinde. Tek oyunculu kariyer (taksici + Tag’ci, aynı kasayla rol değiştirilebilir) çalışıyor: `src/sim/career.ts` (kurallar), `src/ui/career.ts` (ekran), sayılar `data/ekonomi.json`, metinler `data/dialoglar.json` → `kariyer`. Kariyer mekanikleri (hava, günlük görevler, yolcu puanı, kombo, yolculuk içi olaylar, müdavimler) `src/sim/ridelife.ts`. Çok oyunculu ilk adım (ortak oturum): `server/index.mjs` (`npm run server`), istemci `src/net/mp.ts`.
 
 ## Yapılacaklar (öncelik sırasıyla)
 
@@ -59,8 +59,8 @@ Vite + TypeScript + düz canvas. Kod `src/` altında modüllere bölündü; ayr�
 3. ~~**Performans:**~~ (yapıldı, `docs/mimari.md`) Harita parçalı önbellekle çizilsin; görünmeyen araç ve yolcular çizilmesin; görseller sıkıştırılmış atlaslar.
 4. ~~**Telefonda test:**~~ (yapıldı: https://omersenbr.github.io/yolcu-kapmaca/, `main`’e gönderimde otomatik yayın)
 5. **Capacitor ile Android (sonra iOS; iOS için Mac ve Xcode gerekir).**
-6. **Ertelenen mekanikler (kullanıcı hepsini istedi, tek tek detaylandırılacak):** kariyer ve ilerleme, yolcu puan sistemi, günlük görevler, yolculuk içi olaylar, şehir ve hava olayları, sürüş kombosu, tekrar eden karakterler.
-7. **Çok oyunculu (sonra):** Açık dünya (semt kontrolü: her semtte durak ve mahalle; taksiciler durakları para, savaş ya da diplomasiyle alır; Tag ekipleri aynı mahalleden en fazla 3 kişi, komşu mahallelere yayılır; bölge bakım maliyeti; kalıcı dünya için Firebase benzeri sunucu; haftalık sezon) ve hızlı maç modu Plaka Ağası (agar.io benzeri filo). Önce botlarla tek oyunculu denenecek.
+6. **Ertelenen mekanikler** (ilk sürümleri kariyerde yapıldı; ayrıntılandırılacak): kariyer ve ilerleme, yolcu puan sistemi, günlük görevler, yolculuk içi olaylar, şehir ve hava olayları, sürüş kombosu, tekrar eden karakterler.
+7. **Çok oyunculu** (ilk adım yapıldı: ortak oturum, ekip, yardım; sırada yetkili sunucu ve oyuncular arası etkileşim): Açık dünya (semt kontrolü: her semtte durak ve mahalle; taksiciler durakları para, savaş ya da diplomasiyle alır; Tag ekipleri aynı mahalleden en fazla 3 kişi, komşu mahallelere yayılır; bölge bakım maliyeti; kalıcı dünya için Firebase benzeri sunucu; haftalık sezon) ve hızlı maç modu Plaka Ağası (agar.io benzeri filo). Önce botlarla tek oyunculu denenecek.
 8. **Para kazanma:** Ödüllü reklamlar (telsiz istihbaratı, benzin, avukat/torpil son şans), kozmetik satış (süsler, boya, durak tabelası, mahalle bayrağı). Önce Türkiye, sonra şehir paketleriyle yurt dışı.
 
 ## Bilinen notlar

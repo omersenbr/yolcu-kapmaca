@@ -149,6 +149,7 @@ export function meter(v) {
   ui.bar.style.width = Math.round(v * 100) + '%';
 }
 export function closePanel() {
+  if (G) G.mpAlly = null;
   if (!ui.comic.hidden) pageTurn();
   ui.comic.hidden = true;
   ui.answers.innerHTML = '';

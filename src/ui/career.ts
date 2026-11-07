@@ -4,7 +4,7 @@ import { $ } from '../core/dom';
 import { DLG, ECO } from '../sim/content';
 import * as K from '../sim/career';
 import type { Career } from '../sim/career';
-import { ZONES } from '../sim/grid';
+import { DBOX, STREETS, ZONES, district } from '../sim/grid';
 import { G, UNAME } from '../sim/state';
 import { load, save } from '../sim/storage';
 import { T, esc, rnd } from '../sim/util';
@@ -121,7 +121,11 @@ function taxiSection(c: Career) {
       ),
     )
     .join('');
-  return `<h3 class="crole" id="cs-taxi">${esc(s.taksiBolum)} · ${esc(s.statu[K.status(c)])}</h3>
+  const MPT = DLG.cokOyunculu;
+  const durakSel = `<label class="csel">${esc(MPT.durakSec)} <select data-sel="durak">${ZONES.map(
+    (z) => `<option${z.name === c.durak ? ' selected' : ''}>${esc(z.name)}</option>`,
+  ).join('')}</select></label>`;
+  return `<h3 class="crole" id="cs-taxi">${esc(s.taksiBolum)} · ${esc(s.statu[K.status(c)])}</h3>${durakSel}
     <section class="csec"><h4>${esc(s.taksiVardiya)}</h4><p>${esc(feeLine)}${
       K.playerCarOld(c) ? '<br>' + esc(s.eskiArac) : ''
     }</p><div class="row">${btn('taxi:gunduz', s.gunduz)}${btn('taxi:gece', s.gece)}</div></section>
@@ -186,7 +190,12 @@ function tagSection(c: Career, now: number) {
       btn('buyTag:' + sv, T(s.tagAl, { arac: carName(sv), fiyat: tl(K.tagCarPrice(sv)) }), K.canBuyTagCar(c, sv)),
     )
     .join('');
-  return `<h3 class="crole" id="cs-tag">${esc(s.tagBolum)} · ${esc(s.statu[K.tagStatus(c)])}</h3>
+  const MPT = DLG.cokOyunculu,
+    mh = c.tag.mahalle ? district(c.tag.mahalle[0], c.tag.mahalle[1]) : '';
+  const mahSel = `<label class="csel">${esc(MPT.mahalleSec)} <select data-sel="mahalle"><option value="">—</option>${DBOX.map(
+    (d) => `<option${d.ad === mh ? ' selected' : ''}>${esc(d.ad)}</option>`,
+  ).join('')}</select></label>`;
+  return `<h3 class="crole" id="cs-tag">${esc(s.tagBolum)} · ${esc(s.statu[K.tagStatus(c)])}</h3>${mahSel}
     <section class="csec"><h4>${esc(s.tagVardiya)}</h4><p>${esc(line)}${parkLine}</p>
       <div class="row">${btn('tag:gunduz', s.gunduz)}${btn('tag:gece', s.gece)}</div></section>
     <section class="csec"><h4>${esc(s.garajBaslik)}</h4><p>${esc(T(s.tagGarajMetin, { n: c.tag.araclar.length, limit: TG.filoLimiti }))}</p>
@@ -384,8 +393,31 @@ export function careerEndScreen(why: string) {
   $('end').hidden = false;
 }
 
+/** durak / mahalle seçimi (çok oyunculuda ekip buna göre) */
+function onSelect(kind: string, value: string) {
+  const M = DLG.cokOyunculu;
+  if (kind === 'durak' && ZONES.some((z) => z.name === value)) {
+    C.durak = value;
+    toast(T(M.durakDegisti, { durak: value }));
+  } else if (kind === 'mahalle' && value) {
+    const ok = (s: number[]) =>
+      district(s[0], s[1]) === value &&
+      !ZONES.some((z) => s[0] >= z.x0 - 3 && s[0] <= z.x1 + 3 && s[1] >= z.y0 - 3 && s[1] <= z.y1 + 3);
+    const pool = STREETS.filter((s) => ok(s) && s[0] % 4 === 0 && s[1] % 4 === 0);
+    const t = rnd(pool.length ? pool : STREETS.filter(ok));
+    if (!t) return;
+    C.tag.mahalle = [t[0], t[1]];
+    toast(T(M.mahalleDegisti, { mahalle: value }));
+  }
+  saveCareer();
+  render();
+}
 export function initCareer() {
   loadCareer();
+  $('careerBody').addEventListener('change', (e: Event) => {
+    const el = e.target as HTMLSelectElement;
+    if (el.dataset && el.dataset.sel) onSelect(el.dataset.sel, el.value);
+  });
   $('careerBody').addEventListener('click', (e: Event) => {
     const b = (e.target as HTMLElement).closest('button[data-act]') as HTMLButtonElement;
     if (b && !b.disabled) act(b.dataset.act);

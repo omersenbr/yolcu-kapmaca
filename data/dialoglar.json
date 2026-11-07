@@ -2338,5 +2338,27 @@
     "kotu": "You again... no tricks this time, okay?"
    }
   }
- ]
+ ],
+ "cokOyunculu": {
+  "baglanamadi": "Sunucuya bağlanılamadı. Adresi Profil’den kontrol et.",
+  "baglandi": "Çevrimiçi! Şehirde {n} oyuncu daha var.",
+  "ekipDolu": "{ekip} dolu: bir ekipte en fazla 3 kişi.",
+  "katildi": "{ad} şehre girdi ({ekip}).",
+  "yardimaGeldi": "{ad} yardıma geldi! Kavgada yanında.",
+  "yardimaGittin": "Arkadaşının yanına koştun!",
+  "yardimDugme": "{ad} sıkıştı: yardıma git!",
+  "sorguSimge": "?",
+  "kavgaSesleri": [
+   "PAT!",
+   "KÜT!"
+  ],
+  "profilBaslik": "Çevrimiçi (deneme)",
+  "profilAcik": "Kariyerde çevrimiçi oyna",
+  "profilAdres": "Sunucu adresi",
+  "profilNot": "Aynı duraktan ya da mahalleden en fazla 3 arkadaş. Durağını ve mahalleni kariyer sayfasından seç.",
+  "durakSec": "Durağın",
+  "mahalleSec": "Tag mahallen",
+  "durakDegisti": "Yeni durağın: {durak}",
+  "mahalleDegisti": "Yeni mahallen: {mahalle}"
+ }
 }

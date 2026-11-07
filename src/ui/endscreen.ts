@@ -8,9 +8,11 @@ import { addLB, renderLB } from './leaderboard';
 import { pageTurn } from './pageflip';
 import { LOOK } from '../sim/passengers';
 import { careerEndScreen } from './career';
+import { mpStop } from '../net/mp';
 // </auto-imports>
 /* ================= GÜN SONU: gazete manşeti, rekor, sıralama ================= */
 export function endGame(why) {
+  mpStop();
   pageTurn();
   $('nitroBtn').hidden = true;
   $('adbtns').hidden = true;

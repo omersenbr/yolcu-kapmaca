@@ -9,6 +9,8 @@ import { drawCar } from './cars';
 import { drawDest, drawPax } from './people';
 import { DPR, TS, VH, VW, cam, ctx, mctx, mini, px, rr, star } from './view';
 import { onPlayer } from '../sim/ai';
+import { drawRemotes } from './remotes';
+import { smoothRemotes } from '../net/mp';
 // </auto-imports>
 /* ================= ÇİZİM: kamera, harita parçaları, nesneler, ışık, ekran kenarı işaretleri, mini harita ================= */
 /* gün ışığı: renkleri çarpma ile koyulaştır (pus yok) */
@@ -256,6 +258,8 @@ export function render(t, dt) {
         );
       }
     for (const e of G.ents) if (!e.isPlayer && inView(e.x, e.y)) drawCar(e, t);
+    smoothRemotes(dt);
+    drawRemotes(t, inView);
     drawCar(G.player, t);
     if (G.nitro > 0) {
       const P = G.player,
