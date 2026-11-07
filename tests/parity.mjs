@@ -72,7 +72,7 @@ const mk = async (url) => {
   p.errors = [];
   p.on('pageerror', (e) => p.errors.push(e.message));
   await p.addInitScript(fakeClock);
-  await p.addInitScript(() => { localStorage.setItem('yk-name', 'Test Reis'); localStorage.setItem('yk-diff', 'orta'); });
+  await p.addInitScript(() => { localStorage.setItem('yk-name', 'Test Reis'); localStorage.setItem('yk-diff', 'orta'); localStorage.setItem('yk-serbest', '0'); localStorage.setItem('yk-ses', '0'); });
   await p.goto(url);
   await p.waitForFunction(() => !document.getElementById('loading'), null, { timeout: 30000 });
   await p.waitForTimeout(2500); // görseller ve yazı tipleri otursun

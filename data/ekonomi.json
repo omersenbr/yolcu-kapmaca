@@ -369,5 +369,11 @@
     "gonderimHz": 10,
     "yardimMesafe": 6,
     "yardimBonus": 0.2
+  },
+  "serbestSohbet": {
+    "_not": "Serbest konuşmanın oyun etkileri.",
+    "hakaretCezasi": 2000,
+    "hafifSupheArtisi": 0.3,
+    "anlamadimSupheArtisi": 0.08
   }
 }

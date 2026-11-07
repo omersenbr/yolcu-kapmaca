@@ -15,6 +15,7 @@ import { newGame, nitro } from '../sim/game';
 import type { ShiftOpts } from '../sim/game';
 import { careerMode, nextShift, openCareer } from './career';
 import { mpEnabled, mpStart, mpStop, mpUrl, setMp } from '../net/mp';
+import { freeformOn, setFreeform, setVoice, voiceOn } from '../dialog/voice';
 // </auto-imports>
 /* ================= ANA EKRAN: kapak, profil, rol düğmeleri, alttan açılan sayfalar ================= */
 export function toMenu() {
@@ -118,6 +119,15 @@ export function startRole(r, shift?: ShiftOpts) {
 }
 export function initMenu() {
   $('uname').value = UNAME;
+  // konuşma ayarları: serbest konuşma, sesli karakterler
+  const TU = DLG.serbestSohbet.ui;
+  $('talkTitle').textContent = TU.ayarBaslik;
+  $('talkFreeLbl').textContent = TU.ayarSerbest;
+  $('talkVoiceLbl').textContent = TU.ayarSes;
+  $('talkFree').checked = freeformOn();
+  $('talkVoice').checked = voiceOn();
+  $('talkFree').addEventListener('change', () => setFreeform($('talkFree').checked));
+  $('talkVoice').addEventListener('change', () => setVoice($('talkVoice').checked));
   // çevrimiçi (deneme) ayarı
   const MPT = DLG.cokOyunculu;
   $('mpTitle').textContent = MPT.profilBaslik;

@@ -2360,5 +2360,233 @@
   "mahalleSec": "Tag mahallen",
   "durakDegisti": "Yeni durağın: {durak}",
   "mahalleDegisti": "Yeni mahallen: {mahalle}"
+ },
+ "serbestSohbet": {
+  "_not": "Sorgularda serbest konuşma: oyuncunun cümlesi en yakın cevap seçeneğine eşlenir (src/sim/nlu.ts). Seçeneklere isteğe bağlı 'anahtar' listesi eklenebilir.",
+  "esik": 0.45,
+  "dolgu": [
+   "ve",
+   "bir",
+   "bu",
+   "şu",
+   "o",
+   "da",
+   "de",
+   "mi",
+   "mı",
+   "mu",
+   "mü",
+   "ne",
+   "ben",
+   "sen",
+   "biz",
+   "siz",
+   "onu",
+   "bunu",
+   "abi",
+   "abla",
+   "kardeşim",
+   "ya",
+   "yani",
+   "işte",
+   "hani",
+   "ki",
+   "ama",
+   "için",
+   "gibi",
+   "çok",
+   "şey",
+   "valla",
+   "vallahi",
+   "memur",
+   "bey",
+   "efendim",
+   "hocam",
+   "amirim",
+   "reis",
+   "usta",
+   "ağabey",
+   "lütfen",
+   "sadece",
+   "bence",
+   "tamam"
+  ],
+  "esAnlamli": [
+   [
+    "akraba",
+    "kuzen",
+    "amca",
+    "dayı",
+    "teyze",
+    "hala",
+    "yeğen",
+    "enişte",
+    "kardeş",
+    "abim",
+    "ablam",
+    "bacanak",
+    "kayınço",
+    "yenge"
+   ],
+   [
+    "arkadaş",
+    "kanka",
+    "dost",
+    "ahbap",
+    "tanıdık",
+    "komşu"
+   ],
+   [
+    "iş",
+    "mesai",
+    "şirket",
+    "ofis",
+    "toplantı",
+    "işyeri",
+    "patron"
+   ],
+   [
+    "para",
+    "ücret",
+    "ödeme",
+    "nakit",
+    "kuruş",
+    "lira",
+    "fiyat"
+   ],
+   [
+    "almadım",
+    "almıyorum",
+    "bedava",
+    "parasız",
+    "karşılıksız",
+    "ücretsiz"
+   ],
+   [
+    "uygulama",
+    "aplikasyon",
+    "telefon",
+    "tag"
+   ],
+   [
+    "havalimanı",
+    "havaalanı",
+    "uçak",
+    "terminal"
+   ],
+   [
+    "hayır",
+    "değil",
+    "yok",
+    "olmaz",
+    "asla"
+   ],
+   [
+    "evet",
+    "tabii",
+    "doğru",
+    "aynen",
+    "elbette"
+   ],
+   [
+    "hasta",
+    "hastane",
+    "acil",
+    "doktor"
+   ],
+   [
+    "yol",
+    "güzergah",
+    "kestirme",
+    "trafik"
+   ],
+   [
+    "özür",
+    "pardon",
+    "kusura",
+    "affedersin"
+   ],
+   [
+    "kaçmak",
+    "kaç",
+    "gaz",
+    "bas"
+   ]
+  ],
+  "kufur": {
+   "agir": [
+    "amk",
+    "aq",
+    "amına",
+    "amına koyayım",
+    "orospu",
+    "orospu çocuğu",
+    "piç",
+    "siktir",
+    "sikerim",
+    "sik",
+    "yarrak",
+    "göt",
+    "pezevenk",
+    "şerefsiz",
+    "gavat",
+    "kahpe",
+    "oç",
+    "ibne"
+   ],
+   "hafif": [
+    "salak",
+    "aptal",
+    "gerizekalı",
+    "geri zekalı",
+    "mal",
+    "ulan",
+    "lan",
+    "hıyar",
+    "dangalak",
+    "eşek",
+    "öküz",
+    "embesil",
+    "ahmak",
+    "dallama"
+   ]
+  },
+  "tepki": {
+   "polis": {
+    "agir": "Sen memura hakaret mi ediyorsun?! Kelepçeyi tak, karakola gidiyoruz!",
+    "hafif": "Ağzını topla! Bir daha duyarsam tutanağa geçerim."
+   },
+   "taksici": {
+    "agir": "Sen kime küfrediyorsun lan! İn aşağı!",
+    "hafif": "Bana bak, terbiyeli konuş, yoksa fena olur!"
+   },
+   "durakci": {
+    "agir": "Bizim durakta bana küfür eden doğmadı! Çocuklar, gelin!",
+    "hafif": "Laflarına dikkat et, burası bizim durak!"
+   },
+   "yolcu": {
+    "agir": "Bir de küfür mü ediyorsun! Şikayet ediyorum, polisi arıyorum!",
+    "hafif": "Ne biçim konuşuyorsunuz siz?! Şikayet edeceğim!"
+   }
+  },
+  "anlamadim": {
+   "polis": "Ne dedin? Doğru düzgün cevap ver!",
+   "taksici": "Ne diyorsun sen, anlamadım!",
+   "durakci": "Lafı dolandırma, ne diyorsun?",
+   "yolcu": "Pardon, ne dediniz? Anlamadım."
+  },
+  "ui": {
+   "yer": "Söyle ya da yaz…",
+   "gonder": "Söyle",
+   "mikrofon": "Konuş",
+   "dinliyor": "Dinliyorum…",
+   "anlasilmadi": "Anlaşılmadı. Başka türlü söyle ya da bir cevap seç.",
+   "sesYok": "Bu tarayıcıda ses tanıma yok; yazarak cevap verebilirsin.",
+   "izinYok": "Mikrofon izni yok; yazarak cevap verebilirsin.",
+   "ayarBaslik": "Konuşma",
+   "ayarSerbest": "Sorgularda serbest konuşma (yaz ya da konuş)",
+   "ayarSes": "Karakterler sesli konuşsun"
+  },
+  "hakaretToast": "Memura hakaret cezası: −₺{ceza}"
  }
 }

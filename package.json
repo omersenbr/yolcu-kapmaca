@@ -16,7 +16,9 @@
     "ekonomi": "node tools/ekonomi-sim.mjs",
     "test:kariyer": "vite build --ssr tools/career-check.ts --outDir dist-node --emptyOutDir --logLevel warn && node dist-node/career-check.js",
     "server": "node server/index.mjs",
-    "test:mp": "node tests/mp.mjs"
+    "test:mp": "node tests/mp.mjs",
+    "test:nlu": "vite build --ssr tools/nlu-check.ts --outDir dist-node --emptyOutDir --logLevel warn && node dist-node/nlu-check.js",
+    "test:talk": "node tests/talk.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",

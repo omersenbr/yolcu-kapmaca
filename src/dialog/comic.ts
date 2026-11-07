@@ -7,6 +7,10 @@ import { cv } from '../render/view';
 import { updHud } from '../ui/hud';
 import { pageTurn } from '../ui/pageflip';
 import type { Choice } from '../sim/types';
+import { DLG, MANIFEST } from '../sim/content';
+import { assetUrl } from '../core/assets';
+import { bestOption, profanity } from '../sim/nlu';
+import { canListen, freeformOn, listen, speak, stopListening, stopSpeaking } from './voice';
 // </auto-imports>
 export interface CastMember {
   svg: string;
@@ -97,12 +101,19 @@ export function setCast(cast) {
 }
 export function setBubble(who: string, text: string, info?: string) {
   ui.bubble.innerHTML = `<b>${esc(who)}</b>${esc(text)}${info ? `<small>${esc(info)}</small>` : ''}`;
+  speak(who, text);
+}
+/** serbest konuşma seçenekleri (sorgular): eşleşmeyince onMiss, sürede ek pay */
+export interface FreeOpts {
+  onMiss?: () => void;
 }
 export let timerIv = 0;
 export function stopTimer() {
   clearInterval(timerIv);
 }
-export function buttons(list: Choice[], timed?: number): Promise<Choice> {
+export function buttons(list: Choice[], timed?: number, free?: FreeOpts): Promise<Choice> {
+  const serbest = !!free && freeformOn() && list.length > 1;
+  if (serbest && timed) timed *= 1.5; // konuşmak/yazmak için ek süre
   ui.answers.innerHTML = '';
   clearInterval(timerIv);
   ui.timer.hidden = !timed;
@@ -113,6 +124,7 @@ export function buttons(list: Choice[], timed?: number): Promise<Choice> {
       if (done) return;
       done = true;
       clearInterval(timerIv);
+      stopListening();
       ui.timer.hidden = true;
       ui.answers.innerHTML = '';
       res(Object.assign({}, o, { el: (performance.now() - t0) / 1000 }));
@@ -124,6 +136,7 @@ export function buttons(list: Choice[], timed?: number): Promise<Choice> {
       b.addEventListener('click', () => finish(o));
       ui.answers.appendChild(b);
     });
+    if (serbest) addFreeform(list, finish, free);
     if (timed) {
       ui.tbar.style.width = '100%';
       ui.tbar.style.background = '#111';
@@ -136,9 +149,9 @@ export function buttons(list: Choice[], timed?: number): Promise<Choice> {
     }
   });
 }
-export function ask(who: string, text: string, opts: Choice[], info?: string | null, timed?: number) {
+export function ask(who: string, text: string, opts: Choice[], info?: string | null, timed?: number, free?: FreeOpts) {
   setBubble(who, text, info);
-  return buttons(opts, timed);
+  return buttons(opts, timed, free);
 }
 export function say(who: string, text: string, btn?: string) {
   setBubble(who, text);
@@ -149,6 +162,8 @@ export function meter(v) {
   ui.bar.style.width = Math.round(v * 100) + '%';
 }
 export function closePanel() {
+  stopSpeaking();
+  stopListening();
   if (G) G.mpAlly = null;
   if (!ui.comic.hidden) pageTurn();
   ui.comic.hidden = true;
@@ -162,4 +177,56 @@ export function closePanel() {
   G.focus = null;
   G.busy = false;
   updHud();
+}
+
+/* ---- serbest konuşma satırı: yazı kutusu + mikrofon ---- */
+function addFreeform(list: Choice[], finish: (o: Choice) => void, free: FreeOpts) {
+  const U = DLG.serbestSohbet.ui;
+  const row = document.createElement('div');
+  row.className = 'freeform';
+  row.innerHTML = `<input type="text" autocomplete="off" placeholder="${esc(U.yer)}"><button class="mic" type="button" aria-label="${esc(U.mikrofon)}"></button><button class="send" type="button">${esc(U.gonder)}</button><small></small>`;
+  ui.answers.appendChild(row);
+  const inp = row.querySelector('input') as HTMLInputElement,
+    hint = row.querySelector('small') as HTMLElement,
+    mic = row.querySelector('.mic') as HTMLButtonElement;
+  mic.style.backgroundImage = `url(${assetUrl(MANIFEST.ui.i_radio)})`;
+  const submit = (text: string) => {
+    if (!text.trim()) return;
+    const k = profanity(text);
+    if (k) return finish({ kufur: k, said: text });
+    const m = bestOption(
+      text,
+      list.filter((o) => !o.go && !o.decide),
+    );
+    if (m.option) return finish({ ...m.option, said: text });
+    hint.textContent = U.anlasilmadi;
+    inp.select();
+    if (free.onMiss) free.onMiss();
+  };
+  row.querySelector('.send').addEventListener('click', () => submit(inp.value));
+  inp.addEventListener('keydown', (e) => {
+    e.stopPropagation(); // 1–4 kısayolları yazarken çalışmasın
+    if (e.key === 'Enter') submit(inp.value);
+  });
+  mic.addEventListener('click', () => {
+    if (!canListen()) {
+      hint.textContent = U.sesYok;
+      return;
+    }
+    mic.classList.add('on');
+    hint.textContent = U.dinliyor;
+    listen(
+      (t) => (inp.value = t),
+      (t) => {
+        mic.classList.remove('on');
+        inp.value = t;
+        hint.textContent = '';
+        submit(t);
+      },
+      (code) => {
+        mic.classList.remove('on');
+        hint.textContent = code === 'izin' ? U.izinYok : code === 'yok' ? U.sesYok : '';
+      },
+    );
+  });
 }

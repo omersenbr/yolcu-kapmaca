@@ -1,8 +1,9 @@
 // <auto-imports>
-import { DLG } from '../sim/content';
+import { DLG, ECO } from '../sim/content';
 import { DF, G } from '../sim/state';
 import { T, clamp, rnd, shuffle } from '../sim/util';
-import { ask, meter, say } from './comic';
+import { ask, meter, say, setBubble } from './comic';
+import { toast, updHud } from '../ui/hud';
 import { DAT, DISTS, district } from '../sim/grid';
 import { FN, MN } from '../sim/passengers';
 import type { Pax, Vars } from '../sim/types';
@@ -56,6 +57,14 @@ export function expandOpts(list, v, ctx) {
   }
   return shuffle(out);
 }
+/** sorgu türü (cfg.react) → konuşan karakter tipi (küfür tepkisi ve “anlamadım” repliği için) */
+const KONUSAN: Record<string, string> = {
+  police: 'polis',
+  taxiPolice: 'polis',
+  taxi: 'taksici',
+  durak: 'durakci',
+  route: 'yolcu',
+};
 export async function interrogate(cfg) {
   const v = cfg.v,
     R = DLG.reactions[cfg.react];
@@ -73,7 +82,35 @@ export async function interrogate(cfg) {
     const Q = cfg.nodes[key];
     if (!Q) break;
     const opts = expandOpts(Q.opts, v, cfg.ctx || {}).map((o) => ({ ...o, t: T(o.t, { ...v, ...(o.vars || {}) }) }));
-    const o = await ask(who(), T(Q.q, v), opts, null, DF().timer);
+    // serbest konuşma: anlaşılmazsa şüphe biraz artar ve karakter tekrar sorar
+    const tur = KONUSAN[cfg.react] || 'polis',
+      SS = DLG.serbestSohbet,
+      E = ECO.serbestSohbet;
+    const o = await ask(who(), T(Q.q, v), opts, null, DF().timer, {
+      onMiss: () => {
+        sus = clamp(sus + E.anlamadimSupheArtisi, 0, 1);
+        meter(sus);
+        setBubble(who(), SS.anlamadim[tur] + ' ' + T(Q.q, v));
+      },
+    });
+    if (o.kufur) {
+      // küfür: hafifse şüphe artar ve sorgu sürer; ağırsa polis karakola, taksici/durakçı kavgaya, yolcu şikayete
+      const tepki = SS.tepki[tur][o.kufur];
+      if (o.kufur === 'hafif') {
+        sus = clamp(sus + E.hafifSupheArtisi, 0, 1);
+        meter(sus);
+        await say(who(), tepki);
+        continue;
+      }
+      meter(1);
+      if (tur === 'polis' && G) {
+        G.money -= E.hakaretCezasi;
+        toast(T(SS.hakaretToast, { ceza: E.hakaretCezasi }), true);
+        updHud();
+      }
+      await say(who(), tepki);
+      return tur === 'taksici' || tur === 'durakci' ? 'fight' : 'fail';
+    }
     if (o.timeout) {
       sus = clamp(sus + 0.3, 0, 1);
       meter(sus);
