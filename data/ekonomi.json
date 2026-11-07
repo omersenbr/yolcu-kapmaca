@@ -119,7 +119,9 @@
     "ucretCarpani": 1.3,
     "yogunUcretCarpani": 1.15,
     "yogunTalepCarpani": 1.3,
-    "_carpanNot": "Bot ölçümü: çarpansız taksimetre 12 saatte ₺8–10 bin; insan oyuncu için ×1,3."
+    "_carpanNot": "Bot ölçümü: çarpansız taksimetre 12 saatte ₺8–10 bin; insan oyuncu için ×1,3.",
+    "sonYolcuAzamiSaat": 2,
+    "_sonYolcuNot": "Süre dolunca son yolcu için en fazla bu kadar oyun saati beklenir; teslim edilmezse yolcu inip gider."
   },
   "kariyer": {
     "hapisCezasi": 5000,

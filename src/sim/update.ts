@@ -1,6 +1,6 @@
 // <auto-imports>
-import { DLG } from './content';
-import { DF, G, TL, demand } from './state';
+import { DLG, ECO } from './content';
+import { DAY, DF, G, TL, demand } from './state';
 import { dist } from './util';
 import { onPlayer, startChase } from './ai';
 import { mkEnt } from './entities';
@@ -40,6 +40,17 @@ export function update(dt) {
         G.lastRide = true;
         bus.toast(DLG.kariyer.sonYolcu);
         bus.hud();
+      }
+      // sonsuza kadar uzamasın: azami bekleme dolarsa yolcu iner, ücret yok
+      G.overT = (G.overT || 0) + w;
+      if (G.overT > (DAY / G.span) * ECO.vardiya.sonYolcuAzamiSaat) {
+        const p = G.player.carry;
+        G.pax = G.pax.filter((q) => q !== p);
+        G.player.carry = null;
+        bus.toast(DLG.kariyer.sonYolcuIndi, true);
+        bus.hud();
+        bus.end('time');
+        return;
       }
     } else {
       bus.hud();
