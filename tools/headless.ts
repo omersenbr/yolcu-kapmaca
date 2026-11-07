@@ -23,6 +23,8 @@ const role = arg('role', 'taxi') as 'taxi' | 'tag';
 const BOT = process.argv.includes('--bot');
 // --career: 12 saatlik kariyer vardiyası (çarpanlar 1); süre dolunca son yolcu kuralı
 const CAREER = process.argv.includes('--career');
+// --stuck: süre dolunca bot yolcuyu teslim etmeye uğraşmaz (son yolcu güvenlik sınırı testi)
+const STUCK = process.argv.includes('--stuck');
 let rides = 0;
 const minutes = +arg('minutes', '2'),
   extra = +arg('extra', '0');
@@ -31,7 +33,7 @@ Math.random = () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
 
 const json = (p: string) => JSON.parse(fs.readFileSync(new URL('../' + p, import.meta.url), 'utf8'));
 const map = json('data/harita.json');
-setContent(map, json('data/dialoglar.json'), json('assets/manifest.json'));
+setContent(map, json('data/dialoglar.json'), json('assets/manifest.json'), json('data/ekonomi.json'));
 initGrid(map);
 initPathfinding();
 
@@ -75,7 +77,7 @@ const dt = 1 / 30,
 const t0 = performance.now();
 let f = 0;
 for (; f < frames && !G.over; f++) {
-  if (BOT && f % 3 === 0 && !G.busy) {
+  if (BOT && f % 3 === 0 && !G.busy && !(STUCK && G.lastRide)) {
     const P = G.player,
       cx = Math.round(P.x),
       cy = Math.round(P.y);
@@ -103,6 +105,6 @@ console.log(
     ` · kasa ₺${G.money} · bekleyen yolcu ${G.pax.filter((p) => p.state === 'wait').length}` +
     ` · yolculuk ${rides} · sahneler ${JSON.stringify(counts)}${ended ? ' · gün bitti: ' + ended : ''}` +
     (lastRideAt >= 0
-      ? ` · son yolcu: süre ${lastRideAt}. karede doldu, yolcu ${f - lastRideAt} kare sonra teslim edildi`
+      ? ` · son yolcu: süre ${lastRideAt}. karede doldu, vardiya ${f - lastRideAt} kare sonra bitti`
       : ''),
 );
