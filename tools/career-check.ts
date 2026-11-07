@@ -27,6 +27,13 @@ eq(K.isBusyDay(c) ? 1 : 0, 0, '4. gün Perşembe: yoğun değil');
 c.gun = 4;
 eq(K.isBusyDay(c) ? 1 : 0, 1, '5. gün Cuma: yoğun');
 
+// turist doları kasaya, hapiste gider
+c = K.newCareer(t0);
+r = K.endShift(c, 5000, 'time', 'taxi', t0, 40);
+eq(c.dolar, 40, 'turist doları kariyer kasasına');
+r = K.endShift(c, 5000, 'hapis', 'taxi', t0, 40);
+eq(r.dolar, 0, 'hapiste turist doları da gider');
+
 // hapis: kazanç gider, kefalet
 c = K.newCareer(t0);
 r = K.endShift(c, 9000, 'hapis', 'taxi', t0);

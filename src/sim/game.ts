@@ -1,5 +1,5 @@
 // <auto-imports>
-import { DLG } from './content';
+import { DLG, ECO } from './content';
 import { DAY, DF, G, TL, addTagXP, mods, setDay, setG, tagLevel } from './state';
 import { T, dist, rnd } from './util';
 import { DAT, RADARS, STREETS, TAXI_START, ZONES, district, isBog, isBridge, isTunnel, zoneAt } from './grid';
@@ -20,6 +20,8 @@ export interface ShiftOpts {
   /** süre (saat); gün uzunluğu buna göre kısalır */
   span: number;
   mods: { fareMul: number; demandMul: number; complaintMul: number; fuelMul: number };
+  /** kariyer: günün dolar kuru (turist doları için) */
+  kur?: number;
   /** kariyer Tag’ci: sürülen aracın seviyesi (0–4) */
   tagLevel?: number;
   /** kariyerde oyuncunun sabit durağı */
@@ -31,7 +33,14 @@ export function newGame(role, shift?: ShiftOpts) {
   setDay(((DF().day || 480) * (shift ? shift.span : 24)) / 24);
   setG({
     ...(shift
-      ? { career: true, startH: shift.startH, span: shift.span, mods: shift.mods, tagLevel: shift.tagLevel }
+      ? {
+          career: true,
+          startH: shift.startH,
+          span: shift.span,
+          mods: shift.mods,
+          tagLevel: shift.tagLevel,
+          kur: shift.kur,
+        }
       : {}),
     role,
     time: DAY,
@@ -254,12 +263,25 @@ export function deliver(e) {
         cinematic(e.x, e.y, 0.6, 'viralDialog', p);
         return;
       }
-      G.money += p.fare;
-      fx(e.x, e.y, '+₺' + p.fare, '#2f9e44');
+      // kariyer: turistlerin bir kısmı dolarla öder (hızlı günde rastgele çekilmez, eşitlik korunur)
+      let usd = 0;
+      if (G.career && G.kur && Math.random() < ECO.turist.dolarOrani) {
+        usd = Math.max(1, Math.round(p.fare / G.kur));
+        G.usd = (G.usd || 0) + usd;
+        fx(e.x, e.y, '+$' + usd, '#2f9e44');
+      } else {
+        G.money += p.fare;
+        fx(e.x, e.y, '+₺' + p.fare, '#2f9e44');
+      }
       if (Math.random() < 0.2) {
         G.money -= 1500;
         bus.toast(`Turist otelden şikayet etti! Taksimetresiz fahiş ücret cezası −₺1500`, true);
-      } else bus.toast(`${p.dest} teslim. Turistten ₺${p.fare} kazıkladın...`);
+      } else
+        bus.toast(
+          usd
+            ? T(DLG.kariyer.turistDolar, { hedef: p.dest, usd })
+            : `${p.dest} teslim. Turistten ₺${p.fare} kazıkladın...`,
+        );
     } else if (p.fixed) {
       G.money += p.fare;
       fx(e.x, e.y, '+₺' + p.fare, '#2f9e44');

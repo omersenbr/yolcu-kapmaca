@@ -176,5 +176,9 @@
     "_cezaNot": "Korsan taşımacılık cezası ~₺90 bin (2026); araç 24 gerçek saat otoparkta.",
     "arkadasAracSeviye": 1,
     "_arkadasNot": "Arkadaşının aracı kompakt sedan (seviye 2); kendi ilk aracın emektar hatchback olabilir: daha çok yakar ama pay vermezsin."
+  },
+  "turist": {
+    "_not": "Kariyer: kazıklanan turistlerin bir kısmı dolarla öder (ücret / kur). Dolar kariyer kasasında birikir.",
+    "dolarOrani": 0.5
   }
 }

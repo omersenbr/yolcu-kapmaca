@@ -268,6 +268,7 @@ function startShift(role: K.Role, id: string) {
     stand: C.durak,
     tagLevel: role === 'tag' ? K.tagLevelFor(C, now) : undefined,
     home: C.tag.mahalle,
+    kur: C.kur,
   });
   if (role === 'tag' && !C.tag.mahalle) {
     C.tag.mahalle = [G.home.x, G.home.y];
@@ -283,7 +284,7 @@ export function nextShift() {
 export function careerEndScreen(why: string) {
   const c = C,
     s = S();
-  const r = K.endShift(c, G.money, why, G.role, Date.now());
+  const r = K.endShift(c, G.money, why, G.role, Date.now(), G.usd || 0);
   saveCareer();
   $('endTitle').textContent = s.vardiyaBitti;
   const lines = [T(s.sonucBrut, { brut: money(r.brut) })];
@@ -291,6 +292,7 @@ export function careerEndScreen(why: string) {
     if (r.arkadas) lines.push(T(s.sonucArkadas, { tutar: tl(r.arkadas) }));
     if (r.komisyon) lines.push(T(s.sonucKomisyon, { tutar: tl(r.komisyon) }));
   } else lines.push(T(s.sonucUcret, { ucret: tl(r.ucret) }));
+  if (r.dolar) lines.push(T(s.sonucDolar, { usd: tl(r.dolar) }));
   if (r.ceza) lines.push(T(s.sonucCeza, { ceza: tl(r.ceza) }));
   if (why === 'hapis' || why === 'ruhsat' || why === 'baglandi') lines.unshift(s[why]);
   $('endWhy').innerHTML = `<span class="endlines">${lines.map(esc).join('<br>')}</span>`;

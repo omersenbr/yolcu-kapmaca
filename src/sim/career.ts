@@ -44,6 +44,8 @@ export interface ShiftResult {
   ucret: number;
   arkadas: number;
   komisyon: number;
+  /** turistlerden alınan dolar */
+  dolar: number;
   net: number;
   ceza: number;
   neden: string;
@@ -150,7 +152,14 @@ export function shiftMods(c: Career, role: Role, now: number) {
   };
 }
 /** vardiya sonu: kazancı kasaya işle, takvimi ve kuru ilerlet */
-export function endShift(c: Career, earned: number, why: string, role: Role = 'taxi', now = Date.now()): ShiftResult {
+export function endShift(
+  c: Career,
+  earned: number,
+  why: string,
+  role: Role = 'taxi',
+  now = Date.now(),
+  usd = 0,
+): ShiftResult {
   const K = ECO.kariyer,
     TG = ECO.tag;
   let brut = earned,
@@ -183,13 +192,16 @@ export function endShift(c: Career, earned: number, why: string, role: Role = 't
   }
   const net = brut - ucret - ceza;
   c.kasa += net;
+  // hapis, ruhsat iptali ya da bağlanmada turist doları da gider
+  const dolar = why === 'time' ? usd : 0;
+  c.dolar += dolar;
   c.vardiya++;
   if (c.vardiya % 2 === 0) {
     c.gun++;
     const D = ECO.doviz;
     c.kur = clamp(c.kur * (1 + (Math.random() * 2 - 1) * D.gunlukOynama), D.kurAlt, D.kurUst);
   }
-  c.son = { rol: role, brut, ucret, arkadas, komisyon, net, ceza, neden: why };
+  c.son = { rol: role, brut, ucret, arkadas, komisyon, dolar, net, ceza, neden: why };
   return c.son;
 }
 
