@@ -52,7 +52,7 @@ const playShift = () => page.evaluate(async () => {
   return -1;
 });
 const frames = await playShift();
-check(frames > 0 && frames < 9000, `vardiya ~4 dakikada bitti (${frames} kare ≈ ${(frames / 30 / 60).toFixed(1)} dk)`);
+check(frames > 0 && frames < 11000, `vardiya ~4 dakikada (son yolcu ve sahnelerle en fazla ~6 dk) bitti (${frames} kare ≈ ${(frames / 30 / 60).toFixed(1)} dk)`);
 await page.evaluate(() => window.__fake.step(40, 1000 / 30)); // sayfa çevirme animasyonu bitsin
 await page.screenshot({ path: `${out}/02-vardiya-sonu.png` });
 const endTxt = await page.$eval('#end .card', (e) => e.innerText.replace(/\s+/g, ' '));
