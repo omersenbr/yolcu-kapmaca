@@ -64,6 +64,12 @@ function btn(act: string, text: string, ok = true, alt = false) {
   return `<button class="btn${alt ? ' alt' : ''}" data-act="${act}"${ok ? '' : ' disabled'}>${esc(text)}</button>`;
 }
 const fmtKur = (k: number) => k.toFixed(2).replace('.', ',');
+const pctChange = (x: number) =>
+  (x >= 0 ? '+' : '−') +
+  '%' +
+  Math.abs(x * 100)
+    .toFixed(1)
+    .replace('.', ',');
 const carName = (seviye: number) => DLG.tagLevels.levels[seviye].ad;
 
 function taxiSection(c: Career) {
@@ -101,15 +107,21 @@ function taxiSection(c: Career) {
         K.canBuyCar(c, 'yeni'),
         true,
       )}</div>${sell ? `<div class="row">${sell}</div>` : ''}</section>
-    <section class="csec"><h4>${esc(s.plakaBaslik)}</h4><p>${esc(T(s.plakaMetin, { pay, fiyat: tl(ECO.taksi.plakaSatis) }))}${
-      c.borc > 0 ? '<br>' + esc(T(s.borcVar, { borc: tl(c.borc) })) : ''
-    }</p>
-      <div class="row">${btn('hisse', T(s.hisseAl, { fiyat: tl(K.sharePrice()) }), K.canBuyShare(c))}${btn(
+    <section class="csec"><h4>${esc(s.plakaBaslik)}</h4><p>${esc(T(s.plakaMetin, { pay, fiyat: tl(c.plakaFiyat) }))}<br>${esc(
+      T(s.plakaPiyasa, {
+        satis: tl(c.plakaFiyat),
+        alis: tl(K.shareSellPrice(c) * 8),
+        degisim: pctChange(c.plakaFiyat / ECO.taksi.plakaSatis - 1),
+      }),
+    )}${c.borc > 0 ? '<br>' + esc(T(s.borcVar, { borc: tl(c.borc) })) : ''}</p>
+      <div class="row">${btn('hisse', T(s.hisseAl, { fiyat: tl(K.sharePrice(c)) }), K.canBuyShare(c))}${btn(
         'kredi',
         T(s.krediAl, { pesinat: tl(kr.pesinat) }),
         kr.ok,
         true,
-      )}</div>${kr.ok ? `<p>${esc(T(s.krediMetin, { borc: tl(kr.borc), vade: kr.vade, taksit: tl(kr.taksit) }))}</p>` : ''}</section>`;
+      )}</div>${c.plakaPay ? `<div class="row">${btn('hisseSat', T(s.hisseSat, { fiyat: tl(K.shareSellPrice(c)) }), K.canSellShare(c), true)}</div>` : ''}${
+        kr.ok ? `<p>${esc(T(s.krediMetin, { borc: tl(kr.borc), vade: kr.vade, taksit: tl(kr.taksit) }))}</p>` : ''
+      }</section>`;
 }
 
 function tagSection(c: Career, now: number) {
@@ -172,7 +184,7 @@ function render() {
     </div>
     <p class="cmeta">${esc(T(s.ozet, { gun: c.gun + 1, haftaGunu: K.weekday(c) }))} · ${esc(T(s.durak, { durak: c.durak }))}${
       K.isBusyDay(c) ? `<br><span class="busy">${esc(s.yogunGun)}</span>` : ''
-    }<br>${esc(s.rolNotu)}</p>
+    }${c.manset ? `<br><b class="manset">${esc(s.manset)}:</b> ${esc(s.mansetler[c.manset])}` : ''}<br>${esc(s.rolNotu)}</p>
     <section class="csec"><h4>${esc(s.toplaBaslik)}</h4><p>${
       hasAssets
         ? esc(
@@ -237,6 +249,16 @@ function act(a: string) {
       ok = K.buyShare(c);
       msg = s.hisseAlindi;
       break;
+    case 'hisseSat': {
+      const f = K.shareSellPrice(c);
+      ok = K.sellShare(c);
+      msg = T(s.hisseSatildi, { fiyat: tl(f) });
+      if (!ok) {
+        toast(s.hisseSatilamaz, true);
+        return;
+      }
+      break;
+    }
     case 'kredi':
       ok = K.buyPlateWithCredit(c);
       msg = s.krediAlindi;

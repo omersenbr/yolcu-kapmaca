@@ -32,6 +32,9 @@ export interface Career {
   kur: number;
   /** oyuncunun taksi durağı (bölge adı) */
   durak: string;
+  /** plaka piyasa (satış) fiyatı ve son gazete manşeti (olay kimliği) */
+  plakaFiyat: number;
+  manset: string;
   /** Tag garajı; mahalle: ilk Tag vardiyasında seçilen ev karesi */
   tag: { araclar: TagCar[]; mahalle?: [number, number] };
   /** son vardiyanın dökümü (gün sonu ekranı için) */
@@ -53,6 +56,8 @@ export interface ShiftResult {
 /** eski kayıtları yeni alanlarla tamamla */
 export function migrate(c: Career) {
   if (!c.tag) c.tag = { araclar: [] };
+  if (!c.plakaFiyat) c.plakaFiyat = ECO.taksi.plakaSatis;
+  if (c.manset === undefined) c.manset = '';
   return c;
 }
 
@@ -79,6 +84,8 @@ export function newCareer(now: number): Career {
     kur: ECO.doviz.kurBaslangic,
     durak: '',
     tag: { araclar: [] },
+    plakaFiyat: ECO.taksi.plakaSatis,
+    manset: '',
   };
 }
 
@@ -196,13 +203,28 @@ export function endShift(
   const dolar = why === 'time' ? usd : 0;
   c.dolar += dolar;
   c.vardiya++;
-  if (c.vardiya % 2 === 0) {
-    c.gun++;
-    const D = ECO.doviz;
-    c.kur = clamp(c.kur * (1 + (Math.random() * 2 - 1) * D.gunlukOynama), D.kurAlt, D.kurUst);
-  }
+  if (c.vardiya % 2 === 0) newDay(c);
   c.son = { rol: role, brut, ucret, arkadas, komisyon, dolar, net, ceza, neden: why };
   return c.son;
+}
+
+/* ---- takvim günü: kur, plaka piyasası, manşet ---- */
+export function newDay(c: Career) {
+  c.gun++;
+  const D = ECO.doviz,
+    M = ECO.piyasa,
+    base = ECO.taksi.plakaSatis;
+  let kur = c.kur * (1 + (Math.random() * 2 - 1) * D.gunlukOynama),
+    plaka = c.plakaFiyat * (1 + (Math.random() * 2 - 1) * M.plakaGunlukOynama);
+  c.manset = '';
+  if (Math.random() < M.olayIhtimali) {
+    const o = M.olaylar[Math.floor(Math.random() * M.olaylar.length)];
+    kur *= 1 + o.kur;
+    plaka *= 1 + o.plaka;
+    c.manset = o.id;
+  }
+  c.kur = clamp(kur, D.kurAlt, D.kurUst);
+  c.plakaFiyat = Math.round(clamp(plaka, base * M.plakaAlt, base * M.plakaUst) / 1000) * 1000;
 }
 
 /* ---- çevrimdışı birikim ---- */
@@ -278,7 +300,9 @@ export function claimDaily(c: Career, now: number) {
 
 /* ---- satın almalar ---- */
 export const carPrice = (tip: CarTier) => (tip === 'yeni' ? ECO.filo.yeniTaksi : ECO.filo.eskiTaksi);
-export const sharePrice = () => ECO.taksi.plakaSatis / 8;
+export const sharePrice = (c: Career) => c.plakaFiyat / 8;
+/** satarken alınan fiyat (bayi alış fiyatı) */
+export const shareSellPrice = (c: Career) => Math.round(sharePrice(c) * (1 - ECO.piyasa.satisMakasi));
 export function canBuyCar(c: Career, tip: CarTier) {
   return c.araclar.length < carSlots(c) && c.kasa >= carPrice(tip);
 }
@@ -288,17 +312,29 @@ export function buyCar(c: Career, tip: CarTier) {
   c.araclar.push({ tip });
   return true;
 }
-export const canBuyShare = (c: Career) => c.borc <= 0 && c.kasa >= sharePrice();
+export const canBuyShare = (c: Career) => c.borc <= 0 && c.kasa >= sharePrice(c);
 export function buyShare(c: Career) {
   if (!canBuyShare(c)) return false;
-  c.kasa -= sharePrice();
+  c.kasa -= sharePrice(c);
   c.plakaPay = Math.round((c.plakaPay + 1 / 8) * 1000) / 1000;
+  return true;
+}
+/** hisse satışı: borç yoksa ve kalan tam plakalar araçlara yetiyorsa */
+export function canSellShare(c: Career) {
+  if (c.borc > 0 || c.plakaPay < 0.125) return false;
+  const kalan = Math.round((c.plakaPay - 0.125) * 1000) / 1000;
+  return c.araclar.length <= ECO.filo.kiralikPlakaLimiti + Math.floor(kalan);
+}
+export function sellShare(c: Career) {
+  if (!canSellShare(c)) return false;
+  c.kasa += shareSellPrice(c);
+  c.plakaPay = Math.round((c.plakaPay - 0.125) * 1000) / 1000;
   return true;
 }
 /** kredili plaka: elde peşinat (hisseler dahil) varsa eksik kısmı krediyle tamamla */
 export function creditInfo(c: Career) {
   const K = ECO.kredi,
-    P = ECO.taksi.plakaSatis,
+    P = c.plakaFiyat,
     frac = c.plakaPay - Math.floor(c.plakaPay),
     eksik = (1 - frac) * P,
     pesinat = Math.max(0, K.pesinat * P - frac * P),

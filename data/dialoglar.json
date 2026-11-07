@@ -2038,6 +2038,21 @@
   "sonYolcuEtiket": "Son yolcu",
   "sonYolcuIndi": "Yolcun “Ben burada ineyim” deyip gitti. Ücret yok, vardiya bitti.",
   "turistDolar": "{hedef} teslim. Turist dolarla ödedi: +${usd}. Kur iyiyken bozdur!",
-  "sonucDolar": "Turistten dolar: +${usd}"
+  "sonucDolar": "Turistten dolar: +${usd}",
+  "mansetler": {
+   "yeniPlaka": "Belediye 2 bin yeni taksi plakası çıkaracak! Plaka fiyatları düştü.",
+   "taksiZam": "Taksimetreye zam geldi: plaka borsası hareketlendi.",
+   "borsaIsindi": "Plaka borsası ısındı: alıcılar kuyrukta.",
+   "tagYasak": "Tag’e yeni ceza: korsan taşımacılığa sıkı denetim. Plakalar değerlendi.",
+   "tagYasal": "Meclis’te Tag’i yasallaştıran teklif: plaka sahipleri tedirgin.",
+   "kurUctu": "Dolar rekor kırdı! Döviz bürolarında kuyruk.",
+   "faizIndirim": "Faiz indirildi: dolar geriledi, plaka talebi arttı.",
+   "turizmRekor": "Turizmde rekor yıl: döviz bolluğu kuru yatıştırdı."
+  },
+  "plakaPiyasa": "Plaka piyasası: satış ₺{satis} · alış ₺{alis} ({degisim})",
+  "hisseSat": "1/8 hisse sat · ₺{fiyat}",
+  "hisseSatildi": "Hisseni sattın: +₺{fiyat}",
+  "hisseSatilamaz": "Satamazsın: kredi borcun var ya da araçların için plakaya ihtiyacın var.",
+  "manset": "Manşet"
  }
 }

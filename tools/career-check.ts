@@ -87,6 +87,33 @@ eq(c.plakaPay, 1, 'kredili tam plaka');
 eq(K.shiftFee(c), ECO.filo.aracBakimVardiya, 'kendi plakanla yalnızca bakım');
 eq(K.carSlots(c), ECO.filo.kiralikPlakaLimiti + 1, 'tam plaka 1 araç hakkı ekler');
 
+// plaka piyasası ve hisse satışı
+c = K.newCareer(t0);
+for (let i = 0; i < 400; i++) K.newDay(c);
+eq(
+  +(
+    c.plakaFiyat >= ECO.taksi.plakaSatis * ECO.piyasa.plakaAlt &&
+    c.plakaFiyat <= ECO.taksi.plakaSatis * ECO.piyasa.plakaUst
+  ),
+  1,
+  'plaka fiyatı sınırlar içinde kalır',
+);
+c.kasa = 2e6;
+K.buyShare(c);
+eq(K.sharePrice(c), c.plakaFiyat / 8, 'hisse fiyatı piyasadan');
+const kasaOnce = c.kasa;
+K.sellShare(c);
+eq(
+  c.kasa - kasaOnce,
+  Math.round((c.plakaFiyat / 8) * (1 - ECO.piyasa.satisMakasi)),
+  'hisse alış fiyatından satılır (makas)',
+);
+c.kasa = 2e6;
+K.buyShare(c);
+K.buyCar(c, 'eski');
+K.buyCar(c, 'eski');
+eq(+K.canSellShare(c), 1, '2 araç kiralık plakayla çalışabilir: hisse satılabilir');
+
 // günlük giriş serisi
 c = K.newCareer(t0);
 eq(K.claimDaily(c, t0).odul, ECO.gelir.gunlukGiris[0] + ECO.gelir.ilkGunBonus, 'ilk giriş: seri + ilk gün bonusu');

@@ -1737,3 +1737,9 @@ body.inmenu .hud {
   border-top: 3px dashed #111;
   padding-top: 10px;
 }
+.cmeta .manset {
+  font-family: 'Bangers', 'Archivo Black', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  color: #c92a2a;
+}

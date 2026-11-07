@@ -180,5 +180,57 @@
   "turist": {
     "_not": "Kariyer: kazıklanan turistlerin bir kısmı dolarla öder (ücret / kur). Dolar kariyer kasasında birikir.",
     "dolarOrani": 0.5
+  },
+  "piyasa": {
+    "_not": "Plaka fiyatı her takvim günü oynar; bazen gazete manşeti olayı kuru ya da plakayı sarsar. Metinler dialoglar.json → kariyer.mansetler.",
+    "plakaGunlukOynama": 0.012,
+    "plakaAlt": 0.8,
+    "plakaUst": 1.35,
+    "_sinirNot": "plaka fiyatı başlangıç fiyatının %80–135’i arasında kalır",
+    "satisMakasi": 0.035,
+    "_makasNot": "plaka/hisse satarken alış fiyatı satıştan ~%3,5 düşük (bayi: 11,6 M alış / 12,0 M satış)",
+    "olayIhtimali": 0.25,
+    "olaylar": [
+      {
+        "id": "yeniPlaka",
+        "plaka": -0.08,
+        "kur": 0
+      },
+      {
+        "id": "taksiZam",
+        "plaka": 0.06,
+        "kur": 0
+      },
+      {
+        "id": "borsaIsindi",
+        "plaka": 0.05,
+        "kur": 0
+      },
+      {
+        "id": "tagYasak",
+        "plaka": 0.04,
+        "kur": 0
+      },
+      {
+        "id": "tagYasal",
+        "plaka": -0.06,
+        "kur": 0
+      },
+      {
+        "id": "kurUctu",
+        "plaka": 0.02,
+        "kur": 0.06
+      },
+      {
+        "id": "faizIndirim",
+        "plaka": 0.03,
+        "kur": -0.03
+      },
+      {
+        "id": "turizmRekor",
+        "plaka": 0.02,
+        "kur": -0.02
+      }
+    ]
   }
 }
