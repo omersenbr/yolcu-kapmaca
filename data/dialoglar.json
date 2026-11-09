@@ -3199,6 +3199,28 @@
    "fb": "Fenerbahçe",
    "bjk": "Beşiktaş",
    "bsk": "Başakşehir"
+  },
+  "ogrenilen": [],
+  "_ogrenilenNot": "Öğretme modunda öğretilip dışa aktarılan soru-cevaplar buraya eklenir: {s: oyuncunun cümlesi, c: yolcunun cevabı, p: yolcu tipi (yoksa herkes)}.",
+  "ogret": {
+   "mod": "Öğretme modu",
+   "elSerbest": "Eller serbest (mikrofon kendiliğinden açılsın)",
+   "sor": "Bunu bilmiyorum. Buna ne cevap vereyim?",
+   "duzelt": "Bu cevabı değiştir",
+   "duzeltSor": "Peki, “{soru}” denince ne diyeyim?",
+   "tamam": "Tamam, öğrendim. Bundan sonra şöyle derim: “{cevap}”",
+   "vazgec": "Vazgeç",
+   "vazgecildi": "Peki, boş ver.",
+   "kufurOlmaz": "Bunu öğrenemem, çok ayıp. Başka bir cevap söyle.",
+   "kapsamHerkes": "Bütün yolcular böyle desin",
+   "kapsamTip": "Sadece bu yolcu tipi",
+   "yerCevap": "Yolcunun vereceği cevabı söyle…",
+   "profilBaslik": "Öğrettiklerim",
+   "profilSayi": "{n} cevap öğretildi.",
+   "profilKopyala": "Kopyala",
+   "profilKopyalandi": "Kopyalandı. Claude’a yapıştır, oyuna eklesin.",
+   "profilSil": "Hepsini sil",
+   "profilSilOnay": "Öğrettiğin bütün cevaplar silinsin mi?"
   }
  }
 }

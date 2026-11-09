@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import { setContent } from '../src/sim/content';
 import { bestOption, profanity } from '../src/sim/nlu';
 import { chatReply, teamIn } from '../src/sim/chat';
+import { forget, myLearned, recall, teach } from '../src/sim/learn';
 
 const json = (p: string) => JSON.parse(fs.readFileSync(new URL('../' + p, import.meta.url), 'utf8'));
 const D = json('data/dialoglar.json');
@@ -76,6 +77,22 @@ ok(konu('kartal yine uçtu', 'fb') === 'taraftar-rakip', 'FB taraftarına “kar
   ok(a.puan > 0 && b.puan === 0, 'aynı konudan ikinci kez puan yok');
   ok(chatReply('siktir', p).kufur === 'agir', 'sohbette ağır küfür');
   ok(p.sohbet.puan >= -2, `sohbet puanı alt sınırda (${p.sohbet.puan})`);
+}
+// öğretilebilir sohbet: öğret, benzer cümlede hatırla, tipe özel cevap, değiştir
+{
+  ok(konu('dün akşam pizza yedim') === 'dolgu', 'öğretmeden önce bilinmiyor');
+  teach('dün akşam pizza yedim', 'Afiyet olsun {ab}, ben lahmacun severim.');
+  const r = chatReply('akşam pizza yedim ben', pax('plaza'));
+  ok(r.text.startsWith('Afiyet olsun'), `benzer cümlede öğretilen cevap: “${r.text}”`);
+  ok(konu('pizza') === 'dolgu', 'tek kelimelik zayıf benzerlik eşleşmez');
+  teach('dün akşam pizza yedim', 'Pizza! Italian, very good!', 'turist');
+  ok(recall('dün akşam pizza yedim', 'turist')?.p === 'turist', 'tipe özel cevap genelin önünde');
+  ok(!recall('dün akşam pizza yedim', 'ogrenci')?.p, 'başka tipe genel cevap');
+  teach('merhaba', 'Ooo, hoş geldin kaptan!');
+  ok(chatReply('merhaba', pax('kenar')).text.startsWith('Ooo'), 'öğretilen cevap hazır konunun önüne geçer');
+  forget('merhaba');
+  ok(konu('merhaba') === 'selam', 'silinince hazır cevaba döner');
+  ok(myLearned().length === 2, `kayıt sayısı ${myLearned().length}`);
 }
 console.log(fail ? `\n${fail} test başarısız` : '\nSerbest konuşma testleri geçti');
 process.exit(fail ? 1 : 0);

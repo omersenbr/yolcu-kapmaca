@@ -8,6 +8,19 @@ export const voiceOn = () => load('yk-ses', '1') === '1';
 export function setFreeform(on: boolean) {
   save('yk-serbest', on ? '1' : '0');
 }
+/** eller serbest: karakter sözünü bitirince mikrofon kendiliğinden açılır */
+export const handsFreeOn = () => load('yk-elserbest', '1') === '1' && !micDenied;
+export function setHandsFree(on: boolean) {
+  save('yk-elserbest', on ? '1' : '0');
+  if (on) micDenied = false;
+  else stopListening();
+}
+/** öğretme modu: yolcu bilmediği cümlenin cevabını sorar */
+export const teachOn = () => load('yk-ogret', '0') === '1';
+export function setTeach(on: boolean) {
+  save('yk-ogret', on ? '1' : '0');
+}
+let micDenied = false; // izin verilmediyse bu oturumda kendiliğinden açmayı bırak
 export function setVoice(on: boolean) {
   save('yk-ses', on ? '1' : '0');
   if (!on) stopSpeaking();
@@ -36,8 +49,11 @@ export function listen(onPartial: (t: string) => void, onFinal: (t: string) => v
     if (fin) onFinal(txt.trim());
     else onPartial(txt);
   };
-  rec.onerror = (ev) =>
-    onError(ev.error === 'not-allowed' || ev.error === 'service-not-allowed' ? 'izin' : ev.error || 'hata');
+  rec.onerror = (ev) => {
+    const izin = ev.error === 'not-allowed' || ev.error === 'service-not-allowed';
+    if (izin) micDenied = true;
+    onError(izin ? 'izin' : ev.error || 'hata');
+  };
   rec.onend = () => (rec = null);
   try {
     rec.start();
@@ -72,8 +88,31 @@ export function speak(who: string, text: string) {
   const tr = synth.getVoices().find((v) => v.lang && v.lang.toLowerCase().startsWith('tr'));
   if (tr) u.voice = tr;
   Object.assign(u, voiceFor(who));
+  cur = u;
+  u.onend = u.onerror = () => {
+    if (cur === u) cur = null;
+    const w = waiters;
+    waiters = [];
+    w.forEach((f) => f());
+  };
   synth.speak(u);
 }
+let cur: SpeechSynthesisUtterance | null = null,
+  waiters: (() => void)[] = [];
+/** karakter sözünü bitirince (ses kapalıysa hemen) çağır; ses motoru takılırsa 12 sn sonra yine çağırır */
+export function afterSpeech(cb: () => void) {
+  let done = false;
+  const once = () => {
+    if (done) return;
+    done = true;
+    cb();
+  };
+  if (!cur) return void setTimeout(once, 250);
+  waiters.push(once);
+  setTimeout(once, 12000);
+}
 export function stopSpeaking() {
+  cur = null;
+  waiters = [];
   if (synth) synth.cancel();
 }

@@ -382,6 +382,8 @@
     "_not": "Yolcuyla sohbet: yıldıza toplam etki sınırı, ağır küfürde yolcu iner (ücret yok, şikayet).",
     "puanUst": 1,
     "puanAlt": -2,
-    "inisCezasi": 400
+    "inisCezasi": 400,
+    "ogrenmeEsik": 0.6,
+    "ogrenilenPuan": 0.1
   }
 }

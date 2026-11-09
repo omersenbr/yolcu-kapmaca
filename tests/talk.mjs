@@ -11,7 +11,7 @@ const check = (c, m) => { if (!c) errors.push('BEKLENTİ: ' + m); console.log((c
 const browser = await pw.chromium.launch();
 const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
 page.on('pageerror', (e) => errors.push(e.message));
-await page.addInitScript(() => { localStorage.setItem('yk-name', 'Test Reis'); localStorage.setItem('yk-serbest', '1'); localStorage.setItem('yk-ses', '1'); localStorage.setItem('yk-diff', 'kolay'); });
+await page.addInitScript(() => { localStorage.setItem('yk-name', 'Test Reis'); localStorage.setItem('yk-serbest', '1'); localStorage.setItem('yk-ses', '1'); localStorage.setItem('yk-diff', 'kolay'); localStorage.removeItem('yk-ogrenilen'); localStorage.setItem('yk-ogret', '0'); });
 await page.goto(url);
 await page.waitForFunction(() => !document.getElementById('loading'), null, { timeout: 30000 });
 await page.click('#start .role[data-role="tag"]');
@@ -21,6 +21,14 @@ const say = async (txt) => { await page.fill('.freeform input', txt); await page
 async function police() {
   await page.evaluate(() => { const y = window.__yk; y.G.busy = true; y.G.paused = true; y.G.player.carry = null; y.tagScenes.tagVsPolice(false); });
   await page.waitForSelector('.freeform input', { timeout: 5000 });
+}
+// sorgu rastgele erken bitebilir: soru kalmadıysa paneli geçip yeni bir sorgu başlat
+async function soruBekle() {
+  for (let i = 0; i < 8 && !(await page.$('.freeform input')); i++) { await page.keyboard.press('1'); await page.waitForTimeout(400); }
+  if (await page.$('.freeform input')) return;
+  for (let i = 0; i < 10 && (await page.$eval('#comic', (e) => !e.hidden)); i++) { await page.keyboard.press('1'); await page.waitForTimeout(400); }
+  await page.evaluate(() => { const o = document.getElementById('adOv'); if (o) o.hidden = true; });
+  await police();
 }
 await police();
 check(true, 'sorguda yazı kutusu ve mikrofon var');
@@ -40,7 +48,7 @@ const q2 = await bubble();
 console.log('   ilk soru: ' + q1.slice(0, 90) + '\n   cevaptan sonra: ' + q2.slice(0, 90));
 check(q2 !== q1, 'serbest cevap bir seçeneğe eşlendi, sorgu ilerledi');
 // hafif küfür: tepki, sorgu sürer
-for (let i = 0; i < 6 && !(await page.$('.freeform input')); i++) { await page.keyboard.press('1'); await page.waitForTimeout(400); }
+await soruBekle();
 if (await page.$('.freeform input')) {
   await say('salak mısın sen');
   check(/Ağzını topla/.test(await bubble()), 'hafif küfür: “Ağzını topla!”');
@@ -48,7 +56,7 @@ if (await page.$('.freeform input')) {
 } else check(false, 'hafif küfür için soru kalmadı');
 await page.keyboard.press('Enter');
 await page.waitForTimeout(500);
-for (let i = 0; i < 6 && !(await page.$('.freeform input')); i++) { await page.keyboard.press('1'); await page.waitForTimeout(400); }
+await soruBekle();
 const money0 = await page.evaluate(() => window.__yk.G.money);
 if (await page.$('.freeform input')) {
   await say('siktir git');
@@ -86,6 +94,21 @@ check(/taraftar|bize|yıkılmaz|Galatasaray/.test(replies[3]), 'GS taraftarı �
 check(/Fenerbahçe|anma|bulaşma/.test(replies[4]), 'GS taraftarı “Fenerbahçe”ye kızdı');
 check(await page.evaluate(() => window.__yk.G.paused), 'sohbet sırasında oyun duraklı');
 await page.screenshot({ path: `${out}/04-yolcu-sohbet.png` });
+// öğretme modu: bilinmeyen cümlede yolcu cevabı sorar, öğretilen cevap sonra geri gelir
+await page.click('.chatopts input'); // ilk kutu: öğretme modu
+await say('bugün balığa çıkacağım');
+check(/ne cevap vereyim/.test(await bubble()), 'öğretme modu: yolcu “buna ne cevap vereyim?” diye sordu');
+await say('Rastgele {ab}, lüfer çıkarsa bana da getir.');
+check(/öğrendim/.test(await bubble()), `öğrendi: ${(await bubble()).slice(0, 90)}`);
+await say('balığa çıkacağım bugün');
+check(/Rastgele ab(i|la), lüfer/.test(await bubble()), `benzer cümlede öğrettiğim cevabı verdi: ${(await bubble()).slice(0, 70)}`);
+await page.click('.chattools button'); // bu cevabı değiştir
+await say('Bu havada balık mı olur!');
+await say('bugün balığa çıkacağım');
+check(/Bu havada balık/.test(await bubble()), 'cevap değiştirildi');
+const kayit = await page.evaluate(() => JSON.parse(localStorage.getItem('yk-ogrenilen')));
+check(kayit.length === 1 && kayit[0].c === 'Bu havada balık mı olur!', `kayıt kalıcı (${JSON.stringify(kayit)})`);
+await page.screenshot({ path: `${out}/05-ogretme.png` });
 const m0 = await page.evaluate(() => window.__yk.G.money);
 await say('siktir git');
 await page.waitForTimeout(2600);

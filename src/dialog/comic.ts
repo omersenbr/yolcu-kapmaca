@@ -10,7 +10,7 @@ import type { Choice } from '../sim/types';
 import { DLG, MANIFEST } from '../sim/content';
 import { assetUrl } from '../core/assets';
 import { bestOption, profanity } from '../sim/nlu';
-import { canListen, freeformOn, listen, speak, stopListening, stopSpeaking } from './voice';
+import { afterSpeech, canListen, freeformOn, handsFreeOn, listen, speak, stopListening, stopSpeaking } from './voice';
 // </auto-imports>
 export interface CastMember {
   svg: string;
@@ -201,9 +201,10 @@ export function freeRow(onText: (text: string) => void, placeholder?: string) {
     e.stopPropagation(); // 1–4 kısayolları yazarken çalışmasın
     if (e.key === 'Enter') submit(inp.value);
   });
-  mic.addEventListener('click', () => {
+  const hear = (auto?: boolean) => {
+    if (!row.isConnected) return;
     if (!canListen()) {
-      hint.textContent = U.sesYok;
+      if (!auto) hint.textContent = U.sesYok;
       return;
     }
     mic.classList.add('on');
@@ -216,11 +217,23 @@ export function freeRow(onText: (text: string) => void, placeholder?: string) {
       },
       (code) => {
         mic.classList.remove('on');
-        hint.textContent = code === 'izin' ? U.izinYok : code === 'yok' ? U.sesYok : '';
+        hint.textContent = code === 'izin' ? U.izinYok : code === 'yok' && !auto ? U.sesYok : '';
       },
     );
+  };
+  mic.addEventListener('click', () => {
+    if (mic.classList.contains('on')) {
+      stopListening();
+      mic.classList.remove('on');
+      hint.textContent = '';
+    } else hear();
   });
-  return { row, inp };
+  /** eller serbest: karakter sözünü bitirince mikrofonu kendiliğinden aç */
+  const autoListen = () => {
+    if (handsFreeOn() && canListen()) afterSpeech(() => hear(true));
+  };
+  autoListen();
+  return { row, inp, autoListen };
 }
 /** sorgu cevabı: küfür → kufur; seçeneğe uyarsa o seçenek; uymazsa kaçamak cevap (yine gönderilir) */
 function addFreeform(list: Choice[], finish: (o: Choice) => void) {

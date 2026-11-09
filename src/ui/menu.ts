@@ -16,6 +16,7 @@ import type { ShiftOpts } from '../sim/game';
 import { careerMode, nextShift, openCareer } from './career';
 import { mpEnabled, mpStart, mpStop, mpUrl, setMp } from '../net/mp';
 import { freeformOn, setFreeform, setVoice, voiceOn } from '../dialog/voice';
+import { clearLearned, myLearned } from '../sim/learn';
 // </auto-imports>
 /* ================= ANA EKRAN: kapak, profil, rol düğmeleri, alttan açılan sayfalar ================= */
 export function toMenu() {
@@ -129,6 +130,33 @@ export function initMenu() {
   $('talkVoice').checked = voiceOn();
   $('talkFree').addEventListener('change', () => setFreeform($('talkFree').checked));
   $('talkVoice').addEventListener('change', () => setVoice($('talkVoice').checked));
+  // öğretme modunda öğretilen cevaplar: dışa aktar (kopyala) ya da sil
+  const OG = DLG.sohbet.ogret;
+  $('learnTitle').textContent = OG.profilBaslik;
+  $('learnCopy').textContent = OG.profilKopyala;
+  $('learnClear').textContent = OG.profilSil;
+  const drawLearned = () => {
+    const L = myLearned();
+    $('learnCount').textContent = T(OG.profilSayi, { n: L.length });
+    ($('learnOut') as HTMLTextAreaElement).value = JSON.stringify(L, null, 1);
+  };
+  drawLearned();
+  document.querySelector('#start [data-sheet="prof"]')?.addEventListener('click', drawLearned);
+  $('learnCopy').addEventListener('click', async () => {
+    const ta = $('learnOut') as HTMLTextAreaElement;
+    ta.select();
+    try {
+      await navigator.clipboard.writeText(ta.value);
+    } catch (e) {
+      document.execCommand('copy');
+    }
+    $('learnCount').textContent = OG.profilKopyalandi;
+  });
+  $('learnClear').addEventListener('click', () => {
+    if (!confirm(OG.profilSilOnay)) return;
+    clearLearned();
+    drawLearned();
+  });
   // çevrimiçi (deneme) ayarı
   const MPT = DLG.cokOyunculu;
   $('mpTitle').textContent = MPT.profilBaslik;

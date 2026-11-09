@@ -215,3 +215,17 @@ export function keywordHits(input: string, keywords: string[]): number {
   // doğrudan geçen her kelime 1; eş anlamlılar hepsi birden en fazla 0,5
   return n + (syn ? 0.5 : 0);
 }
+
+/** iki cümlenin benzerliği (0–1): ortak kök sayısı / kök sayılarının geometrik ortalaması */
+export function sentenceSim(a: string, b: string): number {
+  const words = (x: string) => {
+    const st = stems(x);
+    return st.length ? st : normalize(x).split(' ').filter(Boolean);
+  };
+  const A = [...new Set(words(a))],
+    B = [...new Set(words(b))];
+  if (!A.length || !B.length) return 0;
+  let hit = 0;
+  for (const w of A) if (B.some((x) => synonymsOf(x).some((sy) => similar(w, sy)))) hit++;
+  return hit / Math.sqrt(A.length * B.length);
+}

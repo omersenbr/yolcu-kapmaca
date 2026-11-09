@@ -4,6 +4,7 @@
 import { DLG, ECO } from './content';
 import { rnd } from './util';
 import { keywordHits, profanity } from './nlu';
+import { recall } from './learn';
 import type { Pax } from './types';
 
 export interface ChatReply {
@@ -49,6 +50,9 @@ export function chatReply(input: string, p: Pax): ChatReply {
   };
   const k = profanity(input);
   if (k) return out(pick(S().kufur[k], prof), 'kufur-' + k, k === 'agir' ? E.puanAlt : -0.5, k);
+  // öğretilmiş cevap her şeyin önünde: oyuncu hazır cevapları da böyle değiştirebilir
+  const ogr = recall(input, prof);
+  if (ogr) return out(ogr.c, 'ogr:' + ogr.s, E.ogrenilenPuan);
   // taraftar yolcu: takım adı geçerse atışma
   const team = teamIn(input);
   if (team && (FANS.includes(prof) || prof === 'milli')) {
