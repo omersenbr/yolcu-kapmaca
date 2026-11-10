@@ -20,6 +20,8 @@ import * as tagScenes from './dialog/tagScenes';
 import * as taxiScenes from './dialog/taxiScenes';
 import * as rideEvents from './dialog/rideEvents';
 import { board } from './sim/game';
+import { renderIso } from './render/iso';
+import { isoCfg } from './render/isoView';
 import * as mp from './net/mp';
 /* ================= GİRİŞ NOKTASI: veri ve görselleri yükle, modülleri başlat, döngüyü çalıştır ================= */
 import './styles/main.css';
@@ -33,7 +35,8 @@ export function loop(now) {
   const dt = Math.min(0.05, (now - lastFrame) / 1000);
   lastFrame = now;
   if (G && !G.over) update(dt);
-  render(now / 1000, dt);
+  if (isoCfg.on) renderIso(now / 1000, dt);
+  else render(now / 1000, dt);
   requestAnimationFrame(loop);
 }
 

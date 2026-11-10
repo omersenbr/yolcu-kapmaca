@@ -17,6 +17,7 @@ import { careerMode, nextShift, openCareer } from './career';
 import { mpEnabled, mpStart, mpStop, mpUrl, setMp } from '../net/mp';
 import { freeformOn, setFreeform, setVoice, voiceOn } from '../dialog/voice';
 import { clearLearned, myLearned } from '../sim/learn';
+import { isoCfg, setIso } from '../render/isoView';
 // </auto-imports>
 /* ================= ANA EKRAN: kapak, profil, rol düğmeleri, alttan açılan sayfalar ================= */
 export function toMenu() {
@@ -130,6 +131,35 @@ export function initMenu() {
   $('talkVoice').checked = voiceOn();
   $('talkFree').addEventListener('change', () => setFreeform($('talkFree').checked));
   $('talkVoice').addEventListener('change', () => setVoice($('talkVoice').checked));
+  // görünüm: 2.5D / üstten, eğim, açı, yakınlık, kamera takibi (değişiklik anında arkadaki haritada görünür)
+  const GV = DLG.gorunum;
+  $('viewTitle').textContent = GV.baslik;
+  $('viewM25').textContent = GV.mod25;
+  $('viewMUst').textContent = GV.modUst;
+  $('viewTiltLbl').textContent = GV.egim;
+  $('viewYawLbl').textContent = GV.aci;
+  $('viewZoomLbl').textContent = GV.yakin;
+  $('viewFollowLbl').textContent = GV.takip;
+  $('viewMode').value = isoCfg.on ? '2.5d' : 'ustten';
+  $('viewTilt').value = Math.round(isoCfg.egim * 100);
+  $('viewYaw').value = isoCfg.aci;
+  $('viewZoom').value = Math.round(isoCfg.yakin * 100);
+  $('viewFollow').checked = isoCfg.takip;
+  const viewSync = () => {
+    setIso({
+      on: $('viewMode').value !== 'ustten',
+      egim: +$('viewTilt').value / 100,
+      aci: +$('viewYaw').value,
+      yakin: +$('viewZoom').value / 100,
+      takip: $('viewFollow').checked,
+    });
+    $('viewIso').hidden = !isoCfg.on;
+  };
+  for (const id of ['viewMode', 'viewTilt', 'viewYaw', 'viewZoom', 'viewFollow']) {
+    $(id).addEventListener('input', viewSync);
+    $(id).addEventListener('change', viewSync);
+  }
+  $('viewIso').hidden = !isoCfg.on;
   // öğretme modunda öğretilen cevaplar: dışa aktar (kopyala) ya da sil
   const OG = DLG.sohbet.ogret;
   $('learnTitle').textContent = OG.profilBaslik;

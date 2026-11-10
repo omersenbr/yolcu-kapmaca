@@ -3222,5 +3222,14 @@
    "profilSil": "Hepsini sil",
    "profilSilOnay": "Öğrettiğin bütün cevaplar silinsin mi?"
   }
+ },
+ "gorunum": {
+  "baslik": "Görünüm",
+  "mod25": "2.5D (eğik kamera)",
+  "modUst": "Üstten",
+  "egim": "Eğim",
+  "aci": "Açı",
+  "yakin": "Yakınlık",
+  "takip": "Kamera aracın yönünü izlesin (kaydırma araca göre: yukarı düz, sol/sağ dön)"
  }
 }

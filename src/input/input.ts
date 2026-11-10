@@ -3,6 +3,7 @@ import { ui } from '../dialog/comic';
 import { cv, resize } from '../render/view';
 import { nitro } from '../sim/game';
 import { setWant } from '../sim/movement';
+import { steerDir } from '../render/isoView';
 // </auto-imports>
 /* ================= GİRDİ: parmak kaydırma, ok tuşları/WASD, sorularda 1–4, nitro Shift/N ================= */
 export let sx = 0,
@@ -22,7 +23,7 @@ export function initInput() {
     const dx = e.clientX - sx,
       dy = e.clientY - sy;
     if (Math.max(Math.abs(dx), Math.abs(dy)) < 16) return;
-    setWant(Math.abs(dx) > Math.abs(dy) ? [Math.sign(dx), 0] : [0, Math.sign(dy)]);
+    setWant(steerDir(Math.abs(dx) > Math.abs(dy) ? [Math.sign(dx), 0] : [0, Math.sign(dy)]));
     sx = e.clientX;
     sy = e.clientY;
   });
@@ -61,7 +62,7 @@ export function initInput() {
     }[e.key.toLowerCase()];
     if (m) {
       e.preventDefault();
-      setWant(m);
+      setWant(steerDir(m));
     }
   });
   window.addEventListener('resize', resize);

@@ -441,6 +441,11 @@ export function spr(
   s: number,
   rot?: number,
 ) {
+  if (sprSink) {
+    // 2.5D görünüm: çizmek yerine yerleşimi topla (kare biriminde)
+    sprSink.push({ cat, i, x: x / TS, y: y / TS, s: s / TS, rot: rot || 0 });
+    return;
+  }
   const A = SPR[cat],
     im = SIMG[cat];
   if (!A || !im) return;
@@ -456,6 +461,34 @@ export function spr(
     m.drawImage(im, sx, sy, sz, sz, -s / 2, -s / 2, s, s);
     m.restore();
   } else m.drawImage(im, sx, sy, sz, sz, x, y, s, s);
+}
+export interface SprSlot {
+  cat: string;
+  i: number;
+  x: number;
+  y: number;
+  s: number;
+  rot: number;
+}
+let sprSink: SprSlot[] | null = null;
+/** bir bölgedeki bina/ağaç yerleşimleri (üstten çizimle birebir aynı seçimler); 2.5D görünüm bunları yükseltir */
+export function collectSprites(c0: number, r0: number, c1: number, r1: number): SprSlot[] {
+  sprSink = [];
+  try {
+    paintSprites(null, c0, r0, c1, r1);
+    return sprSink;
+  } finally {
+    sprSink = null;
+  }
+}
+/** atlas hücresi: [görsel, sx, sy, boy] */
+export function sprCell(cat: string, i: number): [HTMLImageElement, number, number, number] | null {
+  const A = SPR[cat],
+    im = SIMG[cat];
+  if (!A || !im) return null;
+  const n = A.count,
+    ix = ((i % n) + n) % n;
+  return [im, (ix % 4) * A.cell, Math.floor(ix / 4) * A.cell, A.cell];
 }
 export function blockFull(c, r) {
   const ox = c - (c % 4) + 1,

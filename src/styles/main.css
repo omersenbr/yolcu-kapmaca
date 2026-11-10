@@ -2010,3 +2010,29 @@ body.inmenu .hud {
 .learnbox button.no {
   background: #fbf6ea;
 }
+
+.viewset select {
+  border: 2px solid #111;
+  border-radius: 8px;
+  background: #fff;
+  color: #111;
+  font:
+    700 14px 'Grandstander',
+    'Archivo',
+    sans-serif;
+  padding: 5px 8px;
+  margin: 4px 0;
+}
+.viewset #viewIso > label:not(.mpchk) {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  align-items: center;
+  gap: 8px;
+  font:
+    700 13px 'Grandstander',
+    'Archivo',
+    sans-serif;
+}
+.viewset input[type='range'] {
+  width: 100%;
+}
