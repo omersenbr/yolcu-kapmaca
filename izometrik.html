@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Yolcu Kapmaca — 2.5D deneme</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Grandstander:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; background: #141414; overflow: hidden; touch-action: none; }
+  canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  .bar { position: fixed; left: 8px; right: 8px; top: 8px; display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center;
+    background: #ffc20e; border: 3px solid #141414; border-radius: 12px; box-shadow: 3px 3px 0 #141414; padding: 6px 10px;
+    font: 700 13px 'Grandstander', system-ui, sans-serif; color: #141414; }
+  .bar b { font: 400 20px/1 'Bangers', system-ui, sans-serif; letter-spacing: 1px; margin-right: 4px; }
+  .bar label { display: flex; align-items: center; gap: 5px; }
+  .bar input[type=range] { width: 92px; }
+  .hint { position: fixed; left: 0; right: 0; bottom: 12px; text-align: center; pointer-events: none;
+    font: 700 13px 'Grandstander', system-ui, sans-serif; color: #fff; text-shadow: 0 1px 0 #000, 0 0 6px #000; }
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<div class="bar">
+  <b>2.5D DENEME</b>
+  <label><input type="checkbox" id="follow" checked> Kamera aracın yönünü izlesin</label>
+  <label>Eğim <input type="range" id="tilt" min="40" max="95" value="66"></label>
+  <label>Açı <input type="range" id="yaw" min="0" max="45" value="32"></label>
+  <label>Yakınlık <input type="range" id="zoom" min="30" max="90" value="50"></label>
+</div>
+<div class="hint" id="hint">Kaydır ya da ok tuşları: yukarı düz, sol/sağ dön, aşağı geri dön</div>
+<script type="module" src="/src/iso/main.ts"></script>
+</body>
+</html>
