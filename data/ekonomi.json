@@ -259,7 +259,7 @@
       },
       {
         "id": "sis",
-        "agirlik": 10,
+        "agirlik": 0,
         "talep": 1.1,
         "hiz": 0.85,
         "ucret": 1
