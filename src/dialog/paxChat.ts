@@ -22,7 +22,8 @@ export function paxChat(p: Pax) {
   const S = DLG.sohbet,
     me = G.role === 'tag' ? LOOK.tag : LOOK.taxi1,
     L = p.look,
-    v = baseVars(p);
+    // sohbette yolcu konuşur: öğretilen cevaplardaki {ab} de sürücüye hitaptır
+    v = { ...baseVars(p), ab: DLG.surucuHitap.sabi, Ab: DLG.surucuHitap.Sabi };
   const cast = (mood: string) =>
     setCast([
       { svg: face(me, 'neutral'), name: 'Sen' },
