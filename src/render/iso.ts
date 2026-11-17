@@ -158,7 +158,36 @@ function shade(hex: string, f: number) {
   return `rgb(${ch(n >> 16)},${ch((n >> 8) & 255)},${ch(n & 255)})`;
 }
 /** bina hücresi: görünen dış duvarlar (pencere şeritleriyle) + çatı görseli */
+/** binanın 2.5D çizimi (sabit kamera, 45°): arsa kaidesi hücrenin ortasına oturur; yoksa false (kutu çizimine düşülür) */
+function drawCellSprite(b: Cell): boolean {
+  if (isoCfg.takip || Math.abs(isoCfg.aci - 45) > 4) return false;
+  const SI = MANIFEST.sprites_iso && MANIFEST.sprites_iso[b.cat];
+  if (!SI || b.uw < 0.5) return false; // parçalı bloklar (3×3) kutu kalır
+  const im = img(SI.file);
+  if (!ready(im)) return false;
+  const ix = ((b.i % SI.count) + SI.count) % SI.count,
+    slot = b.w / (1 - 2 * INSET), // binanın haritadaki yeri (kare)
+    plot = slot * Math.SQRT2 * S * 0.96, // arsa eşkenar dörtgeninin ekrandaki genişliği
+    k = plot / SI.w[ix],
+    [X, Y] = proj(b.x + b.w / 2, b.y + b.w / 2, 0);
+  screen();
+  // çizimde arsa 2:1 eşkenar dörtgen: alt ucu merkezin çeyrek genişlik altında, altında kaide kalınlığı
+  const bottom = Y + plot * 0.25 + plot * 0.05;
+  ctx.drawImage(
+    im,
+    (ix % SI.cols) * SI.cw,
+    Math.floor(ix / SI.cols) * SI.ch,
+    SI.cw,
+    SI.ch,
+    X - (SI.cw * k) / 2,
+    bottom - (SI.ch - 2) * k,
+    SI.cw * k,
+    SI.ch * k,
+  );
+  return true;
+}
 function drawCell(b: Cell, night: number) {
+  if (drawCellSprite(b)) return;
   const P: [number, number][] = [
     [b.x, b.y],
     [b.x + b.w, b.y],

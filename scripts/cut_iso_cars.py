@@ -1,4 +1,5 @@
-"""2.5D araç sayfalarını keser: python3 scripts/cut_iso_cars.py <önden.jpg> <arkadan.jpg>
+"""2.5D araç sayfalarını keser: python3 scripts/cut_iso_cars.py <önden.jpg> <arkadan.jpg> [atlanacak adlar]
+Eksik araçlar için: python3 scripts/cut_iso_cars.py --tek <görsel> <on|arka> ad1,ad2,...
 Sayfa: 4 sütun × 3 satır, okuma sırasıyla taxi1-3, police1-2, sivil, tag1-5; düz açık gri arka plan.
 Arka plan kenarlardan taşırılarak ayıklanır (mürekkep konturu içeriyi korur), her araç kendi kutusuna
 kırpılıp assets/cars_iso/<ad>_<on|arka>.webp olarak yazılır; ölçek sayfadaki gibi kalır (araçlar arası oran korunur)."""
@@ -6,11 +7,12 @@ import sys
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 
-NAMES = ['taxi1', 'taxi2', 'taxi3', 'police1', 'police2', 'sivil', 'tag1', 'tag2', 'tag3', 'tag4', 'tag5']
+ALL = ['taxi1', 'taxi2', 'taxi3', 'police1', 'police2', 'sivil', 'tag1', 'tag2', 'tag3', 'tag4', 'tag5']
 MARK = (255, 0, 255)
 
 
-def cut(path, suffix, skip=()):
+def cut(path, suffix, skip=(), names=None):
+    NAMES = names or ALL
     im = Image.open(path).convert('RGB')
     w, h = im.size
     work = im.copy()
@@ -61,7 +63,11 @@ def cut(path, suffix, skip=()):
 
 
 if __name__ == '__main__':
-    front, rear = sys.argv[1], sys.argv[2]
-    skip = tuple(sys.argv[3].split(',')) if len(sys.argv) > 3 else ()
-    cut(front, 'on')
-    cut(rear, 'arka', skip)
+    if sys.argv[1] == '--tek':
+        # tek sayfa: python3 scripts/cut_iso_cars.py --tek <görsel> <on|arka> ad1,ad2,...
+        cut(sys.argv[2], sys.argv[3], names=sys.argv[4].split(','))
+    else:
+        front, rear = sys.argv[1], sys.argv[2]
+        skip = tuple(sys.argv[3].split(',')) if len(sys.argv) > 3 else ()
+        cut(front, 'on')
+        cut(rear, 'arka', skip)

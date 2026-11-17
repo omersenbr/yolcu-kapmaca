@@ -469,7 +469,7 @@
   "cover": "assets/ui/cover.jpg"
  },
  "cars_iso": {
-  "_not": "2.5D araçlar (sabit kamera): 'on' aracın önü sol alta bakar, 'arka' araç sağ üste gider; diğer iki yön aynalanır. 'arka' yoksa o yönlerde üstten görsel katmanlanır. olcek: kaynak pikselin kare boyuna oranı için referans genişlik.",
+  "_not": "2.5D araçlar (sabit kamera): 'on' aracın önü sol alta bakar, 'arka' araç sağ üste gider; diğer iki yön aynalanır. olcek: kaynak pikselin kare boyuna oranı için referans genişlik.",
   "refGenislik": 270,
   "araclar": {
    "taxi1": {
@@ -573,6 +573,11 @@
      "file": "assets/cars_iso/tag3_on.webp",
      "w": 267,
      "h": 208
+    },
+    "arka": {
+     "file": "assets/cars_iso/tag3_arka.webp",
+     "w": 267,
+     "h": 186
     }
    },
    "tag4": {
@@ -580,6 +585,11 @@
      "file": "assets/cars_iso/tag4_on.webp",
      "w": 271,
      "h": 222
+    },
+    "arka": {
+     "file": "assets/cars_iso/tag4_arka.webp",
+     "w": 271,
+     "h": 194
     }
    },
    "tag5": {
@@ -587,8 +597,41 @@
      "file": "assets/cars_iso/tag5_on.webp",
      "w": 305,
      "h": 209
+    },
+    "arka": {
+     "file": "assets/cars_iso/tag5_arka.webp",
+     "w": 305,
+     "h": 194
     }
    }
+  }
+ },
+ "sprites_iso": {
+  "_not": "2.5D bina sayfaları (sabit kamera, 45°): her nesne hücrenin alt ortasında; w: kaide (arsa) genişliği px.",
+  "apartman": {
+   "file": "assets/sprites_iso/apartman.webp",
+   "cols": 4,
+   "count": 16,
+   "cw": 195,
+   "ch": 240,
+   "w": [
+    190,
+    189,
+    188,
+    189,
+    190,
+    189,
+    190,
+    189,
+    190,
+    189,
+    189,
+    188,
+    191,
+    190,
+    190,
+    190
+   ]
   }
  }
 }

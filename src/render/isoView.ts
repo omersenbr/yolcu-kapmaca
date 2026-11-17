@@ -11,7 +11,7 @@ const num = (key: string, def: number, lo: number, hi: number) => {
 };
 export const isoCfg = {
   on: load('yk-gorunum', '2.5d') !== 'ustten',
-  egim: num('yk-iso-egim2', 0.58, 0.4, 0.95),
+  egim: num('yk-iso-egim3', 0.5, 0.4, 0.95),
   aci: num('yk-iso-aci2', 45, 0, 45),
   yakin: num('yk-iso-yakin', 1.15, 0.7, 2),
   // varsayılan kapalı: sürekli dönen ekran dikkat dağıtıyor ve baş döndürüyor
@@ -20,7 +20,7 @@ export const isoCfg = {
 export function setIso(patch: Partial<typeof isoCfg>) {
   Object.assign(isoCfg, patch);
   save('yk-gorunum', isoCfg.on ? '2.5d' : 'ustten');
-  save('yk-iso-egim2', isoCfg.egim);
+  save('yk-iso-egim3', isoCfg.egim);
   save('yk-iso-aci2', isoCfg.aci);
   save('yk-iso-yakin', isoCfg.yakin);
   save('yk-iso-donus', isoCfg.takip ? '1' : '0');
