@@ -720,7 +720,7 @@ let navKey = '',
   navPrev: Int32Array | null = null,
   navSeen: Int32Array | null = null,
   navStamp = 0;
-function routeTo(sx: number, sy: number, gx: number, gy: number): number[][] {
+export function routeTo(sx: number, sy: number, gx: number, gy: number): number[][] {
   const key = sx + ',' + sy + '>' + gx + ',' + gy;
   if (key === navKey) return navPath;
   navKey = key;

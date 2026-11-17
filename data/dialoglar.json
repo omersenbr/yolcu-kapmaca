@@ -3415,5 +3415,21 @@
   },
   "seviyeBaslik": "YENİ ARABA!",
   "seviyeAlt": "Artık {arac} sürüyorsun. Yolcular daha sabırlı, bahşiş daha bol."
+ },
+ "arayuz": {
+  "_not": "Oyun içi arayüz: mola, görev kartı (src/ui/hudplus.ts).",
+  "molaBaslik": "ÇAY MOLASI",
+  "molaMetin": {
+   "taxi": "Durakta çay demlendi. Taksimetre seni bekliyor.",
+   "tag": "Telefonu sessize aldın. Uygulama “molada” görünüyor."
+  },
+  "devam": "Yola devam",
+  "cik": "Ana menüye dön",
+  "cikNot": "Bu gün kaydedilmez.",
+  "gorevBaslik": "BUGÜNÜN İŞLERİ",
+  "hizliBaslik": "HEDEF",
+  "hizliRekor": "Rekoru kır: {rekor}",
+  "hizliRekorYok": "İlk rekorunu yaz!",
+  "haritaIpucu": "Haritaya dokun: büyüt"
  }
 }

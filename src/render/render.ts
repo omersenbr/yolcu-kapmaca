@@ -11,6 +11,7 @@ import { DPR, TS, VH, VW, cam, ctx, mctx, mini, playerScr, px, rr, star } from '
 import { onPlayer } from '../sim/ai';
 import { drawRemotes } from './remotes';
 import { resetIsoLm } from './isoView';
+import { routeTo } from './iso';
 import { smoothRemotes } from '../net/mp';
 // </auto-imports>
 /* ================= ÇİZİM: kamera, harita parçaları, nesneler, ışık, ekran kenarı işaretleri, mini harita ================= */
@@ -513,6 +514,19 @@ export function drawMini() {
     if (e.isPlayer) continue;
     if (onPlayer(e)) dot(e.x, e.y, e.kind === 'police' ? '#1c7ed6' : '#e03131', 2);
     else if (e.kind === 'tag' && (e.revealed > 0 || G.assist === e)) dot(e.x, e.y, '#ff922b', 2.4);
+  }
+  if (G.player.carry) {
+    // rota: navigasyonla aynı yol
+    const C = G.player.carry,
+      r = routeTo(Math.round(G.player.x), Math.round(G.player.y), C.dx, C.dy);
+    if (r.length > 1) {
+      mctx.strokeStyle = '#2f9e44';
+      mctx.lineWidth = Math.max(1.5, sx * 0.9);
+      mctx.lineJoin = 'round';
+      mctx.beginPath();
+      r.forEach((q, i) => (i ? mctx.lineTo : mctx.moveTo).call(mctx, (q[0] + 0.5) * sx, (q[1] + 0.5) * sy));
+      mctx.stroke();
+    }
   }
   if (G.player.carry) dot(G.player.carry.dx, G.player.carry.dy, '#2f9e44', 2.4);
   dot(G.player.x, G.player.y, '#fff', 2.6);

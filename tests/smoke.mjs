@@ -37,8 +37,8 @@ for (const role of ['taxi', 'tag']) {
   console.log(role, 'HUD:', hud);
   // menüye dön
   await page.evaluate(() => { const end = document.getElementById('end'); if (!end.hidden) document.getElementById('swap').click(); });
-  await page.click('#menuBtn').catch(() => {});
-  await page.click('#menuBtn').catch(() => {});
+  await page.click('#menuBtn').catch(() => {}); // çay molası
+  await page.click('#pauseQuit').catch(() => {});
   await page.waitForTimeout(900);
 }
 console.log(errors.length ? 'HATALAR:\n' + errors.join('\n') : 'Konsol hatası yok');

@@ -20,6 +20,7 @@ import { clearLearned, myLearned } from '../sim/learn';
 import { isoCfg, setIso } from '../render/isoView';
 import { juiceReset } from './juice';
 import { countdown } from './ceremony';
+import { hudReset, initHudPlus, openPause } from './hudplus';
 import { muted, setMuted } from '../audio/sound';
 // </auto-imports>
 /* ================= ANA EKRAN: kapak, profil, rol düğmeleri, alttan açılan sayfalar ================= */
@@ -28,6 +29,8 @@ export function toMenu() {
   pageTurn();
   $('nitroBtn').hidden = true;
   $('talkBtn').hidden = true;
+  $('taskCard').hidden = true;
+  $('pauseOv').hidden = true;
   $('adbtns').hidden = true;
   $('adOv').hidden = true;
   if (G) G.over = true;
@@ -43,8 +46,7 @@ export function toMenu() {
   window.dispatchEvent(new Event('resize'));
   $('start').hidden = false;
 }
-export let menuArm = 0,
-  pendingRole = null;
+export let pendingRole = null;
 export function openSheet(k) {
   document.querySelectorAll<HTMLElement>('#start .sheet').forEach((x) => (x.hidden = x.id !== 'sh-' + k));
   if (k === 'lbs') renderLB($('lb'));
@@ -123,6 +125,7 @@ export function startRole(r, shift?: ShiftOpts) {
       : `Mahallen: ${G.home.name}. Taksiciler peşine düşerse buraya getir!`,
   );
   mpStart(UNAME);
+  hudReset();
   countdown();
 }
 export function initMenu() {
@@ -219,21 +222,12 @@ export function initMenu() {
   $('ornTitle').textContent = DLG.shop.ornTitle;
   $('wpnTitle').textContent = DLG.shop.wpnTitle;
   paintGarage();
+  // menü düğmesi: çay molası (oyun durur; oradan ana menüye dönülür)
   $('menuBtn').addEventListener('click', () => {
-    if (G && !G.over && Date.now() > menuArm) {
-      menuArm = Date.now() + 3000;
-      $('menuBtn').dataset.ic = $('menuBtn').dataset.ic || $('menuBtn').innerHTML;
-      $('menuBtn').textContent = 'Çık?';
-      toast('Ana menüye dönmek için tekrar bas. Bu oyun kaydedilmez.');
-      setTimeout(() => {
-        $('menuBtn').innerHTML = $('menuBtn').dataset.ic || '☰';
-      }, 3000);
-      return;
-    }
-    menuArm = 0;
-    $('menuBtn').innerHTML = $('menuBtn').dataset.ic || $('menuBtn').innerHTML;
-    toMenu();
+    if (G && !G.over) openPause();
+    else toMenu();
   });
+  initHudPlus(toMenu);
   document
     .querySelectorAll<HTMLElement>('#start [data-sheet]')
     .forEach((b) => b.addEventListener('click', () => openSheet(b.dataset.sheet)));

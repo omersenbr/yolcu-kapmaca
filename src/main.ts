@@ -22,6 +22,7 @@ import * as rideEvents from './dialog/rideEvents';
 import { board } from './sim/game';
 import { renderIso } from './render/iso';
 import { juice, juiceFrame } from './ui/juice';
+import { hudFrame } from './ui/hudplus';
 import { isoCfg } from './render/isoView';
 import * as mp from './net/mp';
 /* ================= GİRİŞ NOKTASI: veri ve görselleri yükle, modülleri başlat, döngüyü çalıştır ================= */
@@ -39,6 +40,7 @@ export function loop(now) {
   if (isoCfg.on) renderIso(now / 1000, dt);
   else render(now / 1000, dt);
   juiceFrame(dt);
+  hudFrame();
   requestAnimationFrame(loop);
 }
 

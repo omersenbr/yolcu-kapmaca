@@ -13,7 +13,7 @@
 <div class="loading" id="loading"><b>Yolcu Kapmaca</b><i><span id="loadBar"></span></i><small id="loadTxt">Yükleniyor…</small></div>
 <div class="hud">
   <div id="moneyBox"><small>Kasa</small><span id="money">₺0</span><span id="moneyShow" aria-hidden="true">₺0</span></div>
-  <div><small id="timeLbl">Saat</small><span id="time">05:00</span></div>
+  <div id="timeBox"><i class="dial" id="dayDial"></i><small id="timeLbl">Saat</small><span id="time">05:00</span></div>
   <div class="grow"><small id="paxLbl">Yolcu</small><span id="pax">Boş</span></div>
   <button class="mbtn" id="menuBtn" aria-label="Ana menüye dön" title="Ana menü"><img alt="" src="/assets/ui/i_menu.webp"></button>
 </div>
@@ -25,7 +25,9 @@
   <button class="nitroBtn" id="nitroBtn" hidden aria-label="Nitro"><img alt="" src="/assets/ui/i_bolt.webp"><span id="nitroLbl">NİTRO</span></button>
   <button class="talkBtn" id="talkBtn" hidden aria-label="Yolcuyla konuş"><img alt="" src="/assets/ui/i_radio.webp"><span>KONUŞ</span></button>
   <div class="flash" id="flash"></div>
+  <div class="taskcard" id="taskCard" hidden></div>
   <div class="juiceLayer" id="juiceLayer"></div>
+  <div class="overlay pauseov" id="pauseOv" hidden><div class="card"><h2 id="pauseTitle"></h2><p id="pauseTxt"></p><div class="row"><button class="btn" id="pauseGo"></button><button class="btn alt" id="pauseQuit"></button></div><small id="pauseNote"></small></div></div>
   <div class="countdown" id="countdown" hidden><b id="cdNum"></b></div>
   <div class="levelup" id="levelup" hidden><div class="lvcard"><b id="lvTitle"></b><img alt="" id="lvCar"><p id="lvText"></p></div></div>
   <button class="mphelp" id="mpHelp" hidden></button>
