@@ -9,7 +9,7 @@ import { img, ready } from '../core/assets';
 import { MANIFEST } from '../sim/content';
 import { G, ORN } from '../sim/state';
 import { hsh } from '../sim/util';
-import { COLS, LMK, MAP, RADARS, ROWS, isTunnel } from '../sim/grid';
+import { COLS, DIRS, LMK, MAP, RADARS, ROWS, isRoad, isTunnel } from '../sim/grid';
 import {
   CHT,
   CHX,
@@ -24,7 +24,7 @@ import {
   sprCell,
 } from '../map/painter';
 import { carOpts, drawAlarm, drawCar, drawCarryBadge, pickCarSpr } from './cars';
-import { drawDest, drawPax } from './people';
+import { drawPax, paxOpts } from './people';
 import { drawRemotes } from './remotes';
 import { smoothRemotes } from '../net/mp';
 import {
@@ -41,7 +41,7 @@ import {
   drawWeather,
   light,
 } from './render';
-import { DPR, TS, VH, VW, cam, ctx, px, rr } from './view';
+import { DPR, TS, VH, VW, cam, ctx, px, rr, setCtx } from './view';
 import { heading, isoCfg, lmState } from './isoView';
 
 const INK = '#141414';
@@ -202,6 +202,8 @@ function cellActive(b: Cell) {
 }
 /* ---- yolu görünür tutmak: binalar basık, kapatan binalar saydam, arkada kalanlar siluetle ---- */
 /** dikey basıklık: bina, simge yapı, ağaç (yalnızca yerden yukarı kalan kısım basılır) */
+/** yolcuların neon rengi (şehirde, taksilerde ve parklarda olmayan bir renk) */
+const NEON = '#ff2fd0';
 const SQ_BINA = 0.6,
   SQ_SIMGE = 0.7,
   SQ_AGAC = 0.8;
@@ -548,8 +550,99 @@ interface Key {
   sy: number;
   col: string;
   car?: number[] | null;
+  /** yolcu: siluet olarak figürün kendi hattı çizilir */
+  pax?: any;
+}
+/* ---- yolcunun neon hattı: figür ayrı tuvale çizilir, rengi neona boyanıp her yöne kaydırılarak
+   arkasına basılır; böylece hat figürün kendi biçimini izler ---- */
+let figCv: HTMLCanvasElement | null = null,
+  tintCv: HTMLCanvasElement | null = null;
+function paxFigure(p, t) {
+  const [X, Y] = proj(p.x, p.y, 0),
+    w = S * 3.2,
+    h = S * 3.8,
+    ox = X - w / 2,
+    oy = Y - h + S * 0.9,
+    W = Math.ceil(w * DPR),
+    H = Math.ceil(h * DPR);
+  if (!figCv) {
+    figCv = document.createElement('canvas');
+    tintCv = document.createElement('canvas');
+  }
+  for (const c of [figCv, tintCv])
+    if (c.width < W || c.height < H) {
+      c.width = Math.max(c.width, W);
+      c.height = Math.max(c.height, H);
+    }
+  const f = figCv.getContext('2d'),
+    main = ctx,
+    s = S / TS;
+  f.setTransform(1, 0, 0, 1, 0, 0);
+  f.clearRect(0, 0, W + 2, H + 2);
+  f.setTransform(DPR * s, 0, 0, DPR * s, DPR * (X - px(p.x) * s - ox), DPR * (Y - px(p.y) * s - oy));
+  setCtx(f);
+  paxOpts.part = 'figure';
+  try {
+    drawPax(p, t);
+  } finally {
+    paxOpts.part = 'all';
+    setCtx(main);
+  }
+  const g = tintCv.getContext('2d');
+  g.globalCompositeOperation = 'copy';
+  g.drawImage(figCv, 0, 0);
+  g.globalCompositeOperation = 'source-in';
+  g.fillStyle = NEON;
+  g.fillRect(0, 0, W, H);
+  g.globalCompositeOperation = 'source-over';
+  return { ox, oy, w, h, W, H };
+}
+function stampNeon(r: { ox: number; oy: number; w: number; h: number; W: number; H: number }, rad: number) {
+  for (let i = 0; i < 12; i++) {
+    const a = (i / 12) * Math.PI * 2;
+    ctx.drawImage(tintCv, 0, 0, r.W, r.H, r.ox + Math.cos(a) * rad, r.oy + Math.sin(a) * rad, r.w, r.h);
+  }
+}
+/** bekleyen yolcu: yerdeki halka, neon hat, figür */
+function drawPaxNeon(p, t) {
+  upright(p.x, p.y, 0, () => {
+    paxOpts.part = 'halo';
+    drawPax(p, t);
+    paxOpts.part = 'all';
+  });
+  const r = paxFigure(p, t);
+  screen();
+  stampNeon(r, Math.max(2, S * 0.075));
+  ctx.drawImage(figCv, 0, 0, r.W, r.H, r.ox, r.oy, r.w, r.h);
+}
+/** bina arkasında kalan yolcu: yalnızca figürün neon hattı (içi boş) binanın üstüne */
+let ringCv: HTMLCanvasElement | null = null;
+function drawPaxGhost(p, t) {
+  const r = paxFigure(p, t),
+    pulse = 0.75 + 0.25 * Math.sin(t * 6),
+    rad = Math.max(2, S * 0.075) * DPR;
+  if (!ringCv) ringCv = document.createElement('canvas');
+  if (ringCv.width < r.W || ringCv.height < r.H) {
+    ringCv.width = Math.max(ringCv.width, r.W);
+    ringCv.height = Math.max(ringCv.height, r.H);
+  }
+  const g = ringCv.getContext('2d');
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.clearRect(0, 0, r.W + 2, r.H + 2);
+  for (let i = 0; i < 12; i++) {
+    const a = (i / 12) * Math.PI * 2;
+    g.drawImage(tintCv, 0, 0, r.W, r.H, Math.cos(a) * rad, Math.sin(a) * rad, r.W, r.H);
+  }
+  g.globalCompositeOperation = 'destination-out';
+  g.drawImage(figCv, 0, 0, r.W, r.H, 0, 0, r.W, r.H);
+  g.globalCompositeOperation = 'source-over';
+  screen();
+  ctx.globalAlpha = pulse;
+  ctx.drawImage(ringCv, 0, 0, r.W, r.H, r.ox, r.oy, r.w, r.h);
+  ctx.globalAlpha = 1;
 }
 function drawSilhouette(k: Key, t: number) {
+  if (k.pax) return drawPaxGhost(k.pax, t);
   const pulse = 0.75 + 0.25 * Math.sin(t * 6);
   ctx.lineJoin = 'round';
   if (k.car) {
@@ -591,6 +684,149 @@ function drawSilhouette(k: Key, t: number) {
     ctx.stroke();
   }
   screen();
+}
+
+/* ---- navigasyon (GTA / Crazy Taxi gibi): yolda çizgi, aracın üstünde ok, varışta ışık sütunu ----
+   Yol, çizim için ayrı bir genişlik öncelikli aramayla bulunur (oyunun rastgele sayılarına dokunmaz). */
+const NAV = '#3cff7a',
+  NAV_INK = '#0b5a23';
+let navKey = '',
+  navPath: number[][] = [],
+  navPrev: Int32Array | null = null,
+  navSeen: Int32Array | null = null,
+  navStamp = 0;
+function routeTo(sx: number, sy: number, gx: number, gy: number): number[][] {
+  const key = sx + ',' + sy + '>' + gx + ',' + gy;
+  if (key === navKey) return navPath;
+  navKey = key;
+  const n = COLS * ROWS;
+  if (!navPrev || navPrev.length !== n) {
+    navPrev = new Int32Array(n);
+    navSeen = new Int32Array(n);
+  }
+  const st = ++navStamp,
+    s0 = sx + sy * COLS,
+    g0 = gx + gy * COLS,
+    q = [s0];
+  navSeen[s0] = st;
+  navPrev[s0] = -1;
+  let found = false;
+  for (let h = 0; h < q.length && q.length < 60000; h++) {
+    const k = q[h];
+    if (k === g0) {
+      found = true;
+      break;
+    }
+    const x = k % COLS,
+      y = (k / COLS) | 0;
+    for (const [dx, dy] of DIRS) {
+      const nx = x + dx,
+        ny = y + dy;
+      if (!isRoad(nx, ny)) continue;
+      const nk = nx + ny * COLS;
+      if (navSeen[nk] === st) continue;
+      navSeen[nk] = st;
+      navPrev[nk] = k;
+      q.push(nk);
+    }
+  }
+  navPath = [];
+  if (found) for (let k = g0; k >= 0; k = navPrev[k]) navPath.push([k % COLS, (k / COLS) | 0]);
+  navPath.reverse();
+  return navPath;
+}
+/** yolda rota çizgisi: mürekkep alt hat + parlak yeşil + akan oklar */
+function drawRoute(path: number[][], t: number) {
+  if (path.length < 2) return;
+  const P = G.player;
+  ground(0.02);
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(px(P.x), px(P.y));
+  for (let i = 1; i < path.length; i++) ctx.lineTo(px(path[i][0]), px(path[i][1]));
+  ctx.strokeStyle = NAV_INK;
+  ctx.lineWidth = TS * 0.36;
+  ctx.stroke();
+  ctx.strokeStyle = NAV;
+  ctx.lineWidth = TS * 0.24;
+  ctx.stroke();
+  // akan şeritler: yön hissi
+  ctx.setLineDash([TS * 0.25, TS * 0.55]);
+  ctx.lineDashOffset = -t * TS * 2.4;
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = TS * 0.1;
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.lineDashOffset = 0;
+}
+/** aracın üstünde büyük ok: rotanın birkaç kare ilerisini gösterir */
+function drawNavArrow(path: number[][], t: number) {
+  const P = G.player;
+  const tgt = path[Math.min(path.length - 1, 3)];
+  if (!tgt) return;
+  const a = Math.atan2(tgt[1] - P.y, tgt[0] - P.x);
+  ground(1.15 + Math.sin(t * 5) * 0.08);
+  ctx.translate(px(P.x), px(P.y));
+  ctx.rotate(a);
+  const L = TS * 1.6,
+    W = TS * 1.0;
+  ctx.beginPath();
+  ctx.moveTo(L * 0.6, 0);
+  ctx.lineTo(-L * 0.05, -W * 0.5);
+  ctx.lineTo(-L * 0.05, -W * 0.2);
+  ctx.lineTo(-L * 0.5, -W * 0.2);
+  ctx.lineTo(-L * 0.5, W * 0.2);
+  ctx.lineTo(-L * 0.05, W * 0.2);
+  ctx.lineTo(-L * 0.05, W * 0.5);
+  ctx.closePath();
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = TS * 0.14;
+  ctx.strokeStyle = '#141414';
+  ctx.stroke();
+  ctx.fillStyle = NAV;
+  ctx.fill();
+  ctx.lineWidth = TS * 0.05;
+  ctx.strokeStyle = '#ffffff';
+  ctx.stroke();
+}
+/** varış yerinde ekranın tepesine uzanan ışık sütunu ve kalan mesafe (binaların üstünde çizilir) */
+function drawDestBeam(dx: number, dy: number, left: number, t: number) {
+  const [X, Y] = proj(dx, dy, 0);
+  screen();
+  const w = S * 0.55,
+    pulse = 0.55 + 0.2 * Math.sin(t * 4);
+  ctx.globalAlpha = pulse * 0.55;
+  ctx.fillStyle = NAV;
+  ctx.fillRect(X - w / 2, 0, w, Y);
+  ctx.globalAlpha = pulse;
+  ctx.fillRect(X - w * 0.14, 0, w * 0.28, Y);
+  ctx.globalAlpha = 1;
+  // yerde halka
+  ground(0.01);
+  ctx.strokeStyle = NAV_INK;
+  ctx.lineWidth = TS * 0.16;
+  ctx.beginPath();
+  ctx.arc(px(dx), px(dy), TS * 0.75, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.strokeStyle = NAV;
+  ctx.lineWidth = TS * 0.1;
+  ctx.stroke();
+  // mesafe etiketi
+  screen();
+  if (left > 1) {
+    const txt = left * 50 >= 1000 ? (left * 0.05).toFixed(1).replace('.', ',') + ' km' : left * 50 + ' m';
+    const ly = Math.max(26, Math.min(Y - S * 1.6, VH - 40));
+    ctx.font = `400 ${Math.round(S * 0.5)}px "Bangers","Archivo Black",system-ui,sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = '#141414';
+    ctx.strokeText(txt, X, ly);
+    ctx.fillStyle = NAV;
+    ctx.fillText(txt, X, ly);
+  }
 }
 
 /* ---- kare ---- */
@@ -683,19 +919,23 @@ export function renderIso(t: number, dt: number) {
   // önemli noktalar: oyuncu ve önündeki yol, yolcular, araçlar, varış yeri. Bunları kapatan binalar
   // saydamlaşır, arkada kalanlar binanın üstüne siluetle çizilir
   const keys: Key[] = [];
-  const key = (x: number, y: number, col: string, car?: number[] | null, z = 0.25) => {
+  const key = (x: number, y: number, col: string, car?: number[] | null, z = 0.25, pax?: any) => {
     if (!inView(x, y)) return;
     const [sx, sy] = proj(x, y, z);
-    keys.push({ x, y, d: depth(x, y), sx, sy, col, car });
+    keys.push({ x, y, d: depth(x, y), sx, sy, col, car, pax });
   };
   if (G && spriteMode()) {
     const P = G.player,
       d = P.dir || [0, -1];
     key(P.x, P.y, G.role === 'taxi' ? '#ffc20e' : '#8e98ff', d);
     for (let n = 1; n <= 4; n++) key(P.x + d[0] * n, P.y + d[1] * n, '', undefined, 0); // gideceği yol
-    if (P.carry) key(P.carry.dx, P.carry.dy, '#2f9e44', undefined, 0);
-    for (const p of G.pax)
-      if (p.state === 'wait' || p.state === 'talk') key(p.x, p.y, p.look.tourist ? '#ffd43b' : '#ffc20e');
+    if (P.carry) {
+      key(P.carry.dx, P.carry.dy, '#2f9e44', undefined, 0);
+      // rotanın yakın kısmını kapatan binalar da saydamlaşsın
+      const r = routeTo(Math.round(P.x), Math.round(P.y), P.carry.dx, P.carry.dy);
+      for (let i = 1; i < Math.min(r.length, 12); i++) key(r[i][0], r[i][1], '', undefined, 0);
+    }
+    for (const p of G.pax) if (p.state === 'wait' || p.state === 'talk') key(p.x, p.y, NEON, undefined, 0.25, p);
     for (const e of G.ents)
       if (!e.isPlayer)
         key(e.x, e.y, e.kind === 'police' ? '#1c7ed6' : e.kind === 'tag' ? '#ff922b' : '#ffc20e', e.dir || [1, 0]);
@@ -776,11 +1016,13 @@ export function renderIso(t: number, dt: number) {
   if (G) {
     ground(0);
     drawHomeStand();
-    if (G.player.carry) drawDest(G.player.carry, t);
+    const C = G.player.carry,
+      route = C ? routeTo(Math.round(G.player.x), Math.round(G.player.y), C.dx, C.dy) : [];
+    if (C) drawRoute(route, t);
     drawWaves(t);
     for (const p of G.pax)
       if ((p.state === 'wait' || p.state === 'talk') && inView(p.x, p.y))
-        objs.push([depth(p.x, p.y) + 0.05, () => upright(p.x, p.y, 0, () => drawPax(p, t))]);
+        objs.push([depth(p.x, p.y) + 0.05, () => drawPaxNeon(p, t)]);
     for (const q of RADARS)
       if (inView(q[0], q[1])) objs.push([depth(q[0], q[1]), () => upright(q[0], q[1], 0, () => drawRadar(q))]);
     for (const ck of G.checks)
@@ -815,6 +1057,13 @@ export function renderIso(t: number, dt: number) {
   for (const o of objs) o[1]();
   ctx.globalAlpha = 1;
   for (const k of covered) drawSilhouette(k, t);
+  if (G && G.player.carry && !G.cine) {
+    const C = G.player.carry,
+      route = routeTo(Math.round(G.player.x), Math.round(G.player.y), C.dx, C.dy);
+    drawDestBeam(C.dx, C.dy, route.length - 1, t);
+    drawNavArrow(route, t);
+    screen();
+  }
   if (G) {
     smoothRemotes(dt);
     ground(0.25);

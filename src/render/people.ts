@@ -117,13 +117,17 @@ export function drawPerson(L, x, y, s, t, ph, waving) {
   ctx.arc(x + s * 0.045, y - s * 0.24, s * 0.018, 0, Math.PI * 2);
   ctx.fill();
 }
+/** 2.5D görünüm yolcunun yerdeki halkasını ve figürünü ayrı çizer (figüre neon hat çekmek için) */
+export const paxOpts = { part: 'all' as 'all' | 'halo' | 'figure' };
 export function drawPax(p, t) {
   const boss = p.look.tourist;
   const x = px(p.x) - TS * 0.18,
     y = px(p.y) - TS * (boss ? 0.3 : 0.12),
     s = TS * (boss ? 1.45 : 1.05);
   const pulse = 0.5 + 0.5 * Math.sin(t * 4 + p.ph);
-  if (boss) {
+  if (paxOpts.part === 'figure') {
+    /* halka yok */
+  } else if (boss) {
     const cx0 = x + TS * 0.12,
       cy0 = y + s * 0.4;
     ctx.save();
@@ -152,6 +156,7 @@ export function drawPax(p, t) {
     ctx.ellipse(x + TS * 0.18, y + s * 0.4, TS * 0.5, TS * 0.22, 0, 0, Math.PI * 2);
     ctx.fill();
   }
+  if (paxOpts.part === 'halo') return;
   {
     const k = p.look.prof,
       pf = k && MANIFEST.passengers.map[k],

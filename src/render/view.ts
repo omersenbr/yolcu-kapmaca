@@ -4,9 +4,13 @@ import { buildMap } from '../map/painter';
 // </auto-imports>
 export const stage = $('stage'),
   cv = $('cv'),
-  ctx = cv.getContext('2d'),
   mini = $('mini'),
   mctx = mini.getContext('2d');
+/** çizim yüzeyi; 2.5D görünüm bir figürü ayrı tuvale çizmek için geçici olarak değiştirir (setCtx) */
+export let ctx: CanvasRenderingContext2D = cv.getContext('2d');
+export function setCtx(c: CanvasRenderingContext2D) {
+  ctx = c;
+}
 /* TS: bir karenin piksel boyu; ekran boyuna göre 28–52 arası */
 export let TS = 34,
   VW = 300,
