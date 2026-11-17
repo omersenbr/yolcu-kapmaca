@@ -8,7 +8,7 @@
 import { img, ready } from '../core/assets';
 import { MANIFEST } from '../sim/content';
 import { G, ORN } from '../sim/state';
-import { hsh } from '../sim/util';
+import { clamp, hsh } from '../sim/util';
 import { COLS, DIRS, LMK, MAP, RADARS, ROWS, isRoad, isTunnel } from '../sim/grid';
 import {
   CHT,
@@ -557,75 +557,243 @@ const lmReady = (n: string) => {
   const L = MANIFEST.landmarks_iso && MANIFEST.landmarks_iso.yapilar[n];
   return L && ready(img(L.file)) ? L : null;
 };
-function drawLandmark(m: Lm, draw = true): Box | null {
-  const L = lmReady(m.name);
-  if (!L) return null;
-  // alanın ekrandaki eşkenar dörtgeni: sol, alt, sağ köşeler
-  const x0 = m.x - 0.5,
-    y0 = m.y - 0.5,
-    x1 = x0 + m.w,
-    y1 = y0 + m.h;
+/** alanın ekrandaki eşkenar dörtgeni: sol, alt, sağ, üst köşeler (yoldan biraz içeride) */
+function lmDiamond(m: Lm, inset = 0) {
+  const x0 = m.x - 0.5 + inset,
+    y0 = m.y - 0.5 + inset,
+    x1 = m.x - 0.5 + m.w - inset,
+    y1 = m.y - 0.5 + m.h - inset;
   const P = [proj(x0, y0, 0), proj(x1, y0, 0), proj(x1, y1, 0), proj(x0, y1, 0)];
   const left = P.reduce((a, b) => (b[0] < a[0] ? b : a)),
     right = P.reduce((a, b) => (b[0] > a[0] ? b : a)),
-    bot = P.reduce((a, b) => (b[1] > a[1] ? b : a));
-  const dist = (a: number[], b: number[]) => Math.hypot(a[0] - b[0], a[1] - b[1]);
-  const Lab = dist(left, bot),
-    Lbr = dist(bot, right);
-  // görselin tabanı (en sol, en alt, en sağ noktalar): alana sığacak en büyük ölçek; aynalama gerekirse aynala
-  const [xl, yl, xb, yb, xr, yr] = L.taban || [0, L.h * 0.75, L.w / 2, L.h, L.w, L.h * 0.75];
-  const ia = Math.hypot(xb - xl, yb - yl) || 1,
-    ib = Math.hypot(xr - xb, yr - yb) || 1;
-  const k1 = Math.min(Lab / ia, Lbr / ib),
-    k2 = Math.min(Lab / ib, Lbr / ia),
-    flip = k2 > k1 * 1.02,
-    k = Math.max(k1, k2) * 0.95;
-  // taban merkezi alan merkezine
-  const ecx = flip ? L.w - (xl + xr) / 2 : (xl + xr) / 2,
-    ecy = (yl + yr) / 2,
-    pcx = (left[0] + right[0]) / 2,
-    pcy = (left[1] + right[1]) / 2,
-    X = pcx + (L.w / 2 - ecx) * k,
-    bottom = pcy + (L.h - ecy) * k,
-    foot = (L.h - (yl + yr - yb)) * k;
-  return drawSquashed(img(L.file), 0, 0, L.w, L.h, X, bottom, k, foot, SQ_SIMGE, flip, draw);
+    bot = P.reduce((a, b) => (b[1] > a[1] ? b : a)),
+    top = P.reduce((a, b) => (b[1] < a[1] ? b : a));
+  return { P, left, right, bot, top };
+}
+/** simge alanının düz zemini: yolu izleyen ızgaraya oturan kaldırım plakası (zemin katmanında) */
+function drawLmPlate(m: Lm) {
+  if (!lmReady(m.name)) return;
+  const { P } = lmDiamond(m, 0.04);
+  screen();
+  ctx.beginPath();
+  P.forEach((q, i) => (i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])));
+  ctx.closePath();
+  ctx.fillStyle = pal.plaza;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(27,26,23,.55)';
+  ctx.lineWidth = Math.max(1, S * 0.04);
+  ctx.stroke();
+}
+/** 3x3 doğrusal denklem (Cramer) */
+function solve3(M: number[][], v: number[]): number[] | null {
+  const det = (A: number[][]) =>
+    A[0][0] * (A[1][1] * A[2][2] - A[1][2] * A[2][1]) -
+    A[0][1] * (A[1][0] * A[2][2] - A[1][2] * A[2][0]) +
+    A[0][2] * (A[1][0] * A[2][1] - A[1][1] * A[2][0]);
+  const D = det(M);
+  if (Math.abs(D) < 1e-9) return null;
+  return [0, 1, 2].map((c) => det(M.map((r, i) => r.map((x, j) => (j === c ? v[i] : x)))) / D);
+}
+/** simge yapı: görselin tabanı (sol, alt, sağ köşe) alanın eşkenar dörtgenine birebir oturur.
+ *  Dönüşüm dikeyleri dik tutar (x' = a·x + c, y' = b·x + d·y + e); taban üstü SQ_SIMGE oranında basılır. */
+function drawLandmark(m: Lm, draw = true): Box | null {
+  const L = lmReady(m.name);
+  if (!L) return null;
+  const { left, right, bot } = lmDiamond(m, 0.12);
+  const W = L.w,
+    H = L.h;
+  const [xl, yl, xb, yb, xr, yr] = L.taban || [0, H * 0.75, W / 2, H, W, H * 0.75];
+  // iki seçenek: düz ya da aynalı; tabanın oranı alana daha uygun olanı
+  let best: { a: number; b: number; c: number; d: number; e: number; score: number } | null = null;
+  for (const flip of [false, true]) {
+    const l = flip ? [W - xr, yr] : [xl, yl],
+      r = flip ? [W - xl, yl] : [xr, yr],
+      bo = flip ? [W - xb, yb] : [xb, yb];
+    let a = (right[0] - left[0]) / (r[0] - l[0] || 1),
+      c = left[0] - a * l[0];
+    const sol = solve3(
+      [
+        [l[0], l[1], 1],
+        [bo[0], bo[1], 1],
+        [r[0], r[1], 1],
+      ],
+      [left[1], bot[1], right[1]],
+    );
+    if (!sol) continue;
+    let [b, d, e] = sol;
+    const score = Math.abs(Math.log(Math.max(1e-3, d / a))) + Math.abs(b / a);
+    if (flip) {
+      // aynalı görselde kaynak x → W − x
+      c = c + a * W;
+      a = -a;
+      e = e + b * W;
+      b = -b;
+    }
+    if (!best || score < best.score) best = { a, b, c, d, e, score };
+  }
+  if (!best) return null;
+  let { a, b, c, d, e } = best;
+  // aşırı bozulmayı sınırla (dikey ölçek yatayın yarısı ile 1,6 katı arasında)
+  const ab = Math.abs(a);
+  if (d < ab * 0.5 || d > ab * 1.6) {
+    const d2 = clamp(d, ab * 0.5, ab * 1.6);
+    e += (d - d2) * yb; // alt köşe yerinde kalsın
+    d = d2;
+  }
+  const yf = clamp(yl + yr - yb, 0, H), // taban dörtgeninin üst köşesi: bunun altı basılmaz
+    sqd = d * SQ_SIMGE,
+    eU = e + (d - sqd) * yf;
+  // ekran kutusu (saydamlık için)
+  const xs = [c, a * W + c],
+    ys = [b * 0 + sqd * 0 + eU, b * W + eU, b * 0 + d * H + e, b * W + d * H + e];
+  const box = { x0: Math.min(...xs), x1: Math.max(...xs), y0: Math.min(...ys), y1: Math.max(...ys) };
+  if (!draw) return box;
+  const im = img(L.file);
+  // taban kısmı: tam ölçek
+  ctx.setTransform(DPR * a, DPR * b, 0, DPR * d, DPR * c, DPR * e);
+  if (H - yf > 0.5) ctx.drawImage(im, 0, yf, W, H - yf, 0, yf, W, H - yf);
+  // gövde: dikeyde basık
+  ctx.setTransform(DPR * a, DPR * b, 0, DPR * sqd, DPR * c, DPR * eU);
+  ctx.drawImage(im, 0, 0, W, yf + 0.5, 0, 0, W, yf + 0.5);
+  screen();
+  return box;
 }
 
 /* ---- köprüler: görselin iki ucu yolun iki ucuna oturur, zemin katmanında çizilir ---- */
-const BRIDGES: { name: string; a: number[]; b: number[] }[] = [
-  { name: 'Yavuz Sultan Selim Köprüsü', a: [130.5, 40], b: [140.5, 40] },
-  { name: 'FSM Köprüsü', a: [130.5, 76], b: [140.5, 76] },
-  { name: '15 Temmuz Şehitler Köprüsü', a: [130.5, 116], b: [140.5, 116] },
-  { name: 'Galata Köprüsü', a: [116, 145.5], b: [116, 152.5] },
+/** köprüler: tabliye yolun karelerinin tam üstüne çizilir (araçlar yoldan doğrudan tabliyeye geçer);
+ *  kuleler ve halatlar mürekkep çizgisiyle kodda çizilir, aralar boştur.
+ *  tip: asma (iki kule, sarkık ana halat), yss (yüksek kuleler, eğik askılar + halat), duz (alçak, fenerli) */
+type BridgeDef = { name: string; a: number[]; b: number[]; tip: 'asma' | 'yss' | 'duz'; kule: number };
+const BRIDGES: BridgeDef[] = [
+  { name: 'Yavuz Sultan Selim Köprüsü', a: [130.5, 40], b: [140.5, 40], tip: 'yss', kule: 6.5 },
+  { name: 'FSM Köprüsü', a: [130.5, 76], b: [140.5, 76], tip: 'asma', kule: 4.2 },
+  { name: '15 Temmuz Şehitler Köprüsü', a: [130.5, 116], b: [140.5, 116], tip: 'asma', kule: 4.6 },
+  { name: 'Galata Köprüsü', a: [116, 145.5], b: [116, 152.5], tip: 'duz', kule: 0 },
 ];
-export const bridgeReady = (n: string) => {
-  const B = MANIFEST.bridges_iso && MANIFEST.bridges_iso.kopruler[n];
-  return B && ready(img(B.file)) ? B : null;
-};
-function drawBridge(br: { name: string; a: number[]; b: number[] }) {
-  const B = bridgeReady(br.name);
-  if (!B) return;
-  let pa = proj(br.a[0], br.a[1], 0),
-    pb = proj(br.b[0], br.b[1], 0);
-  if (pb[0] < pa[0]) [pa, pb] = [pb, pa];
-  let [el, er] = B.uclar as number[][];
-  // görselin eğimi yolunkiyle ters ise aynala
-  const flip = Math.sign(er[1] - el[1]) !== Math.sign(pb[1] - pa[1]);
-  if (flip)
-    [el, er] = [
-      [B.w - er[0], er[1]],
-      [B.w - el[0], el[1]],
-    ];
-  const k = Math.hypot(pb[0] - pa[0], pb[1] - pa[1]) / Math.hypot(er[0] - el[0], er[1] - el[1]),
-    ox = pa[0] - el[0] * k,
-    oy = pa[1] - el[1] * k;
+export const bridgeReady = (_n: string) => true;
+function bridgeGeom(br: BridgeDef) {
+  const [ax, ay] = br.a,
+    [bx, by] = br.b,
+    len = Math.hypot(bx - ax, by - ay),
+    ux = (bx - ax) / len,
+    uy = (by - ay) / len,
+    nx = -uy,
+    ny = ux,
+    W = 0.56; // tabliyenin yarı genişliği (kare)
+  const at = (t: number, side: number, z: number) => proj(ax + ux * t + nx * side * W, ay + uy * t + ny * side * W, z);
+  // hangi kenar kameraya yakın: derinliği büyük olan
+  const mx = (ax + bx) / 2,
+    my = (ay + by) / 2,
+    near = depth(mx + nx, my + ny) > depth(mx - nx, my - ny) ? 1 : -1;
+  return { len, at, near, mx, my };
+}
+function line(pts: [number, number][], w: number, col: string) {
+  ctx.beginPath();
+  pts.forEach((q, i) => (i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])));
+  ctx.strokeStyle = col;
+  ctx.lineWidth = w;
+  ctx.stroke();
+}
+function poly(pts: [number, number][], fill: string) {
+  ctx.beginPath();
+  pts.forEach((q, i) => (i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])));
+  ctx.closePath();
+  ctx.fillStyle = fill;
+  ctx.fill();
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = Math.max(1, S * 0.035);
+  ctx.stroke();
+}
+/** ana halatın yüksekliği (t: tabliye boyunca konum) */
+function cableZ(br: BridgeDef, len: number, t: number) {
+  const t1 = len * 0.2,
+    t2 = len * 0.8,
+    H = br.kule - 0.15;
+  if (t <= t1) return 0.25 + (H - 0.25) * (t / t1);
+  if (t >= t2) return 0.25 + (H - 0.25) * ((len - t) / (len - t2));
+  const u = (t - t1) / (t2 - t1); // ortada sarkar
+  return 0.45 + (H - 0.45) * (2 * u - 1) ** 2;
+}
+/** bir kenarın kulesi, halatı ve askıları (side: ±1) */
+function bridgeSide(br: BridgeDef, side: number) {
+  const { len, at } = bridgeGeom(br),
+    lw = Math.max(1, S * 0.035);
   screen();
-  if (flip) {
-    ctx.translate(ox + B.w * k, oy);
-    ctx.scale(-1, 1);
-    ctx.drawImage(img(B.file), 0, 0, B.w * k, B.h * k);
-    screen();
-  } else ctx.drawImage(img(B.file), ox, oy, B.w * k, B.h * k);
+  // korkuluk
+  line([at(0, side, 0.16), at(len, side, 0.16)], Math.max(1, S * 0.05), INK);
+  if (br.tip === 'duz') {
+    // fenerler
+    for (let t = 0.7; t < len; t += 1.6) {
+      const p0 = at(t, side, 0.1),
+        p1 = at(t, side, 0.9);
+      line([p0, p1], Math.max(1, S * 0.05), INK);
+      ctx.fillStyle = '#ffd36b';
+      ctx.beginPath();
+      ctx.arc(p1[0], p1[1], S * 0.09, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = INK;
+      ctx.lineWidth = lw;
+      ctx.stroke();
+    }
+    return;
+  }
+  const t1 = len * 0.2,
+    t2 = len * 0.8,
+    H = br.kule;
+  // ana halat
+  const cab: [number, number][] = [];
+  for (let t = 0; t <= len + 1e-6; t += len / 40) cab.push(at(t, side, cableZ(br, len, t)));
+  line(cab, Math.max(1.2, S * 0.06), INK);
+  // askılar: dikey (asma) ya da kuleden yelpaze (yss)
+  ctx.globalAlpha = 0.8;
+  for (let t = 0.35; t < len; t += 0.45) {
+    if (Math.abs(t - t1) < 0.2 || Math.abs(t - t2) < 0.2) continue;
+    line([at(t, side, 0.16), at(t, side, cableZ(br, len, t))], Math.max(0.8, S * 0.02), INK);
+  }
+  if (br.tip === 'yss')
+    for (const tk of [t1, t2])
+      for (let i = 1; i <= 5; i++) {
+        const d = i * 0.42;
+        for (const sgn of [-1, 1]) {
+          const t = tk + sgn * d;
+          if (t > 0 && t < len) line([at(tk, side, H * (0.55 + i * 0.07)), at(t, side, 0.16)], Math.max(0.8, S * 0.022), INK);
+        }
+      }
+  ctx.globalAlpha = 1;
+  // kuleler: iki ayaklı dikdörtgen
+  for (const tk of [t1, t2]) {
+    const w = 0.13;
+    poly([at(tk - w, side, 0), at(tk + w, side, 0), at(tk + w, side, H), at(tk - w, side, H)], pal.pillar);
+  }
+}
+/** kulelerin iki ayağını birleştiren kirişler (yakın kenarla birlikte çizilir) */
+function bridgeBeams(br: BridgeDef) {
+  if (br.tip === 'duz') return;
+  const { len, at } = bridgeGeom(br),
+    H = br.kule;
+  for (const tk of [len * 0.2, len * 0.8])
+    for (const z of [H - 0.25, H * 0.55]) poly([at(tk, -1, z), at(tk, 1, z), at(tk, 1, z - 0.22), at(tk, -1, z - 0.22)], pal.pillar);
+}
+/** tabliye: yolun üstünde, zemin katmanında */
+function bridgeDeck(br: BridgeDef) {
+  const { len, at, near } = bridgeGeom(br);
+  screen();
+  // yan yüz (kirişin kalınlığı) yakın kenarda
+  poly([at(0, near, 0), at(len, near, 0), at(len, near, -0.3), at(0, near, -0.3)], br.tip === 'duz' ? '#b9b2a2' : '#c8ccd0');
+  poly([at(0, -1, 0), at(len, -1, 0), at(len, 1, 0), at(0, 1, 0)], pal.road);
+  // şerit çizgisi
+  ctx.setLineDash([S * 0.3, S * 0.3]);
+  line([at(0.2, 0, 0.01), at(len - 0.2, 0, 0.01)], Math.max(1, S * 0.04), pal.line);
+  ctx.setLineDash([]);
+}
+function drawBridgeLow(br: BridgeDef) {
+  bridgeDeck(br);
+  bridgeSide(br, -bridgeGeom(br).near);
+}
+function drawBridgeHigh(br: BridgeDef) {
+  bridgeSide(br, bridgeGeom(br).near);
+  bridgeBeams(br);
+  screen();
 }
 
 /** binanın arkasında kalan önemli nesnenin siluet işareti (binanın üstüne çizilir) */
@@ -1026,7 +1194,9 @@ export function renderIso(t: number, dt: number) {
     [140, 30, 194, 0.09, 2],
   ])
     drawFerry((x0 + ((Math.sin(ft * sp + ph) + 1) / 2) * span) * TS, y * TS, true, t);
-  if (painterOpts.skipLm) for (const br of BRIDGES) drawBridge(br);
+  if (painterOpts.skipLm) {
+    for (const m of landmarks()) drawLmPlate(m);
+  }
   const L = light();
   // sıralı nesneler: [derinlik, çizim]
   const objs: [number, () => void][] = [];
@@ -1136,6 +1306,15 @@ export function renderIso(t: number, dt: number) {
       route = C ? routeTo(Math.round(G.player.x), Math.round(G.player.y), C.dx, C.dy) : [];
     if (C) drawRoute(route, t);
     drawWaves(t);
+    // köprüler: tabliye ve uzak kenar zeminde; yakın kenar araçların önünde
+    for (const br of BRIDGES) {
+      const { mx, my } = bridgeGeom(br);
+      if (Math.abs(mx - CX) > R + 12 || Math.abs(my - CY) > R + 12) continue;
+      drawBridgeLow(br);
+      const d = Math.max(depth(br.a[0], br.a[1]), depth(br.b[0], br.b[1])) + 0.3; // köprüdeki bütün araçların önünde
+      objs.push([d, () => drawBridgeHigh(br)]);
+    }
+    ground(0);
     for (const p of G.pax)
       if ((p.state === 'wait' || p.state === 'talk') && inView(p.x, p.y))
         objs.push([depth(p.x, p.y) + 0.05, () => drawPaxNeon(p, t)]);
@@ -1193,7 +1372,10 @@ export function renderIso(t: number, dt: number) {
       ctx.fillRect(0, 0, VW, VH);
       ctx.restore();
     }
-    if (G.hava && G.hava !== 'acik') drawWeather(G.hava, t, 0, 0, VW, VH);
+    if (G.hava && G.hava !== 'acik') {
+      const [ax, ay] = proj(0, 0, 0);
+      drawWeather(G.hava, t, 0, 0, VW, VH, ax, ay, S);
+    }
     for (const f of G.fx) upright(f.x, f.y, 0.4, () => drawFx(f));
     screen();
     drawMarks((wx, wy) => proj(wx / TS - 0.5, wy / TS - 0.5, 0));

@@ -534,11 +534,68 @@ export function drawMini() {
 }
 
 /** kariyer havası: yağmur çizgileri, kar taneleri, sis; dünya koordinatında görünen alana çizilir */
-export function drawWeather(h: string, t: number, x0: number, y0: number, w: number, hgt: number) {
+/* sis: yumuşak kenarlı duman topakları; bir kez çizilir, sonra ölçekli basılır */
+let fogPuffs: HTMLCanvasElement[] | null = null;
+function puffs() {
+  if (fogPuffs) return fogPuffs;
+  fogPuffs = [];
+  for (let v = 0; v < 3; v++) {
+    const N = 256,
+      cv = document.createElement('canvas');
+    cv.width = cv.height = N;
+    const g = cv.getContext('2d')!;
+    // birkaç yumuşak daireden topak: kenarı düzensiz, ortası yoğun
+    for (let i = 0; i < 9; i++) {
+      const a = i * 2.39996 + v * 1.7,
+        r = i ? N * (0.12 + ((i * 37 + v * 11) % 7) * 0.012) : N * 0.22,
+        d = i ? N * (0.12 + ((i * 53 + v * 5) % 5) * 0.02) : 0,
+        x = N / 2 + Math.cos(a) * d,
+        y = N / 2 + Math.sin(a) * d * 0.8,
+        rg = g.createRadialGradient(x, y, 0, x, y, r);
+      rg.addColorStop(0, 'rgba(246,247,248,.8)');
+      rg.addColorStop(0.5, 'rgba(242,244,246,.5)');
+      rg.addColorStop(1, 'rgba(236,238,240,0)');
+      g.fillStyle = rg;
+      g.fillRect(0, 0, N, N);
+    }
+    fogPuffs.push(cv);
+  }
+  return fogPuffs;
+}
+/** sisli hava: rüzgârla sürüklenen duman topakları. Harita ile birlikte kayar (ax, ay: dünya başlangıcının
+ *  çizim koordinatı; u: bir karenin çizim boyu). Oyunun rastgele üretecini kullanmaz. */
+function drawFog(t: number, x0: number, y0: number, w: number, hgt: number, ax: number, ay: number, u: number) {
+  const P = puffs(),
+    per = 9 * u, // topak ızgarasının bir hücresi
+    ox = ax + t * 0.45 * u, // rüzgâr
+    oy = ay + t * 0.15 * u,
+    i0 = Math.floor((x0 - ox) / per) - 1,
+    j0 = Math.floor((y0 - oy) / per) - 1,
+    i1 = Math.ceil((x0 + w - ox) / per) + 1,
+    j1 = Math.ceil((y0 + hgt - oy) / per) + 1;
+  // ince genel pus: uzak yerler az soluk
+  ctx.fillStyle = 'rgba(236,238,240,.06)';
+  ctx.fillRect(x0, y0, w, hgt);
+  for (let j = j0; j <= j1; j++)
+    for (let i = i0; i <= i1; i++)
+      for (let k = 0; k < 3; k++) {
+        const hsh = Math.abs(Math.sin(i * 12.9898 + j * 78.233 + k * 37.719) * 43758.5453) % 1,
+          hs2 = Math.abs(Math.sin(i * 39.346 + j * 11.135 + k * 83.155) * 24634.6345) % 1,
+          cx = ox + (i + hsh) * per,
+          cy = oy + (j + hs2) * per,
+          r = u * (2.4 + hsh * 2.6) * (1 + 0.06 * Math.sin(t * 0.4 + i + j)),
+          a = 0.8 + 0.2 * Math.sin(t * 0.25 + hsh * 6.28);
+        if (cx + r * 1.3 < x0 || cx - r * 1.3 > x0 + w || cy + r < y0 || cy - r > y0 + hgt) continue;
+        ctx.globalAlpha = a;
+        ctx.drawImage(P[(((i * 7 + j * 3 + k) % 3) + 3) % 3], cx - r * 1.3, cy - r * 0.7, r * 2.6, r * 1.4);
+      }
+  ctx.globalAlpha = 1;
+}
+
+export function drawWeather(h: string, t: number, x0: number, y0: number, w: number, hgt: number, ax = 0, ay = 0, u = TS) {
   ctx.save();
   if (h === 'sis') {
-    ctx.fillStyle = 'rgba(236,238,240,.38)';
-    ctx.fillRect(x0, y0, w, hgt);
+    drawFog(t, x0, y0, w, hgt, ax, ay, u);
   } else if (h === 'yagmur') {
     ctx.strokeStyle = 'rgba(40,70,110,.45)';
     ctx.lineWidth = Math.max(1, TS * 0.04);

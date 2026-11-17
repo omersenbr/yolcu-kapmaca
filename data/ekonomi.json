@@ -355,8 +355,9 @@
     "mesafe": 4
   },
   "mudavim": {
-    "_not": "Tekrar eden karakterler: yolcu doğarken bu ihtimalle (aktif değilse) semtinde bir müdavim çıkar. İlişki −5…+10; bahşiş = ilişki × bahsisBasina (pozitifse).",
+    "_not": "Tekrar eden karakterler: yolcu doğarken bu ihtimalle (aktif değilse) semtinde bir müdavim çıkar; haritada aynı anda en fazla enFazla müdavim bekler. İlişki −5…+10; bahşiş = ilişki × bahsisBasina (pozitifse).",
     "ihtimal": 0.03,
+    "enFazla": 1,
     "bahsisBasina": 300,
     "artis": 1,
     "sikayetCeza": 2,
