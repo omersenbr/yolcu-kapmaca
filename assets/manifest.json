@@ -708,49 +708,32 @@
   "yali": {
    "file": "assets/sprites_iso/yali.webp",
    "cols": 4,
-   "count": 16,
-   "cw": 219,
-   "ch": 224,
+   "count": 4,
+   "cw": 461,
+   "ch": 462,
    "w": [
-    211,
-    203,
-    203,
-    207,
-    212,
-    200,
-    213,
-    203,
-    205,
-    203,
-    213,
-    205,
-    215,
-    203,
-    207,
-    206
+    457,
+    457,
+    455,
+    455
    ],
-   "dolu": 0.82,
-   "kaide": 0.0
+   "dolu": 0.96,
+   "kaide": 0.05
   },
   "blok": {
    "file": "assets/sprites_iso/blok.webp",
    "cols": 4,
-   "count": 9,
-   "cw": 301,
-   "ch": 315,
+   "count": 4,
+   "cw": 461,
+   "ch": 465,
    "w": [
-    205,
-    225,
-    297,
-    292,
-    164,
-    230,
-    199,
-    197,
-    263
+    457,
+    457,
+    455,
+    455
    ],
-   "dolu": 0.8,
-   "kaide": 0.0
+   "dolu": 0.96,
+   "kaide": 0.05
   },
   "agac": {
    "file": "assets/sprites_iso/agac.webp",
@@ -785,43 +768,43 @@
   "yapilar": {
    "Galata Kulesi": {
     "file": "assets/landmarks_iso/galata-kulesi.webp",
-    "w": 394,
-    "h": 463
+    "w": 335,
+    "h": 469
    },
    "Kız Kulesi": {
     "file": "assets/landmarks_iso/kiz-kulesi.webp",
-    "w": 486,
-    "h": 427
+    "w": 421,
+    "h": 412
    },
    "Çamlıca Kulesi": {
     "file": "assets/landmarks_iso/camlica-kulesi.webp",
-    "w": 488,
-    "h": 487
+    "w": 383,
+    "h": 488
    },
    "Rumeli Hisarı": {
     "file": "assets/landmarks_iso/rumeli-hisari.webp",
-    "w": 488,
-    "h": 399
+    "w": 474,
+    "h": 423
    },
    "Ayasofya": {
     "file": "assets/landmarks_iso/ayasofya.webp",
-    "w": 502,
-    "h": 447
+    "w": 486,
+    "h": 465
    },
    "Sultanahmet Camii": {
     "file": "assets/landmarks_iso/sultanahmet-camii.webp",
-    "w": 486,
-    "h": 442
+    "w": 487,
+    "h": 463
    },
    "Topkapı Sarayı": {
     "file": "assets/landmarks_iso/topkapi-sarayi.webp",
-    "w": 488,
-    "h": 458
+    "w": 483,
+    "h": 460
    },
    "Dolmabahçe Sarayı": {
     "file": "assets/landmarks_iso/dolmabahce-sarayi.webp",
-    "w": 488,
-    "h": 441
+    "w": 487,
+    "h": 344
    }
   }
  }
