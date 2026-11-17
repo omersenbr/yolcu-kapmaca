@@ -18,6 +18,8 @@ import { mpEnabled, mpStart, mpStop, mpUrl, setMp } from '../net/mp';
 import { freeformOn, setFreeform, setVoice, voiceOn } from '../dialog/voice';
 import { clearLearned, myLearned } from '../sim/learn';
 import { isoCfg, setIso } from '../render/isoView';
+import { juiceReset } from './juice';
+import { muted, setMuted } from '../audio/sound';
 // </auto-imports>
 /* ================= ANA EKRAN: kapak, profil, rol düğmeleri, alttan açılan sayfalar ================= */
 export function toMenu() {
@@ -97,6 +99,7 @@ export function paintDiff() {
     .forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.d === DIFF)));
 }
 export function startRole(r, shift?: ShiftOpts) {
+  juiceReset();
   document.body.classList.remove('inmenu');
   window.dispatchEvent(new Event('resize'));
   pageTurn();
@@ -131,6 +134,9 @@ export function initMenu() {
   $('talkVoice').checked = voiceOn();
   $('talkFree').addEventListener('change', () => setFreeform($('talkFree').checked));
   $('talkVoice').addEventListener('change', () => setVoice($('talkVoice').checked));
+  $('sfxLbl').textContent = TU.ayarEfekt;
+  $('sfxOn').checked = !muted;
+  $('sfxOn').addEventListener('change', () => setMuted(!$('sfxOn').checked));
   // görünüm: 2.5D / üstten, eğim, açı, yakınlık, kamera takibi (değişiklik anında arkadaki haritada görünür)
   const GV = DLG.gorunum;
   $('viewTitle').textContent = GV.baslik;

@@ -2584,7 +2584,8 @@
    "izinYok": "Mikrofon izni yok; yazarak cevap verebilirsin.",
    "ayarBaslik": "Konuşma",
    "ayarSerbest": "Serbest konuşma: sorgularda ve yolcularla (yaz ya da konuş)",
-   "ayarSes": "Karakterler sesli konuşsun"
+   "ayarSes": "Karakterler sesli konuşsun",
+   "ayarEfekt": "Ses efektleri ve titreşim"
   },
   "hakaretToast": "Memura hakaret cezası: −₺{ceza}",
   "kacamak": {
@@ -3231,5 +3232,135 @@
   "aci": "Açı",
   "yakin": "Yakınlık",
   "takip": "Kamera aracın yönünü izlesin (ekran döner; kaydırma araca göre: yukarı düz, sol/sağ dön)"
+ },
+ "juice": {
+  "_not": "Ödül/ceza damgaları (src/ui/juice.ts). iyi: sarı patlama, kotu: kırmızı damga. {n}: kombo sayısı. Taksici ve Tag’ci aynı olaya farklı bakar.",
+  "teslim": {
+   "iyi": true,
+   "metin": [
+    "HELAL!",
+    "YAĞ GİBİ!",
+    "BİR SONRAKİNE!",
+    "KAPIDAN KAPIYA!"
+   ]
+  },
+  "sisti": {
+   "iyi": true,
+   "metin": [
+    "TAKSİMETRE ŞAHA KALKTI!",
+    "YOLU UZATTIN, KESEYİ DOLDURDUN!",
+    "BOĞAZ TURU DAHİL!"
+   ]
+  },
+  "kazik": {
+   "iyi": true,
+   "metin": [
+    "KAZIK ATILDI!",
+    "WELCOME TO İSTANBUL!",
+    "TURİST TARİFESİ!"
+   ]
+  },
+  "teslimTag": {
+   "iyi": true,
+   "metin": [
+    "KİMSE GÖRMEDİ!",
+    "TERTEMİZ İŞ!",
+    "BEŞ YILDIZLIK!",
+    "DURAKÇILARIN HABERİ YOK!"
+   ]
+  },
+  "goruldun": {
+   "iyi": false,
+   "metin": [
+    "GÖRÜLDÜN!",
+    "DURAK UYANDI!",
+    "BAS GAZA!"
+   ]
+  },
+  "sikayet": {
+   "iyi": false,
+   "metin": [
+    "ŞİKAYET!",
+    "ZABITAYA YAZILDIN!",
+    "BİR YILDIZ!"
+   ]
+  },
+  "radar": {
+   "iyi": false,
+   "metin": [
+    "FLAŞ!",
+    "CEZA YAZILDI!",
+    "GÜLÜMSE, ÇEKİLDİN!"
+   ]
+  },
+  "ceza": {
+   "iyi": false,
+   "metin": [
+    "ÇEVİRME!",
+    "CEZA!"
+   ]
+  },
+  "kombo": {
+   "iyi": true,
+   "metin": [
+    "KOMBO ×{n}!",
+    "SERİ ×{n}!"
+   ]
+  },
+  "yildiz5": {
+   "iyi": true,
+   "metin": [
+    "★★★★★"
+   ]
+  },
+  "seviye": {
+   "iyi": true,
+   "metin": [
+    "YENİ ARABA!",
+    "SEVİYE ATLADIN!"
+   ]
+  },
+  "kavgaKazandi": {
+   "iyi": true,
+   "metin": [
+    "HAYDARİ!",
+    "YERE SERDİN!",
+    "PATAKLADIN!"
+   ]
+  },
+  "kavgaKaybetti": {
+   "iyi": false,
+   "metin": [
+    "NAKAVT!",
+    "DAYAĞI YEDİN!"
+   ]
+  },
+  "para": {
+   "iyi": true,
+   "metin": []
+  },
+  "kactin": {
+   "iyi": true,
+   "metin": [
+    "SIYRILDIN!",
+    "TOZ OL!",
+    "DURAKÇILAR TOZ YUTTU!"
+   ]
+  },
+  "yuttular": {
+   "iyi": true,
+   "metin": [
+    "YUTTULAR!",
+    "KUZENİMMİŞ, EVET!",
+    "İNANDILAR!"
+   ]
+  },
+  "siyrildin": {
+   "iyi": true,
+   "metin": [
+    "PAÇAYI KURTARDIN!",
+    "İYİ ÇALIŞMALAR AMİRİM!"
+   ]
+  }
  }
 }

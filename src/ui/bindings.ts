@@ -7,6 +7,7 @@ import * as taxiScenes from '../dialog/taxiScenes';
 import { endGame } from './endscreen';
 import { rideEvent } from '../dialog/rideEvents';
 import { paxChat } from '../dialog/paxChat';
+import { juice } from './juice';
 import { freeformOn } from '../dialog/voice';
 import { cinematic } from '../sim/game';
 import { radio, toast, updHud } from './hud';
@@ -35,6 +36,7 @@ export function initBindings() {
     hud: updHud,
     radio,
     end: endGame,
+    juice,
     flash() {
       const fl = $('flash');
       fl.classList.add('on');

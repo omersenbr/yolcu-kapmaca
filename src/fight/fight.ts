@@ -7,6 +7,7 @@ import { setBubble, stopTimer, ui } from '../dialog/comic';
 import { face } from '../dialog/portraits';
 import { LOOK } from '../sim/passengers';
 import type { Look } from '../sim/types';
+import { bus } from '../sim/bus';
 // </auto-imports>
 export interface FightOpts {
   bonus?: number;
@@ -147,6 +148,7 @@ export function fight(
           requestAnimationFrame(tick);
           return;
         }
+        bus.juice(roll < ch ? 'kavgaKazandi' : 'kavgaKaybetti');
         res({ win: roll < ch, hits, rate: rateNow(), ch });
       };
       requestAnimationFrame(tick);

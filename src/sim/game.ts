@@ -174,6 +174,7 @@ export function arrive(e) {
         G.money -= fine;
         fx(e.x, e.y, 'Radar −₺' + fine, '#d6402b');
         bus.toast(`Radar! Nitroyla hız sınırını aştın. Hız cezası −₺${fine}`, true);
+        bus.juice('radar');
         bus.flash();
         bus.hud();
       }
@@ -225,6 +226,7 @@ export function board(e, p) {
       G.lastAct = 'aldın';
       G.lastLoc = district(Math.round(P.x), Math.round(P.y));
       if (!witness(P, 'aldın')) bus.toast(`${p.look.name} bindi, kimse görmedi. ${DAT[p.dest]} götür.`);
+      else bus.juice('goruldun');
     }
   } else if (e.kind === 'tag') {
     const n = npcWitness(e);
@@ -267,12 +269,14 @@ export function deliver(e) {
       addTagXP();
       if (tagLevel() > before) {
         G.player.spr = null;
+        bus.juice('seviye');
         setTimeout(() => bus.toast(T(DLG.tagLevels.up, { arac: TL().ad })), 2600);
       }
     }
     G.lastLoc = district(Math.round(e.x), Math.round(e.y));
-    if (!witness(e, 'indirdin'))
-      bus.toast(p.complained ? `${p.dest} teslim ama şikayetli. +₺${f}` : `${p.dest} teslim. +₺${f}`);
+    const seen = witness(e, 'indirdin');
+    if (!seen) bus.toast(p.complained ? `${p.dest} teslim ama şikayetli. +₺${f}` : `${p.dest} teslim. +₺${f}`);
+    bus.juice(seen ? 'goruldun' : p.complained ? 'sikayet' : 'teslimTag');
   } else {
     const before = G.money;
     const normal = taximeter(p.m, p.cross);
@@ -293,6 +297,7 @@ export function deliver(e) {
       }
       const otelSikayet = Math.random() < 0.2;
       rideDone(p, usd ? 0 : p.fare, otelSikayet);
+      bus.juice(otelSikayet ? 'sikayet' : 'kazik');
       if (otelSikayet) {
         G.money -= 1500;
         bus.toast(`Turist otelden şikayet etti! Taksimetresiz fahiş ücret cezası −₺1500`, true);
@@ -306,6 +311,7 @@ export function deliver(e) {
       G.money += p.fare;
       fx(e.x, e.y, '+₺' + p.fare, '#2f9e44');
       rideDone(p, p.fare, !!p.lateComplain);
+      bus.juice(p.lateComplain ? 'sikayet' : 'teslim');
       if (p.lateComplain) {
         G.money -= 400;
         bus.toast(`${p.look.name}: “${DLG.pickup.lateComplain}” −₺400`, true);
@@ -334,6 +340,7 @@ export function deliver(e) {
       G.money += meter;
       rideDone(p, meter, false);
       fx(e.x, e.y, '+₺' + meter, '#2f9e44');
+      bus.juice(meter > normal + 20 ? 'sisti' : 'teslim');
       if (!p.honest)
         bus.toast(
           meter > normal + 20 ? `${p.dest} teslim. Taksimetre şişti: +₺${meter}` : `${p.dest} teslim. +₺${meter}`,
@@ -369,6 +376,7 @@ export function checkpoint(ck) {
   if (P.carry && P.carry.fixed) {
     G.money -= 500;
     bus.toast('Sivil çevirme: taksimetre kapalı! −₺500', true);
+    bus.juice('ceza');
     bus.hud();
     return false;
   }

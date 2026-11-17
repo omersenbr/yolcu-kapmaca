@@ -7,7 +7,7 @@ import { COLS, RADARS, ROWS } from '../sim/grid';
 import { CHT, CHX, CHY, buildMap, mapChunk, mapChunks, miniCv, pal, painterOpts, setChunkCap } from '../map/painter';
 import { drawCar } from './cars';
 import { drawDest, drawPax } from './people';
-import { DPR, TS, VH, VW, cam, ctx, mctx, mini, px, rr, star } from './view';
+import { DPR, TS, VH, VW, cam, ctx, mctx, mini, playerScr, px, rr, star } from './view';
 import { onPlayer } from '../sim/ai';
 import { drawRemotes } from './remotes';
 import { resetIsoLm } from './isoView';
@@ -197,6 +197,7 @@ export function render(t, dt) {
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
     const toS = (wx, wy) => [(wx - cx) * Z + VW / 2, (wy - cy) * Z + VH / 2];
+    [playerScr.x, playerScr.y] = toS(px(G.player.x), px(G.player.y));
     drawMarks(toS);
   }
   drawMini();

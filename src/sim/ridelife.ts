@@ -59,6 +59,7 @@ export function rideDone(p: Pax, earned: number, sikayet: boolean) {
   const y = rating(p, sikayet);
   S.puanlar.push(y);
   if (y >= 5) S.besYildiz++;
+  if (y >= 5) setTimeout(() => bus.juice('yildiz5'), 1500);
   setTimeout(() => bus.toast(T(D.puanToast, { yolcu: p.look.name, yildiz: '★'.repeat(y) + '☆'.repeat(5 - y) })), 1400);
   // kombo: şikayetsiz ve kısa aralıklı teslimatlar
   const K = ECO.kombo,
@@ -69,6 +70,7 @@ export function rideDone(p: Pax, earned: number, sikayet: boolean) {
   } else {
     G.combo = G.lastDel !== undefined && G.clock - G.lastDel <= win ? (G.combo || 0) + 1 : 1;
     if (G.combo > S.kombo) S.kombo = G.combo;
+    if (G.combo >= 2) setTimeout(() => bus.juice('kombo', G.combo), 800);
     if (G.combo >= 2 && earned > 0) {
       const kat = Math.min(K.azami, K.adim * (G.combo - 1)),
         ek = Math.round(earned * kat);

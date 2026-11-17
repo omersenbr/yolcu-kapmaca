@@ -38,6 +38,8 @@ export function resize() {
 
 /* kamera ve dünya→piksel dönüşümü */
 export const cam = { x: 0, y: 0, z: 1 };
+/** oyuncunun ekrandaki yeri (CSS piksel; uçan paralar buradan kalkar) */
+export const playerScr = { x: 0, y: 0 };
 export const px = (v) => (v + 0.5) * TS;
 export function star(x, y, r, c) {
   ctx.fillStyle = c;

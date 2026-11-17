@@ -39,7 +39,8 @@ async function inputFor(page, f) {
 // bilinçli fark: yeni sürümde emoji yok (stil kuralı); karşılaştırmada emojiler yok sayılır
 const noEmoji = (x) => x.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{26FF}]\uFE0F?\s?/gu, '');
 const snapRaw = (page) => page.evaluate(() => ({
-  hud: document.querySelector('.hud').innerText.replace(/\s+/g, ' ').trim(),
+  // bilgi şeridinin değerleri kimlikle okunur (yeni sürümde şerit simgeli ve kasa animasyonlu)
+  hud: ['money', 'timeLbl', 'time', 'paxLbl', 'pax'].map((id) => document.getElementById(id).textContent).join(' ').replace(/\s+/g, ' ').trim(),
   panel: document.getElementById('comic').hidden ? '' : document.getElementById('panel').innerText.replace(/\s+/g, ' ').trim().slice(0, 160),
   end: document.getElementById('end').hidden ? '' : document.getElementById('endTitle').textContent,
   img: document.getElementById('cv').toDataURL('image/png'),

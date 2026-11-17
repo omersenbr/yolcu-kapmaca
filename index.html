@@ -12,7 +12,7 @@
 <body>
 <div class="loading" id="loading"><b>Yolcu Kapmaca</b><i><span id="loadBar"></span></i><small id="loadTxt">Yükleniyor…</small></div>
 <div class="hud">
-  <div><small>Kasa</small><span id="money">₺0</span></div>
+  <div id="moneyBox"><small>Kasa</small><span id="money">₺0</span><span id="moneyShow" aria-hidden="true">₺0</span></div>
   <div><small id="timeLbl">Saat</small><span id="time">05:00</span></div>
   <div class="grow"><small id="paxLbl">Yolcu</small><span id="pax">Boş</span></div>
   <button class="mbtn" id="menuBtn" aria-label="Ana menüye dön" title="Ana menü"><img alt="" src="/assets/ui/i_menu.webp"></button>
@@ -25,6 +25,7 @@
   <button class="nitroBtn" id="nitroBtn" hidden aria-label="Nitro"><img alt="" src="/assets/ui/i_bolt.webp"><span id="nitroLbl">NİTRO</span></button>
   <button class="talkBtn" id="talkBtn" hidden aria-label="Yolcuyla konuş"><img alt="" src="/assets/ui/i_radio.webp"><span>KONUŞ</span></button>
   <div class="flash" id="flash"></div>
+  <div class="juiceLayer" id="juiceLayer"></div>
   <button class="mphelp" id="mpHelp" hidden></button>
   <div class="overlay" id="adOv" hidden><div class="card" id="adCard"></div></div>
   <div class="radio" id="radio" hidden><b><img alt="" src="/assets/ui/i_radio.webp">Telsiz</b><p id="radioTxt"></p><div><button id="radioYes">Yardıma git</button><button class="no" id="radioNo">Boş ver</button></div></div>
@@ -66,7 +67,7 @@
     <div class="sheet" id="sh-prof" hidden><div class="shead"><b>Profil</b><button class="sx" aria-label="Kapat">✕</button></div>
       <label class="nm" id="nmWrap">Kullanıcı adın<input id="uname" maxlength="16" autocomplete="nickname" placeholder="ör. Kadıköylü Reis"></label>
       <div class="mpset viewset"><b id="viewTitle"></b><select id="viewMode"><option value="2.5d" id="viewM25"></option><option value="ustten" id="viewMUst"></option></select><div id="viewIso"><label><span id="viewTiltLbl"></span><input type="range" id="viewTilt" min="40" max="95"></label><label><span id="viewYawLbl"></span><input type="range" id="viewYaw" min="0" max="45"></label><label><span id="viewZoomLbl"></span><input type="range" id="viewZoom" min="70" max="200"></label><label class="mpchk"><input type="checkbox" id="viewFollow"> <span id="viewFollowLbl"></span></label></div></div>
-      <div class="mpset"><b id="talkTitle">Konuşma</b><label class="mpchk"><input type="checkbox" id="talkFree"> <span id="talkFreeLbl"></span></label><label class="mpchk"><input type="checkbox" id="talkVoice"> <span id="talkVoiceLbl"></span></label></div>
+      <div class="mpset"><b id="talkTitle">Konuşma</b><label class="mpchk"><input type="checkbox" id="talkFree"> <span id="talkFreeLbl"></span></label><label class="mpchk"><input type="checkbox" id="talkVoice"> <span id="talkVoiceLbl"></span></label><label class="mpchk"><input type="checkbox" id="sfxOn"> <span id="sfxLbl"></span></label></div>
       <div class="mpset learnbox"><b id="learnTitle"></b><small id="learnCount"></small><textarea id="learnOut" readonly></textarea><div class="row"><button type="button" id="learnCopy"></button><button type="button" class="no" id="learnClear"></button></div></div>
       <div class="mpset"><b id="mpTitle">Çevrimiçi (deneme)</b><label class="mpchk"><input type="checkbox" id="mpOn"> <span id="mpOnLbl">Kariyerde çevrimiçi oyna</span></label>
         <label class="nm"><span id="mpUrlLbl">Sunucu adresi</span><input id="mpUrl" placeholder="ws://192.168.1.20:8787" autocomplete="off"></label><small id="mpNote"></small></div>

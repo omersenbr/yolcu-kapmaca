@@ -15,6 +15,7 @@ import { board, fx } from '../sim/game';
 import { FN, LOOK, MN } from '../sim/passengers';
 import type { Vars } from '../sim/types';
 import { rideDone } from '../sim/ridelife';
+import { juice } from '../ui/juice';
 // </auto-imports>
 /* ================= TAKSİCİ SAHNELERİ ================= */
 /* ---- Taksici: turist ---- */
@@ -373,6 +374,7 @@ export async function routeDialog(p, meter, normal) {
     return;
   }
   if (res === 'pass') {
+    juice('sisti');
     G.money += meter;
     rideDone(p, meter, false);
     setCast([
@@ -572,6 +574,7 @@ export async function taxiVsPolice(sivil) {
   openPanel('police', T(sivil ? S.captionSivil : S.caption, v), castBase('nervous'));
   const res = await interrogate({ speaker: '{polis}', react: S.react, start: S.start, nodes: S.nodes, v, ctx: {} });
   if (res === 'pass') {
+    juice('siyrildin');
     setCast(castBase('smile'));
     await sayL(O.pass, v);
     clearChases();

@@ -41,7 +41,7 @@ import {
   drawWeather,
   light,
 } from './render';
-import { DPR, TS, VH, VW, cam, ctx, px, rr, setCtx } from './view';
+import { DPR, TS, VH, VW, cam, ctx, playerScr, px, rr, setCtx } from './view';
 import { heading, isoCfg, lmState } from './isoView';
 
 const INK = '#141414';
@@ -572,7 +572,8 @@ interface NeonEntry {
   H: number;
 }
 const neonCache = new Map<any, NeonEntry>();
-const neonBox = () => ({ w: S * 3.2, h: S * 3.8, up: S * 0.9 });
+// geniş: müdavim etiketi ve “Taksi!” balonu kesilmesin
+const neonBox = () => ({ w: S * 6.4, h: S * 4.2, up: S * 0.9 });
 const sized = (c: HTMLCanvasElement, W: number, H: number) => {
   if (c.width !== W || c.height !== H) {
     c.width = W;
@@ -1106,6 +1107,7 @@ export function renderIso(t: number, dt: number) {
     for (const f of G.fx) upright(f.x, f.y, 0.4, () => drawFx(f));
     screen();
     drawMarks((wx, wy) => proj(wx / TS - 0.5, wy / TS - 0.5, 0));
+    [playerScr.x, playerScr.y] = proj(G.player.x, G.player.y, 0.3);
   }
   screen();
   drawMini();
