@@ -631,7 +631,198 @@
     190,
     190,
     190
-   ]
+   ],
+   "dolu": 0.96,
+   "kaide": 0.05
+  },
+  "mahalle": {
+   "file": "assets/sprites_iso/mahalle.webp",
+   "cols": 4,
+   "count": 32,
+   "cw": 255,
+   "ch": 247,
+   "w": [
+    231,
+    231,
+    231,
+    231,
+    232,
+    232,
+    232,
+    231,
+    232,
+    232,
+    231,
+    231,
+    232,
+    231,
+    232,
+    231,
+    240,
+    240,
+    241,
+    239,
+    241,
+    240,
+    248,
+    239,
+    240,
+    251,
+    241,
+    241,
+    240,
+    242,
+    240,
+    242
+   ],
+   "dolu": 0.96,
+   "kaide": 0.05
+  },
+  "kiremit": {
+   "file": "assets/sprites_iso/kiremit.webp",
+   "cols": 4,
+   "count": 16,
+   "cw": 215,
+   "ch": 245,
+   "w": [
+    204,
+    204,
+    203,
+    200,
+    203,
+    201,
+    204,
+    207,
+    203,
+    202,
+    208,
+    205,
+    202,
+    206,
+    211,
+    199
+   ],
+   "dolu": 0.8,
+   "kaide": 0.0
+  },
+  "yali": {
+   "file": "assets/sprites_iso/yali.webp",
+   "cols": 4,
+   "count": 16,
+   "cw": 219,
+   "ch": 224,
+   "w": [
+    211,
+    203,
+    203,
+    207,
+    212,
+    200,
+    213,
+    203,
+    205,
+    203,
+    213,
+    205,
+    215,
+    203,
+    207,
+    206
+   ],
+   "dolu": 0.82,
+   "kaide": 0.0
+  },
+  "blok": {
+   "file": "assets/sprites_iso/blok.webp",
+   "cols": 4,
+   "count": 9,
+   "cw": 301,
+   "ch": 315,
+   "w": [
+    205,
+    225,
+    297,
+    292,
+    164,
+    230,
+    199,
+    197,
+    263
+   ],
+   "dolu": 0.8,
+   "kaide": 0.0
+  },
+  "agac": {
+   "file": "assets/sprites_iso/agac.webp",
+   "cols": 4,
+   "count": 16,
+   "cw": 203,
+   "ch": 219,
+   "w": [
+    158,
+    161,
+    160,
+    174,
+    71,
+    70,
+    69,
+    78,
+    184,
+    199,
+    192,
+    186,
+    165,
+    162,
+    120,
+    133
+   ],
+   "dolu": 1.0,
+   "kaide": 0.0
+  }
+ },
+ "landmarks_iso": {
+  "_not": "2.5D simge yapılar: arsanın uzun kenarı sol alttan sağ üste; haritadaki alan daha derinse aynalanır.",
+  "yapilar": {
+   "Galata Kulesi": {
+    "file": "assets/landmarks_iso/galata-kulesi.webp",
+    "w": 394,
+    "h": 463
+   },
+   "Kız Kulesi": {
+    "file": "assets/landmarks_iso/kiz-kulesi.webp",
+    "w": 486,
+    "h": 427
+   },
+   "Çamlıca Kulesi": {
+    "file": "assets/landmarks_iso/camlica-kulesi.webp",
+    "w": 488,
+    "h": 487
+   },
+   "Rumeli Hisarı": {
+    "file": "assets/landmarks_iso/rumeli-hisari.webp",
+    "w": 488,
+    "h": 399
+   },
+   "Ayasofya": {
+    "file": "assets/landmarks_iso/ayasofya.webp",
+    "w": 502,
+    "h": 447
+   },
+   "Sultanahmet Camii": {
+    "file": "assets/landmarks_iso/sultanahmet-camii.webp",
+    "w": 486,
+    "h": 442
+   },
+   "Topkapı Sarayı": {
+    "file": "assets/landmarks_iso/topkapi-sarayi.webp",
+    "w": 488,
+    "h": 458
+   },
+   "Dolmabahçe Sarayı": {
+    "file": "assets/landmarks_iso/dolmabahce-sarayi.webp",
+    "w": 488,
+    "h": 441
+   }
   }
  }
 }

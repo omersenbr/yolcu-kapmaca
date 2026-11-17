@@ -62,6 +62,8 @@ export function dark() {
   return mq.matches;
 }
 export let pal: any = PAL.light;
+/** 2.5D görünüm: ayakta çizilen simge yapılar zemin parçalarına basılmaz (değişince buildMap) */
+export const painterOpts: { skipLm: null | ((name: string) => boolean) } = { skipLm: null };
 /* ---- harita çizimi: parça parça (8×8 kare), sadece görünen ve hemen çevresindeki bölgeler;
    önbellek görüş alanına göre sınırlı (telefon belleği için) ---- */
 export const CHT = 8;
@@ -327,6 +329,7 @@ export function paintRegion(m, c0, r0, c1, r1) {
         key = IMN[n] || n,
         L = LMD[key];
       if (x0 + w < c0 - 2 || x0 > c1 + 2 || y0 + h < r0 - 2 || y0 > r1 + 2) continue;
+      if (painterOpts.skipLm && painterOpts.skipLm(n)) continue; // 2.5D: ayakta duran çizim var
       if (!L) {
         if (n === 'Dolmabahçe Sarayı') {
           m.fillStyle = pal.shadow;
@@ -352,7 +355,7 @@ export function paintRegion(m, c0, r0, c1, r1) {
     }
     {
       const p = LMK['Kız Kulesi'];
-      if (p && near(p[0], p[1], 4)) {
+      if (p && near(p[0], p[1], 4) && !(painterOpts.skipLm && painterOpts.skipLm('Kız Kulesi'))) {
         const L = LMD['Kız Kulesi'],
           s2 = 3.4;
         m.drawImage(

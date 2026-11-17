@@ -4,12 +4,13 @@ import { MANIFEST } from '../sim/content';
 import { G, hourNow } from '../sim/state';
 import { clamp, mixHex } from '../sim/util';
 import { COLS, RADARS, ROWS } from '../sim/grid';
-import { CHT, CHX, CHY, mapChunk, mapChunks, miniCv, pal, setChunkCap } from '../map/painter';
+import { CHT, CHX, CHY, buildMap, mapChunk, mapChunks, miniCv, pal, painterOpts, setChunkCap } from '../map/painter';
 import { drawCar } from './cars';
 import { drawDest, drawPax } from './people';
 import { DPR, TS, VH, VW, cam, ctx, mctx, mini, px, rr, star } from './view';
 import { onPlayer } from '../sim/ai';
 import { drawRemotes } from './remotes';
+import { resetIsoLm } from './isoView';
 import { smoothRemotes } from '../net/mp';
 // </auto-imports>
 /* ================= ÇİZİM: kamera, harita parçaları, nesneler, ışık, ekran kenarı işaretleri, mini harita ================= */
@@ -52,6 +53,11 @@ export function drawFerry(x, y, horiz, t) {
   ctx.restore();
 }
 export function render(t, dt) {
+  if (painterOpts.skipLm) {
+    painterOpts.skipLm = null;
+    resetIsoLm();
+    buildMap();
+  }
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
   ctx.fillStyle = pal.water;
   ctx.fillRect(0, 0, VW, VH);

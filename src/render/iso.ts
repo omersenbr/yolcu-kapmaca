@@ -9,8 +9,20 @@ import { img, ready } from '../core/assets';
 import { MANIFEST } from '../sim/content';
 import { G, ORN } from '../sim/state';
 import { hsh } from '../sim/util';
-import { COLS, RADARS, ROWS, isTunnel } from '../sim/grid';
-import { CHT, CHX, CHY, collectSprites, mapChunk, mapChunks, pal, setChunkCap, sprCell } from '../map/painter';
+import { COLS, LMK, MAP, RADARS, ROWS, isTunnel } from '../sim/grid';
+import {
+  CHT,
+  CHX,
+  CHY,
+  buildMap,
+  collectSprites,
+  mapChunk,
+  mapChunks,
+  pal,
+  painterOpts,
+  setChunkCap,
+  sprCell,
+} from '../map/painter';
 import { carOpts, drawAlarm, drawCar, drawCarryBadge, pickCarSpr } from './cars';
 import { drawDest, drawPax } from './people';
 import { drawRemotes } from './remotes';
@@ -30,7 +42,7 @@ import {
   light,
 } from './render';
 import { DPR, TS, VH, VW, cam, ctx, px } from './view';
-import { heading, isoCfg } from './isoView';
+import { heading, isoCfg, lmState } from './isoView';
 
 const INK = '#141414';
 /** kamera açısı (radyan) ve o karedeki ölçek */
@@ -85,6 +97,9 @@ interface Cell {
   uw: number;
   /** dış duvarlar: kuzey, doğu, güney, batı */
   walls: boolean[];
+  /** 3×3 bloğun bütünü (2.5D çizim varsa parçaların yerine çizilir) ve parçaları */
+  whole?: boolean;
+  part?: boolean;
 }
 interface Tree {
   x: number;
@@ -134,9 +149,24 @@ function cellsOf(ci: number, cj: number) {
       x0 = sl.x + sl.s * INSET,
       w = (sl.s * (1 - 2 * INSET)) / n,
       uw = (1 - 2 * INSET) / n;
+    if (n > 1)
+      c.cells.push({
+        x: x0 - 0.5,
+        y: sl.y + sl.s * INSET - 0.5,
+        w: w * n,
+        h,
+        cat: sl.cat,
+        i: sl.i,
+        u: INSET,
+        v: INSET,
+        uw: 1 - 2 * INSET,
+        walls: [true, true, true, true],
+        whole: true,
+      });
     for (let j = 0; j < n; j++)
       for (let i = 0; i < n; i++)
         c.cells.push({
+          part: n > 1,
           x: x0 + i * w - 0.5,
           y: sl.y + sl.s * INSET + j * w - 0.5,
           w,
@@ -158,23 +188,33 @@ function shade(hex: string, f: number) {
   return `rgb(${ch(n >> 16)},${ch((n >> 8) & 255)},${ch(n & 255)})`;
 }
 /** bina hücresi: görünen dış duvarlar (pencere şeritleriyle) + çatı görseli */
-/** binanın 2.5D çizimi (sabit kamera, 45°): arsa kaidesi hücrenin ortasına oturur; yoksa false (kutu çizimine düşülür) */
+/** 2.5D çizimler yalnızca sabit kamerada ve çizildikleri açıda (45°) kullanılır */
+const spriteMode = () => !isoCfg.takip && Math.abs(isoCfg.aci - 45) <= 4;
+const isoSheet = (cat: string) => {
+  const SI = MANIFEST.sprites_iso && MANIFEST.sprites_iso[cat];
+  return SI && ready(img(SI.file)) ? SI : null;
+};
+/** bu hücre bu karede çizilmeli mi: blok çizimi varsa bütün, yoksa parçalar */
+function cellActive(b: Cell) {
+  if (!b.whole && !b.part) return true;
+  const whole = spriteMode() && !!isoSheet(b.cat);
+  return b.whole ? whole : !whole;
+}
+/** binanın 2.5D çizimi: nesne genişliği haritadaki yerinin “dolu” oranı kadar, alt ucu yerin alt köşesinde */
 function drawCellSprite(b: Cell): boolean {
-  if (isoCfg.takip || Math.abs(isoCfg.aci - 45) > 4) return false;
-  const SI = MANIFEST.sprites_iso && MANIFEST.sprites_iso[b.cat];
-  if (!SI || b.uw < 0.5) return false; // parçalı bloklar (3×3) kutu kalır
-  const im = img(SI.file);
-  if (!ready(im)) return false;
-  const ix = ((b.i % SI.count) + SI.count) % SI.count,
+  if (!spriteMode()) return false;
+  const SI = isoSheet(b.cat);
+  if (!SI) return false;
+  // tür sayfası birden çok sayfadan oluşabilir (mahalle: tek ve iki katlı); yere göre karıştırılır
+  const ix = (b.i + Math.floor(hsh(Math.round(b.x * 3) + 11, Math.round(b.y * 5) + 7) * SI.count)) % SI.count,
     slot = b.w / (1 - 2 * INSET), // binanın haritadaki yeri (kare)
-    plot = slot * Math.SQRT2 * S * 0.96, // arsa eşkenar dörtgeninin ekrandaki genişliği
+    plot = slot * Math.SQRT2 * S * (SI.dolu || 0.96), // yerin ekrandaki genişliği
     k = plot / SI.w[ix],
     [X, Y] = proj(b.x + b.w / 2, b.y + b.w / 2, 0);
   screen();
-  // çizimde arsa 2:1 eşkenar dörtgen: alt ucu merkezin çeyrek genişlik altında, altında kaide kalınlığı
-  const bottom = Y + plot * 0.25 + plot * 0.05;
+  const bottom = Y + plot * K * 0.5 + plot * (SI.kaide ?? 0.05);
   ctx.drawImage(
-    im,
+    img(SI.file),
     (ix % SI.cols) * SI.cw,
     Math.floor(ix / SI.cols) * SI.ch,
     SI.cw,
@@ -260,6 +300,29 @@ function drawCell(b: Cell, night: number) {
   }
 }
 function drawTree(tr: Tree) {
+  const TI = spriteMode() && isoSheet('agac');
+  if (TI) {
+    const ix = tr.i % TI.count,
+      k = (tr.s * S * 1.15) / Math.max(...TI.w),
+      [X, Y] = proj(tr.x, tr.y, 0);
+    screen();
+    ctx.fillStyle = 'rgba(0,0,0,.18)';
+    ctx.beginPath();
+    ctx.ellipse(X, Y, tr.s * S * 0.32, tr.s * S * 0.32 * K, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.drawImage(
+      img(TI.file),
+      (ix % TI.cols) * TI.cw,
+      Math.floor(ix / TI.cols) * TI.ch,
+      TI.cw,
+      TI.ch,
+      X - (TI.cw * k) / 2,
+      Y + 2 * k - TI.ch * k,
+      TI.cw * k,
+      TI.ch * k,
+    );
+    return;
+  }
   const cell = sprCell('agac', tr.i);
   if (!cell || !ready(cell[0])) return;
   const [im, sx, sy, sz] = cell;
@@ -390,6 +453,51 @@ function drawCarIso(e, t: number) {
   upright(e.x, e.y, 0.5, () => drawAlarm(e, t));
 }
 
+/* ---- simge yapılar: ayakta duran 2.5D çizim, haritadaki alanına oturur ---- */
+interface Lm {
+  name: string;
+  /** alan (kare köşe koordinatı) */
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+let LMS: Lm[] | null = null;
+function landmarks(): Lm[] {
+  if (LMS) return LMS;
+  LMS = [];
+  const L = MANIFEST.landmarks_iso && MANIFEST.landmarks_iso.yapilar;
+  if (!L) return LMS;
+  for (const [n, fp] of Object.entries((MAP && MAP.simge_alanlari) || {}) as [string, number[]][])
+    if (L[n]) LMS.push({ name: n, x: fp[0], y: fp[1], w: fp[2], h: fp[3] });
+  const kk = LMK && LMK['Kız Kulesi'];
+  if (kk && L['Kız Kulesi']) LMS.push({ name: 'Kız Kulesi', x: kk[0] - 1.2, y: kk[1] - 1.2, w: 3.4, h: 3.4 });
+  return LMS;
+}
+const lmReady = (n: string) => {
+  const L = MANIFEST.landmarks_iso && MANIFEST.landmarks_iso.yapilar[n];
+  return L && ready(img(L.file)) ? L : null;
+};
+function drawLandmark(m: Lm) {
+  const L = lmReady(m.name);
+  if (!L) return;
+  // çizimde arsanın uzun kenarı sol alttan sağ üste (haritada x yönü); alan derinse aynalanır
+  const flip = m.h > m.w,
+    wScr = (m.w + m.h) * S * CS * 0.98,
+    k = wScr / L.w,
+    [X] = proj(m.x + m.w / 2 - 0.5, m.y + m.h / 2 - 0.5, 0),
+    [, Yb] = proj(m.x - 0.5, m.y + m.h - 0.5, 0),
+    bottom = Yb + wScr * 0.03,
+    h = L.h * k;
+  screen();
+  if (flip) {
+    ctx.translate(X, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(img(L.file), -wScr / 2, bottom - h, wScr, h);
+    screen();
+  } else ctx.drawImage(img(L.file), X - wScr / 2, bottom - h, wScr, h);
+}
+
 /* ---- kare ---- */
 export function renderIso(t: number, dt: number) {
   screen();
@@ -412,6 +520,15 @@ export function renderIso(t: number, dt: number) {
   cam.z += ((G ? G.zoomT : 1) - cam.z) * k;
   cam.x += (tg.x - cam.x) * k;
   cam.y += (tg.y - cam.y) * k;
+  {
+    // ayakta çizilen simge yapılar zemine basılmasın; görseller yüklendikçe harita parçaları yeniden çizilir
+    const sig = spriteMode() ? landmarks().filter((m) => lmReady(m.name)).length : -1;
+    if (sig !== lmState.sig) {
+      lmState.sig = sig;
+      painterOpts.skipLm = sig >= 0 ? (n: string) => !!lmReady(n) : null;
+      buildMap();
+    }
+  }
   K = isoCfg.egim;
   HZ = Math.sqrt(1 - K * K);
   S = TS * isoCfg.yakin * (1 + (cam.z - 1) * 0.5);
@@ -480,6 +597,7 @@ export function renderIso(t: number, dt: number) {
         if (mx0 < -rad0 || mx0 > VW + rad0 || my0 < -rad0 * K || my0 > VH + rad0 * K + S * 4) continue;
         const c = cellsOf(i, j);
         for (const b of c.cells) {
+          if (!cellActive(b)) continue;
           const mx = b.x + b.w / 2,
             my = b.y + b.w / 2;
           if (!inView(mx, my)) continue;
@@ -499,6 +617,13 @@ export function renderIso(t: number, dt: number) {
           ]);
         }
         for (const tr of c.trees) if (inView(tr.x, tr.y)) objs.push([depth(tr.x, tr.y), () => drawTree(tr)]);
+      }
+    if (painterOpts.skipLm)
+      for (const m of landmarks()) {
+        const cx = m.x + m.w / 2 - 0.5,
+          cy = m.y + m.h / 2 - 0.5;
+        if (Math.abs(cx - CX) < R + 6 && Math.abs(cy - CY) < R + 6 && lmReady(m.name))
+          objs.push([depth(cx, cy), () => drawLandmark(m)]);
       }
   }
   if (G) {

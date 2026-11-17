@@ -55,3 +55,9 @@ export function swipeDir(dx: number, dy: number): number[] {
   }
   return steerDir(Math.abs(dx) > Math.abs(dy) ? [Math.sign(dx), 0] : [0, Math.sign(dy)]);
 }
+
+/** üstten görünüme geçince 2.5D simge yapı durumunu sıfırla (geri dönüşte harita yeniden çizilsin) */
+export const lmState = { sig: -2 };
+export function resetIsoLm() {
+  lmState.sig = -2;
+}
