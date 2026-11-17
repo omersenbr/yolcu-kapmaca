@@ -2116,7 +2116,19 @@
    "tagGizli4": "Tag’de 4 yolcu teslim et"
   },
   "olayBaslik": "Yolculukta",
-  "olayBahsis": "(+₺{bahsis} bahşiş)"
+  "olayBahsis": "(+₺{bahsis} bahşiş)",
+  "sekme": {
+   "vardiya": "Direksiyon",
+   "garaj": "Garaj",
+   "plaka": "Plaka",
+   "kasa": "Kasa"
+  },
+  "plakaPlaka": "34 T",
+  "plakaIlerleme": "Plakanın {pay}’i senin",
+  "eskiTaksi": "Eski taksi",
+  "yeniTaksi": "Yeni taksi",
+  "senin": "SENİN",
+  "pahali": "Kasa yetmez"
  },
  "yolculukOlaylari": [
   {

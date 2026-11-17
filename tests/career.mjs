@@ -70,13 +70,16 @@ await page.waitForFunction(() => !document.getElementById('loading'), null, { ti
 await page.waitForTimeout(800);
 await page.click('#start .role[data-role="taxi"]');
 await page.waitForTimeout(400);
+await page.click('#careerBody .ctab[data-tab="garaj"]');
 await page.click('#careerBody button[data-act="eski"]');
 await page.waitForTimeout(300);
 const c = await page.evaluate(() => JSON.parse(localStorage.getItem('yk-kariyer')));
 check(c.araclar.length === 1 && c.kasa === 1550000 && c.vardiya === 1, `eski taksi alındı ve kayıt kalıcı (araç ${c.araclar.length}, kasa ₺${c.kasa}, vardiya ${c.vardiya})`);
-const fee = await page.$eval('#cs-taxi ~ .csec p', (e) => e.textContent);
+const fee = await page.$eval('.crolecard.taxi .csec p', (e) => e.textContent);
 check(/Kendi aracın/.test(fee) && /eski/.test(fee), `kendi araçla vardiya ücreti ve eski araç uyarısı (${fee.slice(0, 80)})`);
+await page.click('#careerBody .ctab[data-tab="garaj"]');
 await page.screenshot({ path: `${out}/03-garaj.png` });
+await page.click('#careerBody .ctab[data-tab="vardiya"]');
 
 // rol değiştir: aynı kasayla Tag vardiyası (arkadaşının aracı)
 await page.evaluate(() => window.__fake.start(9)); // sayfa yenilendi: sanal saati yeniden başlat
@@ -103,9 +106,11 @@ await page.waitForTimeout(400);
 const c2 = await page.evaluate(() => JSON.parse(localStorage.getItem('yk-kariyer')));
 check(c2.vardiya === 2 && c2.gun === 1 && c2.son.rol === 'tag', `ortak takvim: 2 vardiya = 1 gün (vardiya ${c2.vardiya}, gün ${c2.gun})`);
 check(Array.isArray(c2.tag.mahalle), 'Tag mahallesi kaydedildi');
+await page.click('#careerBody .ctab[data-tab="garaj"]');
 await page.click('#careerBody button[data-act="buyTag:0"]');
 await page.waitForTimeout(300);
-const tagTxt = await page.$eval('#cs-tag', (e) => e.parentElement.innerText);
+await page.click('#careerBody .ctab[data-tab="vardiya"]');
+const tagTxt = await page.$eval('.crolecard.tag', (e) => e.innerText);
 check(/Kendi aracın \(emektar bir hatchback\)/.test(tagTxt) && /benzin ×1,6/.test(tagTxt), 'Tag aracı alındı: arkadaş payı yok, eski araç çok yakar');
 await page.evaluate(() => document.getElementById('cs-tag').scrollIntoView());
 await page.screenshot({ path: `${out}/05-tag-garaj.png` });

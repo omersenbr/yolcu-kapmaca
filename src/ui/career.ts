@@ -10,6 +10,8 @@ import { G, UNAME } from '../sim/state';
 import { load, save } from '../sim/storage';
 import { T, esc, rnd } from '../sim/util';
 import { toast } from './hud';
+import { MANIFEST } from '../sim/content';
+import { assetUrl } from '../core/assets';
 import { closeSheets, openSheet, startRole } from './menu';
 
 const KEY = 'yk-kariyer';
@@ -57,6 +59,7 @@ export function openCareer(role?: string) {
     toast(T(S().girisOdul, { seri: r.seri, odul: tl(r.odul) }));
     saveCareer();
   }
+  tab = 'vardiya';
   render();
   openSheet('career');
   if (role) $(role === 'tag' ? 'cs-tag' : 'cs-taxi').scrollIntoView({ block: 'start' });
@@ -98,20 +101,28 @@ function tasksSection(c: Career) {
   return `<section class="csec"><h4>${esc(s.gorevBaslik)}</h4><ul class="ctasks">${rows}</ul>
     <h4>${esc(s.puanBaslik)}</h4><p>${esc(puan)}</p></section>`;
 }
-function taxiSection(c: Career) {
+function feeLineOf(c: Career) {
   const s = S(),
-    fee = K.shiftFee(c),
-    kr = K.creditInfo(c);
-  const pay =
-    c.plakaPay >= 1
-      ? c.plakaPay.toFixed(3).replace(/\.?0+$/, '')
-      : c.plakaPay
-        ? `${Math.round(c.plakaPay * 8)}/8`
-        : '0';
-  let feeLine: string;
-  if (K.drivesOwnCar(c)) feeLine = T(c.plakaPay >= 1 ? s.vardiyaKendiPlaka : s.vardiyaKendi, { ucret: tl(fee) });
-  else if (c.cirakKalan > 0) feeLine = T(s.vardiyaCirak, { ucret: tl(fee), kalan: c.cirakKalan });
-  else feeLine = T(s.vardiyaPatron, { ucret: tl(fee) });
+    fee = K.shiftFee(c);
+  if (K.drivesOwnCar(c)) return T(c.plakaPay >= 1 ? s.vardiyaKendiPlaka : s.vardiyaKendi, { ucret: tl(fee) });
+  if (c.cirakKalan > 0) return T(s.vardiyaCirak, { ucret: tl(fee), kalan: c.cirakKalan });
+  return T(s.vardiyaPatron, { ucret: tl(fee) });
+}
+function taxiShift(c: Career) {
+  const s = S(),
+    MPT = DLG.cokOyunculu;
+  const durakSel = `<label class="csel">${esc(MPT.durakSec)} <select data-sel="durak">${ZONES.map(
+    (z) => `<option${z.name === c.durak ? ' selected' : ''}>${esc(z.name)}</option>`,
+  ).join('')}</select></label>`;
+  return `<div class="crolecard taxi"><div class="chead">${carImg(K.drivesOwnCar(c) ? 'taxi1' : 'taxi2')}<div><h3 class="crole" id="cs-taxi">${esc(s.taksiBolum)}</h3><span class="chip">${esc(s.statu[K.status(c)])}</span></div></div>
+    <section class="csec"><p>${esc(feeLineOf(c))}${K.playerCarOld(c) ? '<br>' + esc(s.eskiArac) : ''}</p>${durakSel}
+    <div class="row big">${btn('taxi:gunduz', s.gunduz)}${btn('taxi:gece', s.gece)}</div></section></div>`;
+}
+function garagePanel(c: Career, now: number) {
+  const s = S(),
+    TG = ECO.tag;
+  const nOld = c.araclar.filter((a) => a.tip === 'eski').length,
+    nNew = c.araclar.filter((a) => a.tip === 'yeni').length;
   const sell = c.araclar
     .map((a, i) =>
       btn(
@@ -122,22 +133,55 @@ function taxiSection(c: Career) {
       ),
     )
     .join('');
-  const MPT = DLG.cokOyunculu;
-  const durakSel = `<label class="csel">${esc(MPT.durakSec)} <select data-sel="durak">${ZONES.map(
-    (z) => `<option${z.name === c.durak ? ' selected' : ''}>${esc(z.name)}</option>`,
-  ).join('')}</select></label>`;
-  return `<h3 class="crole" id="cs-taxi">${esc(s.taksiBolum)} · ${esc(s.statu[K.status(c)])}</h3>${durakSel}
-    <section class="csec"><h4>${esc(s.taksiVardiya)}</h4><p>${esc(feeLine)}${
-      K.playerCarOld(c) ? '<br>' + esc(s.eskiArac) : ''
-    }</p><div class="row">${btn('taxi:gunduz', s.gunduz)}${btn('taxi:gece', s.gece)}</div></section>
-    <section class="csec"><h4>${esc(s.garajBaslik)}</h4><p>${esc(T(s.garajMetin, { n: c.araclar.length, slot: K.carSlots(c) }))}</p>
-      <div class="row">${btn('eski', T(s.eskiAl, { fiyat: tl(K.carPrice('eski')) }), K.canBuyCar(c, 'eski'))}${btn(
-        'yeni',
-        T(s.yeniAl, { fiyat: tl(ECO.filo.yeniTaksi) }),
-        K.canBuyCar(c, 'yeni'),
+  const taxiCars = `<div class="ccars">${carCard('taxi2', s.eskiTaksi, '₺' + tl(K.carPrice('eski')), 'eski', K.canBuyCar(c, 'eski'), nOld)}${carCard(
+    'taxi1',
+    s.yeniTaksi,
+    '₺' + tl(ECO.filo.yeniTaksi),
+    'yeni',
+    K.canBuyCar(c, 'yeni'),
+    nNew,
+  )}</div>`;
+  const own = c.tag.araclar
+    .map((a, k) =>
+      btn(
+        'sellTag:' + k,
+        T(s.sat, { arac: carName(a.seviye), fiyat: tl(K.tagCarPrice(a.seviye) * ECO.kariyer.ikinciElOrani) }),
+        a.blokaj <= now,
         true,
-      )}</div>${sell ? `<div class="row">${sell}</div>` : ''}</section>
-    <section class="csec"><h4>${esc(s.plakaBaslik)}</h4><p>${esc(T(s.plakaMetin, { pay, fiyat: tl(c.plakaFiyat) }))}<br>${esc(
+      ),
+    )
+    .join('');
+  const tagCars = `<div class="ccars">${TG.araclar
+    .map((_, sv: number) =>
+      carCard(
+        'tag' + (sv + 1),
+        carName(sv),
+        '₺' + tl(K.tagCarPrice(sv)),
+        'buyTag:' + sv,
+        K.canBuyTagCar(c, sv),
+        c.tag.araclar.filter((a) => a.seviye === sv).length,
+      ),
+    )
+    .join('')}</div>`;
+  return `<section class="csec"><h4>${esc(s.taksiBolum)} · ${esc(s.garajBaslik)}</h4><p>${esc(T(s.garajMetin, { n: c.araclar.length, slot: K.carSlots(c) }))}</p>${taxiCars}${sell ? `<div class="row">${sell}</div>` : ''}</section>
+    <section class="csec"><h4>${esc(s.tagBolum)} · ${esc(s.garajBaslik)}</h4><p>${esc(T(s.tagGarajMetin, { n: c.tag.araclar.length, limit: TG.filoLimiti }))}</p>${tagCars}${own ? `<div class="row">${own}</div>` : ''}</section>`;
+}
+function platePanel(c: Career) {
+  const s = S(),
+    kr = K.creditInfo(c);
+  const pay =
+    c.plakaPay >= 1
+      ? c.plakaPay.toFixed(3).replace(/\.?0+$/, '')
+      : c.plakaPay
+        ? `${Math.round(c.plakaPay * 8)}/8`
+        : '0';
+  const segs = Array.from(
+    { length: 8 },
+    (_, k) => `<i class="${k < Math.round(Math.min(1, c.plakaPay) * 8) ? 'on' : ''}"></i>`,
+  ).join('');
+  return `<section class="csec"><div class="plate"><span class="tr">TR</span><b>${esc(s.plakaPlaka)} ${String(1000 + ((c.gun * 37) % 9000))}</b></div>
+    <div class="psegs">${segs}</div><p class="pcap">${esc(T(s.plakaIlerleme, { pay }))}</p>
+    <p>${esc(T(s.plakaMetin, { pay, fiyat: tl(c.plakaFiyat) }))}<br>${esc(
       T(s.plakaPiyasa, {
         satis: tl(c.plakaFiyat),
         alis: tl(K.shareSellPrice(c) * 8),
@@ -153,8 +197,7 @@ function taxiSection(c: Career) {
         kr.ok ? `<p>${esc(T(s.krediMetin, { borc: tl(kr.borc), vade: kr.vade, taksit: tl(kr.taksit) }))}</p>` : ''
       }</section>`;
 }
-
-function tagSection(c: Career, now: number) {
+function tagShift(c: Career, now: number) {
   const s = S(),
     TG = ECO.tag,
     i = K.tagCarIndex(c, now);
@@ -176,32 +219,32 @@ function tagSection(c: Career, now: number) {
     ? '<br>' +
       esc(T(s.tagOtopark, { n: park.length, saat: Math.ceil((Math.min(...park.map((a) => a.blokaj)) - now) / 3600e3) }))
     : '';
-  const own = c.tag.araclar
-    .map((a, k) =>
-      btn(
-        'sellTag:' + k,
-        T(s.sat, { arac: carName(a.seviye), fiyat: tl(K.tagCarPrice(a.seviye) * ECO.kariyer.ikinciElOrani) }),
-        a.blokaj <= now,
-        true,
-      ),
-    )
-    .join('');
-  const buy = TG.araclar
-    .map((_, sv: number) =>
-      btn('buyTag:' + sv, T(s.tagAl, { arac: carName(sv), fiyat: tl(K.tagCarPrice(sv)) }), K.canBuyTagCar(c, sv)),
-    )
-    .join('');
   const MPT = DLG.cokOyunculu,
     mh = c.tag.mahalle ? district(c.tag.mahalle[0], c.tag.mahalle[1]) : '';
   const mahSel = `<label class="csel">${esc(MPT.mahalleSec)} <select data-sel="mahalle"><option value="">—</option>${DBOX.map(
     (d) => `<option${d.ad === mh ? ' selected' : ''}>${esc(d.ad)}</option>`,
   ).join('')}</select></label>`;
-  return `<h3 class="crole" id="cs-tag">${esc(s.tagBolum)} · ${esc(s.statu[K.tagStatus(c)])}</h3>${mahSel}
-    <section class="csec"><h4>${esc(s.tagVardiya)}</h4><p>${esc(line)}${parkLine}</p>
-      <div class="row">${btn('tag:gunduz', s.gunduz)}${btn('tag:gece', s.gece)}</div></section>
-    <section class="csec"><h4>${esc(s.garajBaslik)}</h4><p>${esc(T(s.tagGarajMetin, { n: c.tag.araclar.length, limit: TG.filoLimiti }))}</p>
-      <div class="row">${buy}</div>${own ? `<div class="row">${own}</div>` : ''}</section>`;
+  const spr = 'tag' + ((i < 0 ? TG.arkadasAracSeviye : c.tag.araclar[i].seviye) + 1);
+  return `<div class="crolecard tag"><div class="chead">${carImg(spr)}<div><h3 class="crole" id="cs-tag">${esc(s.tagBolum)}</h3><span class="chip">${esc(s.statu[K.tagStatus(c)])}</span></div></div>
+    <section class="csec"><p>${esc(line)}${parkLine}</p>${mahSel}
+      <div class="row big">${btn('tag:gunduz', s.gunduz)}${btn('tag:gece', s.gece)}</div></section></div>`;
 }
+
+/* ---- görseller: araç kartı ---- */
+const carImg = (spr: string) => {
+  const ci = MANIFEST.cars_iso && MANIFEST.cars_iso.araclar[spr],
+    f = ci && ci.on ? ci.on.file : MANIFEST.cars[spr] && MANIFEST.cars[spr].file;
+  return f ? `<img alt="" src="${assetUrl(f)}">` : '';
+};
+/** satın alınabilir araç kartı: görsel, ad, fiyat, düğme */
+function carCard(spr: string, name: string, priceTxt: string, act: string, ok: boolean, owned = 0) {
+  const s = S();
+  return `<div class="ccar${ok ? '' : ' locked'}">${owned ? `<i class="own">${esc(s.senin)} ×${owned}</i>` : ''}${carImg(spr)}
+    <b>${esc(name)}</b>${btn(act, priceTxt, ok)}${ok ? '' : `<small>${esc(s.pahali)}</small>`}</div>`;
+}
+/** sekmeler */
+let tab = 'vardiya';
+const TABS = ['vardiya', 'garaj', 'plaka', 'kasa'];
 
 function render() {
   const c = C,
@@ -211,32 +254,60 @@ function render() {
     fx = K.fx(c),
     hasAssets = c.araclar.length || c.plakaPay || c.tag.araclar.length > 1;
   $('careerTitle').textContent = s.baslik;
+  const chips = [
+    esc(T(s.ozet, { gun: c.gun + 1, haftaGunu: K.weekday(c) })),
+    esc(s.hava[c.hava]),
+    K.isBusyDay(c) ? `<span class="busy">${esc(s.yogunGun)}</span>` : '',
+  ]
+    .filter(Boolean)
+    .map((x) => `<span class="chip">${x}</span>`)
+    .join('');
+  const tabs = TABS.map(
+    (k) => `<button class="ctab" data-tab="${k}" aria-pressed="${k === tab}">${esc(s.sekme[k])}</button>`,
+  ).join('');
+  const panel = (k: string, html: string) =>
+    `<div class="cpanel" data-panel="${k}"${k === tab ? '' : ' hidden'}>${html}</div>`;
   $('careerBody').innerHTML = `
     <div class="cstats">
-      <div><small>${esc(s.kasa)}</small><b>${money(c.kasa)}</b></div>
+      <div class="kasa"><small>${esc(s.kasa)}</small><b>${money(c.kasa)}</b></div>
       <div><small>${esc(s.dolar)}</small><b>$${tl(c.dolar)}</b></div>
       <div><small>${esc(s.kur)}</small><b>₺${fmtKur(fx.satis)}</b></div>
     </div>
-    <p class="cmeta">${esc(T(s.ozet, { gun: c.gun + 1, haftaGunu: K.weekday(c) }))} · ${esc(T(s.durak, { durak: c.durak }))}${
-      K.isBusyDay(c) ? `<br><span class="busy">${esc(s.yogunGun)}</span>` : ''
-    }<br>${esc(T(s.servet, { servet: money(K.wealth(c)) }))}<br>${esc(s.havaBaslik)}: ${esc(s.hava[c.hava])}${c.manset ? `<br><b class="manset">${esc(s.manset)}:</b> ${esc(s.mansetler[c.manset])}` : ''}<br>${esc(s.rolNotu)}</p>
-    <section class="csec"><h4>${esc(s.toplaBaslik)}</h4><p>${
-      hasAssets
-        ? esc(
-            T(s.toplaMetin, {
-              saat: acc.saat.toFixed(1).replace('.', ','),
-              gelir: tl(acc.gelir),
-              taksit: acc.taksit ? T(s.toplaTaksit, { taksit: tl(acc.taksit) }) : '',
-            }) + (acc.dolu ? s.toplaDolu : ''),
-          )
-        : esc(s.toplaBos)
-    }</p>${hasAssets ? `<div class="row">${btn('topla', s.toplaDugme, acc.gelir > 0 || acc.taksit > 0)}</div>` : ''}</section>
-    ${tasksSection(c)}
-    ${taxiSection(c)}
-    ${tagSection(c, now)}
-    <h3 class="crole">${esc(s.dovizBaslik)}</h3>
-    <section class="csec"><p>${esc(T(s.dovizMetin, { alis: fmtKur(fx.alis), satis: fmtKur(fx.satis) }))}</p>
-      <div class="row">${btn('usdAl', s.dolarAl, c.kasa >= 100 * fx.alis)}${btn('usdSat', s.dolarSat, c.dolar >= 100, true)}</div></section>`;
+    <div class="cchips">${chips}</div>
+    ${c.manset ? `<div class="cnews"><b>${esc(s.manset)}</b> ${esc(s.mansetler[c.manset])}</div>` : ''}
+    <nav class="ctabs">${tabs}</nav>
+    ${panel('vardiya', shiftPanel(c, now))}
+    ${panel('garaj', garagePanel(c, now))}
+    ${panel('plaka', platePanel(c))}
+    ${panel(
+      'kasa',
+      `<section class="csec"><h4>${esc(s.toplaBaslik)}</h4><p>${
+        hasAssets
+          ? esc(
+              T(s.toplaMetin, {
+                saat: acc.saat.toFixed(1).replace('.', ','),
+                gelir: tl(acc.gelir),
+                taksit: acc.taksit ? T(s.toplaTaksit, { taksit: tl(acc.taksit) }) : '',
+              }) + (acc.dolu ? s.toplaDolu : ''),
+            )
+          : esc(s.toplaBos)
+      }</p>${hasAssets ? `<div class="row">${btn('topla', s.toplaDugme, acc.gelir > 0 || acc.taksit > 0)}</div>` : ''}</section>
+      ${tasksSection(c)}
+      <section class="csec"><h4>${esc(s.dovizBaslik)}</h4><p>${esc(T(s.dovizMetin, { alis: fmtKur(fx.alis), satis: fmtKur(fx.satis) }))}</p>
+      <div class="row">${btn('usdAl', s.dolarAl, c.kasa >= 100 * fx.alis)}${btn('usdSat', s.dolarSat, c.dolar >= 100, true)}</div></section>
+      <p class="cmeta">${esc(T(s.servet, { servet: money(K.wealth(c)) }))}<br>${esc(s.rolNotu)}</p>`,
+    )}`;
+}
+/** direksiyon: iki rolün vardiya kartı */
+function shiftPanel(c: Career, now: number) {
+  return taxiShift(c) + tagShift(c, now);
+}
+function setTab(k: string) {
+  tab = k;
+  document
+    .querySelectorAll<HTMLElement>('#careerBody .ctab')
+    .forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.tab === k)));
+  document.querySelectorAll<HTMLElement>('#careerBody .cpanel').forEach((p) => (p.hidden = p.dataset.panel !== k));
 }
 
 function act(a: string) {
@@ -421,6 +492,8 @@ export function initCareer() {
     if (el.dataset && el.dataset.sel) onSelect(el.dataset.sel, el.value);
   });
   $('careerBody').addEventListener('click', (e: Event) => {
+    const tb = (e.target as HTMLElement).closest('button[data-tab]') as HTMLButtonElement;
+    if (tb) return setTab(tb.dataset.tab);
     const b = (e.target as HTMLElement).closest('button[data-act]') as HTMLButtonElement;
     if (b && !b.disabled) act(b.dataset.act);
   });
