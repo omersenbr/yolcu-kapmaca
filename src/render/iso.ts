@@ -1372,10 +1372,7 @@ export function renderIso(t: number, dt: number) {
       ctx.fillRect(0, 0, VW, VH);
       ctx.restore();
     }
-    if (G.hava && G.hava !== 'acik') {
-      const [ax, ay] = proj(0, 0, 0);
-      drawWeather(G.hava, t, 0, 0, VW, VH, ax, ay, S);
-    }
+    if (G.hava && G.hava !== 'acik') drawWeather(G.hava, t, 0, 0, VW, VH);
     for (const f of G.fx) upright(f.x, f.y, 0.4, () => drawFx(f));
     screen();
     drawMarks((wx, wy) => proj(wx / TS - 0.5, wy / TS - 0.5, 0));
