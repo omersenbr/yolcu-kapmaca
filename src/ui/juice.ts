@@ -4,7 +4,8 @@
 import { $, reduce } from '../core/dom';
 import { assetUrl } from '../core/assets';
 import { DLG, MANIFEST } from '../sim/content';
-import { G } from '../sim/state';
+import { G, TL, tagLevel } from '../sim/state';
+import { levelUp } from './ceremony';
 import { T } from '../sim/util';
 import { muted, sfx } from '../audio/sound';
 import { playerScr } from '../render/view';
@@ -121,6 +122,7 @@ function fly(d: number, usd = false) {
 /* ---- damga: dergi sayfasına basılmış gibi; iyi olay sarı patlama, kötü olay kırmızı mühür ---- */
 let lastStamp = 0;
 export function juice(kind: string, n?: number) {
+  if (kind === 'seviye' && G) setTimeout(() => levelUp(TL().ad, 'tag' + (tagLevel() + 1)), 1800);
   const J = DLG.juice && DLG.juice[kind];
   if (!J) return;
   const layer = $('juiceLayer');

@@ -19,6 +19,7 @@ import { freeformOn, setFreeform, setVoice, voiceOn } from '../dialog/voice';
 import { clearLearned, myLearned } from '../sim/learn';
 import { isoCfg, setIso } from '../render/isoView';
 import { juiceReset } from './juice';
+import { countdown } from './ceremony';
 import { muted, setMuted } from '../audio/sound';
 // </auto-imports>
 /* ================= ANA EKRAN: kapak, profil, rol düğmeleri, alttan açılan sayfalar ================= */
@@ -122,6 +123,7 @@ export function startRole(r, shift?: ShiftOpts) {
       : `Mahallen: ${G.home.name}. Taksiciler peşine düşerse buraya getir!`,
   );
   mpStart(UNAME);
+  countdown();
 }
 export function initMenu() {
   $('uname').value = UNAME;

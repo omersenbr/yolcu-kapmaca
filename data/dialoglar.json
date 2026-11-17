@@ -3362,5 +3362,58 @@
     "İYİ ÇALIŞMALAR AMİRİM!"
    ]
   }
+ },
+ "toren": {
+  "_not": "Vardiya başı geri sayım ve gün sonu gazete manşeti (src/ui/ceremony.ts).",
+  "geriSayim": {
+   "taxi": "TAKSİMETRE AÇIK!",
+   "tag": "UYGULAMA AÇIK!"
+  },
+  "manset": {
+   "time": {
+    "taxi": [
+     "TAKSİCİ ESNAFI GÜNÜ KÂRLA KAPATTI",
+     "TAKSİMETRE BUGÜN DE DURMADI",
+     "DURAKTA BAYRAM HAVASI"
+    ],
+    "tag": [
+     "TAG’Cİ GÜNÜ KAZASIZ BELASIZ ATLATTI",
+     "UYGULAMA KAPANDI, CEP DOLDU",
+     "DURAKÇILAR BUGÜN DE ELİ BOŞ DÖNDÜ"
+    ]
+   },
+   "zarar": {
+    "taxi": [
+     "ESNAF DERTLİ: “BENZİNE ÇALIŞTIK”",
+     "TAKSİMETRE ÇALIŞTI, KASA BOŞ"
+    ],
+    "tag": [
+     "TAG’Cİ ZARARDA: “ARABA BOŞUNA YANDI”",
+     "UYGULAMA KAPANDI, CEP DELİK"
+    ]
+   },
+   "baglandi": [
+    "TAG ARACI OTOPARKA ÇEKİLDİ!",
+    "DURAKÇILAR SEVİNÇTEN HALAY ÇEKTİ"
+   ],
+   "hapis": [
+    "KAVGACI TAKSİCİ NEZARETTE!",
+    "DURAK KAVGASI KARAKOLDA BİTTİ"
+   ],
+   "ruhsat": [
+    "VİRAL VİDEO RUHSAT YAKTI!",
+    "TURİST YAYINDA, TAKSİCİ YANDA"
+   ]
+  },
+  "damga": {
+   "rekor": "YENİ REKOR!",
+   "zarar": "ZARAR!",
+   "baglandi": "BAĞLANDI!",
+   "hapis": "NEZARET!",
+   "ruhsat": "İPTAL!",
+   "iyi": "HAYIRLI OLSUN!"
+  },
+  "seviyeBaslik": "YENİ ARABA!",
+  "seviyeAlt": "Artık {arac} sürüyorsun. Yolcular daha sabırlı, bahşiş daha bol."
  }
 }

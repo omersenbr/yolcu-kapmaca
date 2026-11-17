@@ -2178,3 +2178,128 @@ body.inmenu .hud {
     animation-timing-function: steps(1);
   }
 }
+
+/* ---- törenler ---- */
+.countdown {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  display: grid;
+  place-items: center;
+  background: rgba(20, 20, 20, 0.25);
+  pointer-events: none;
+}
+.countdown[hidden],
+.levelup[hidden],
+.endstamp[hidden] {
+  display: none;
+}
+.countdown b {
+  font: 400 120px/1 'Bangers', 'Archivo Black', system-ui, sans-serif;
+  color: #ffc20e;
+  -webkit-text-stroke: 4px #141414;
+  text-shadow: 6px 6px 0 #141414;
+  letter-spacing: 2px;
+}
+.countdown b.go {
+  font-size: 54px;
+  padding: 30px 34px;
+  background: url('../../assets/ui/fx_burst.webp') center/100% 100% no-repeat;
+  -webkit-text-stroke: 2px #141414;
+  color: #fff;
+}
+.countdown b.pop {
+  animation: cdPop 0.55s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+@keyframes cdPop {
+  0% {
+    transform: scale(2.6) rotate(-8deg);
+    opacity: 0;
+  }
+  35% {
+    transform: scale(0.95) rotate(2deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(-3deg);
+  }
+}
+.manset {
+  font: 400 23px/1.05 'Bangers', 'Archivo Black', system-ui, sans-serif;
+  letter-spacing: 0.6px;
+  text-align: center;
+  margin: 6px 0 2px;
+  color: #141414;
+}
+#end .card {
+  position: relative;
+}
+.endstamp {
+  position: absolute;
+  right: 12px;
+  top: 238px;
+  padding: 18px 20px;
+  background: center/100% 100% no-repeat;
+  transform: rotate(-12deg);
+  animation: endStamp 0.45s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+  pointer-events: none;
+  z-index: 2;
+}
+.endstamp b {
+  font: 400 26px/1 'Bangers', 'Archivo Black', system-ui, sans-serif;
+  letter-spacing: 1px;
+  color: #141414;
+}
+.endstamp.bad b {
+  color: #fff;
+  text-shadow: 2px 2px 0 #141414;
+}
+@keyframes endStamp {
+  0% {
+    transform: rotate(-12deg) scale(3);
+    opacity: 0;
+  }
+  100% {
+    transform: rotate(-12deg) scale(1);
+    opacity: 1;
+  }
+}
+#end .card > .rise {
+  animation: rise 0.4s ease-out both;
+}
+@keyframes rise {
+  from {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+}
+.levelup {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.levelup .lvcard {
+  width: min(86%, 330px);
+  padding: 22px 26px 30px;
+  text-align: center;
+  background: url('../../assets/ui/card_yellow.webp') center/100% 100% no-repeat;
+  animation: cdPop 0.6s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+.levelup b {
+  font: 400 40px/1 'Bangers', 'Archivo Black', system-ui, sans-serif;
+  letter-spacing: 1px;
+  color: #141414;
+}
+.levelup img {
+  display: block;
+  width: 70%;
+  margin: 8px auto;
+}
+.levelup p {
+  font: 700 14px/1.3 'Grandstander', 'Archivo', sans-serif;
+  margin: 0;
+  color: #141414;
+}

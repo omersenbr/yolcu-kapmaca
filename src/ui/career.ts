@@ -1,3 +1,4 @@
+import { endReveal } from './ceremony';
 /* ================= KARİYER EKRANI: kasa, vardiya seçimi, garaj, plaka, döviz, günlük ödül =================
    Kural ve hesaplar sim/career.ts’de; burası yalnızca gösterir ve kaydeder (localStorage: yk-kariyer). */
 import { $ } from '../core/dom';
@@ -391,6 +392,7 @@ export function careerEndScreen(why: string) {
   $('again').textContent = s.sonrakiVardiya;
   $('swap').textContent = s.kariyereDon;
   $('end').hidden = false;
+  endReveal(why, r.net, false);
 }
 
 /** durak / mahalle seçimi (çok oyunculuda ekip buna göre) */

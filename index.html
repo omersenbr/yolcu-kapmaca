@@ -26,6 +26,8 @@
   <button class="talkBtn" id="talkBtn" hidden aria-label="Yolcuyla konuş"><img alt="" src="/assets/ui/i_radio.webp"><span>KONUŞ</span></button>
   <div class="flash" id="flash"></div>
   <div class="juiceLayer" id="juiceLayer"></div>
+  <div class="countdown" id="countdown" hidden><b id="cdNum"></b></div>
+  <div class="levelup" id="levelup" hidden><div class="lvcard"><b id="lvTitle"></b><img alt="" id="lvCar"><p id="lvText"></p></div></div>
   <button class="mphelp" id="mpHelp" hidden></button>
   <div class="overlay" id="adOv" hidden><div class="card" id="adCard"></div></div>
   <div class="radio" id="radio" hidden><b><img alt="" src="/assets/ui/i_radio.webp">Telsiz</b><p id="radioTxt"></p><div><button id="radioYes">Yardıma git</button><button class="no" id="radioNo">Boş ver</button></div></div>
@@ -81,6 +83,8 @@
   <div class="overlay" id="end" hidden>
     <div class="card">
       <div class="newsbox"><img alt="" src="/assets/ui/news_head.jpg"><b>YOLCU KAPMACA</b><span>SON DAKİKA</span></div>
+      <p class="manset" id="endHead"></p>
+      <div class="endstamp" id="endStamp" hidden></div>
       <h1 id="endTitle">Vardiya bitti</h1>
       <p id="endWhy"></p>
       <div class="big" id="endMoney">₺0</div>

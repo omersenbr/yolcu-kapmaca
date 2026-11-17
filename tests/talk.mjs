@@ -11,7 +11,7 @@ const check = (c, m) => { if (!c) errors.push('BEKLENTİ: ' + m); console.log((c
 const browser = await pw.chromium.launch();
 const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
 page.on('pageerror', (e) => errors.push(e.message));
-await page.addInitScript(() => { localStorage.setItem('yk-name', 'Test Reis'); localStorage.setItem('yk-serbest', '1'); localStorage.setItem('yk-ses', '1'); localStorage.setItem('yk-diff', 'kolay'); localStorage.removeItem('yk-ogrenilen'); localStorage.setItem('yk-ogret', '0'); });
+await page.addInitScript(() => { localStorage.setItem('yk-name', 'Test Reis'); localStorage.setItem('yk-serbest', '1'); localStorage.setItem('yk-ses', '1'); localStorage.setItem('yk-diff', 'kolay'); localStorage.setItem('yk-geri-sayim', '0'); localStorage.removeItem('yk-ogrenilen'); localStorage.setItem('yk-ogret', '0'); });
 await page.goto(url);
 await page.waitForFunction(() => !document.getElementById('loading'), null, { timeout: 30000 });
 await page.click('#start .role[data-role="tag"]');
