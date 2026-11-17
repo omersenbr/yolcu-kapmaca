@@ -59,6 +59,7 @@ export function recall(input: string, prof: string): Learned | null {
   const scan = (list: Learned[], bonus: number) => {
     for (const x of list) {
       if (x.p && x.p !== prof) continue;
+      if (!x.p && prof === 'turist') continue; // herkese öğretilen Türkçe cevaplar turiste uymaz
       const sim = sentenceSim(input, x.s);
       if (sim < esik) continue;
       const sc = sim + bonus + (x.p ? 0.05 : 0);

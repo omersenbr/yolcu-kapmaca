@@ -19,18 +19,21 @@ export async function rideEvent(p: Pax) {
     { svg: face(me, 'neutral'), name: 'Sen' },
     { svg: face(L, 'neutral'), name: L.name },
   ]);
+  // turist kırık Türkçe-İngilizce konuşur (olayın turist sürümü)
+  const tr = L.tourist && (o as any).turist ? (o as any).turist : null;
   const ch = await ask(
     L.name,
-    T(o.soru, v),
+    T(tr ? tr.soru : o.soru, v),
     o.secenekler.map((x) => ({ t: T(x.t, v), x })),
   );
-  const x = ch.x || o.secenekler[o.secenekler.length - 1];
+  const xi = ch.x ? o.secenekler.indexOf(ch.x) : o.secenekler.length - 1,
+    x = o.secenekler[xi];
   p.puanEk = (p.puanEk || 0) + x.puan;
   if (x.bahsis) G.money += x.bahsis;
   setCast([
     { svg: face(me, x.puan >= 0 ? 'smile' : 'nervous'), name: 'Sen' },
     { svg: face(L, x.puan >= 0 ? 'smile' : 'angry'), name: L.name },
   ]);
-  await say(L.name, T(x.cevap, v) + (x.bahsis ? ' ' + T(DLG.kariyer.olayBahsis, { bahsis: x.bahsis }) : ''));
+  await say(L.name, T(tr ? tr.cevap[xi] : x.cevap, v) + (x.bahsis ? ' ' + T(DLG.kariyer.olayBahsis, { bahsis: x.bahsis }) : ''));
   closePanel();
 }

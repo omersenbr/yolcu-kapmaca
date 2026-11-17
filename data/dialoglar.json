@@ -2154,7 +2154,15 @@
      "puan": -0.5,
      "cevap": "Hıh. Peki."
     }
-   ]
+   ],
+   "turist": {
+    "soru": "Radio, please? Turkish music! Arabesk... or pop? You choose!",
+    "cevap": [
+     "Wow, very emotional! I feel İstanbul!",
+     "Yes! Dance dance! Çok güzel!",
+     "Oh... okay. No music. Sad."
+    ]
+   }
   },
   {
    "id": "simit",
@@ -2173,7 +2181,14 @@
      "puan": -0.3,
      "cevap": "Neyse, açlıktan ölmem herhalde."
     }
-   ]
+   ],
+   "turist": {
+    "soru": "Wait wait! Simit! Famous bread, yes? We stop one second, please?",
+    "cevap": [
+     "Thank you {ab}! I buy one for you also!",
+     "Oh no... okay, I eat later."
+    ]
+   }
   },
   {
    "id": "kestirme",
@@ -2192,7 +2207,14 @@
      "puan": -0.2,
      "cevap": "Peki usta, sen bilirsin."
     }
-   ]
+   ],
+   "turist": {
+    "soru": "Google says turn right here, shortcut! We go?",
+    "cevap": [
+     "Yes! Google is smart, five minutes save!",
+     "Okay okay, you are the boss."
+    ]
+   }
   },
   {
    "id": "telefon",
@@ -2211,7 +2233,14 @@
      "puan": -0.6,
      "cevap": "Ne yasağı ya!"
     }
-   ]
+   ],
+   "turist": {
+    "soru": "(Turist telefonda bağırıyor) ...NO MOM, I AM FINE! Sorry {sabi}, radio little down, please?",
+    "cevap": [
+     "Thank you, very kind!",
+     "Forbidden? Oh my God, sorry sorry!"
+    ]
+   }
   },
   {
    "id": "klima",
@@ -2230,7 +2259,14 @@
      "puan": -0.2,
      "cevap": "Saçım dağılacak ama neyse."
     }
-   ]
+   ],
+   "turist": {
+    "soru": "So hot! Air condition, possible? Klima?",
+    "cevap": [
+     "Ahh, perfect! Teşekkür!",
+     "Window? Okay... my hair, crazy, but okay!"
+    ]
+   }
   },
   {
    "id": "uygulama",
@@ -2249,7 +2285,14 @@
      "puan": -0.4,
      "cevap": "Hmm, biraz garip ama..."
     }
-   ]
+   ],
+   "turist": {
+    "soru": "In app, the car is different... this is you? Really?",
+    "cevap": [
+     "Okay, okay, just asking!",
+     "Brother is sick? Hmm... strange, but okay."
+    ]
+   }
   },
   {
    "id": "para",
@@ -2268,7 +2311,14 @@
      "puan": -0.2,
      "cevap": "Peki, üstü kalsın o zaman."
     }
-   ]
+   ],
+   "turist": {
+    "soru": "I have no Turkish lira, only card... or dollar. Okay?",
+    "cevap": [
+     "Great! I pay with card, no problem.",
+     "ATM, okay... keep the change, my friend!"
+    ]
+   }
   }
  ],
  "mudavimler": [
@@ -3096,6 +3146,10 @@
       "Güzel götürürsen beş yıldız veririm.",
       "Bakalım, yol nasıl geçecek.",
       "Puanı sonunda veririm {sabi}."
+     ],
+     "turist": [
+      "Five star? Yes yes, if you drive nice!",
+      "Stars at the end, my friend. Bakalım!"
      ]
     }
    },

@@ -540,16 +540,10 @@ function landmarks(): Lm[] {
   if (L['Havalimanı terminali'])
     for (const a of (MAP && MAP.havalimanlari) || []) {
       const [ax0, , ax1, ay1] = a,
-        Wt = Math.min(12, (ax1 - ax0) * 0.5);
-      LMS.push({ name: 'Havalimanı terminali', x: (ax0 + ax1) / 2 - Wt / 2, y: ay1 - 5, w: Wt, h: 5 });
+        Wt = Math.min(6, (ax1 - ax0) * 0.5); // görselin tabanı kareye yakın: alan da öyle
+      LMS.push({ name: 'Havalimanı terminali', x: (ax0 + ax1) / 2 - Wt / 2, y: ay1 - 5.5, w: Wt, h: 5.5 });
     }
-  // Avrasya Tüneli ağızları
-  if (L['Avrasya Tüneli girişi'])
-    for (const [tx, ty] of [
-      [92.5, 184.6],
-      [152.5, 182.6],
-    ])
-      LMS.push({ name: 'Avrasya Tüneli girişi', x: tx - 2, y: ty - 1.5, w: 4, h: 3 });
+  // Avrasya Tüneli ağızları 2.5D çizimle değil, zemindeki üstten çizimle kalır (suyun üstünde havada duruyordu)
   return LMS;
 }
 const lmReady = (n: string) => {
@@ -584,6 +578,25 @@ function drawLmPlate(m: Lm) {
   ctx.lineWidth = Math.max(1, S * 0.04);
   ctx.stroke();
 }
+/** alanın içinde, ekrandaki taban kenarlarının oranı (sol→alt / alt→sağ) r olan en büyük ortalanmış parça */
+function lmSub(m: Lm, r: number): Lm {
+  const D = lmDiamond(m),
+    dist = (p: number[], q: number[]) => Math.hypot(p[0] - q[0], p[1] - q[1]),
+    cur = dist(D.left, D.bot) / dist(D.bot, D.right);
+  let best = m,
+    err = Math.abs(Math.log(cur / r));
+  for (const ax of ['w', 'h'] as const)
+    for (const f of [r / cur, cur / r]) {
+      if (f >= 1) continue;
+      const n = { ...m, [ax]: m[ax] * f } as Lm;
+      if (ax === 'w') n.x = m.x + (m.w - n.w) / 2;
+      else n.y = m.y + (m.h - n.h) / 2;
+      const E = lmDiamond(n),
+        e = Math.abs(Math.log(dist(E.left, E.bot) / dist(E.bot, E.right) / r));
+      if (e < err - 1e-6) ((best = n), (err = e));
+    }
+  return best;
+}
 /** 3x3 doğrusal denklem (Cramer) */
 function solve3(M: number[][], v: number[]): number[] | null {
   const det = (A: number[][]) =>
@@ -599,29 +612,36 @@ function solve3(M: number[][], v: number[]): number[] | null {
 function drawLandmark(m: Lm, draw = true): Box | null {
   const L = lmReady(m.name);
   if (!L) return null;
-  const { left, right, bot } = lmDiamond(m, 0.12);
   const W = L.w,
     H = L.h;
   const [xl, yl, xb, yb, xr, yr] = L.taban || [0, H * 0.75, W / 2, H, W, H * 0.75];
   // iki seçenek: düz ya da aynalı; tabanın oranı alana daha uygun olanı
   let best: { a: number; b: number; c: number; d: number; e: number; score: number } | null = null;
+  const ia = Math.hypot(xb - xl, yb - yl) || 1,
+    ib = Math.hypot(xr - xb, yr - yb) || 1;
+  let left: number[] = [0, 0],
+    right: number[] = [0, 0];
   for (const flip of [false, true]) {
     const l = flip ? [W - xr, yr] : [xl, yl],
       r = flip ? [W - xl, yl] : [xr, yr],
       bo = flip ? [W - xb, yb] : [xb, yb];
-    let a = (right[0] - left[0]) / (r[0] - l[0] || 1),
-      c = left[0] - a * l[0];
+    // alanın içinde görselin taban oranına uyan, ortalanmış parça (uzun alanda yamulmasın)
+    const sub = lmSub(m, flip ? ib / ia : ia / ib),
+      D = lmDiamond(sub, 0.12);
+    const { left: dl, right: dr, bot: db } = D;
+    let a = (dr[0] - dl[0]) / (r[0] - l[0] || 1),
+      c = dl[0] - a * l[0];
     const sol = solve3(
       [
         [l[0], l[1], 1],
         [bo[0], bo[1], 1],
         [r[0], r[1], 1],
       ],
-      [left[1], bot[1], right[1]],
+      [dl[1], db[1], dr[1]],
     );
     if (!sol) continue;
     let [b, d, e] = sol;
-    const score = Math.abs(Math.log(Math.max(1e-3, d / a))) + Math.abs(b / a);
+    const score = Math.abs(Math.log(Math.max(1e-3, d / a))) + Math.abs(b / a) + (1 - (sub.w * sub.h) / (m.w * m.h));
     if (flip) {
       // aynalı görselde kaynak x → W − x
       c = c + a * W;
@@ -629,7 +649,10 @@ function drawLandmark(m: Lm, draw = true): Box | null {
       e = e + b * W;
       b = -b;
     }
-    if (!best || score < best.score) best = { a, b, c, d, e, score };
+    if (!best || score < best.score) {
+      best = { a, b, c, d, e, score };
+      [left, right] = [dl, dr];
+    }
   }
   if (!best) return null;
   let { a, b, c, d, e } = best;
@@ -639,6 +662,21 @@ function drawLandmark(m: Lm, draw = true): Box | null {
     const d2 = clamp(d, ab * 0.5, ab * 1.6);
     e += (d - d2) * yb; // alt köşe yerinde kalsın
     d = d2;
+  }
+  // görselin tamamı (çatı çıkıntıları dahil) alanın genişliğine sığsın: alt köşe etrafında küçült
+  {
+    const bx = a * xb + c,
+      by = b * xb + d * yb + e,
+      x0 = Math.min(c, a * W + c),
+      x1 = Math.max(c, a * W + c),
+      f = Math.min(1, (bx - left[0]) / Math.max(1e-3, bx - x0), (right[0] - bx) / Math.max(1e-3, x1 - bx));
+    if (f < 1) {
+      a *= f;
+      c = bx + f * (c - bx);
+      b *= f;
+      d *= f;
+      e = by + f * (e - by);
+    }
   }
   const yf = clamp(yl + yr - yb, 0, H), // taban dörtgeninin üst köşesi: bunun altı basılmaz
     sqd = d * SQ_SIMGE,
@@ -807,6 +845,8 @@ interface Key {
   car?: number[] | null;
   /** yolcu: siluet olarak figürün kendi hattı çizilir */
   pax?: any;
+  /** önündeki binayı saydamlaştırır mı */
+  fade?: boolean;
 }
 /* ---- yolcunun neon hattı: figür ayrı tuvale çizilir, rengi neona boyanıp her yöne kaydırılarak
    arkasına basılır; böylece hat figürün kendi biçimini izler. Pahalı olduğu için sonuç yolcu başına
@@ -1139,7 +1179,7 @@ export function renderIso(t: number, dt: number) {
       : -1;
     if (sig !== lmState.sig) {
       lmState.sig = sig;
-      painterOpts.skipLm = sig >= 0 ? (n: string) => !!(lmReady(n) || bridgeReady(n)) : null;
+      painterOpts.skipLm = sig >= 0 ? (n: string) => n !== 'Avrasya Tüneli girişi' && !!(lmReady(n) || bridgeReady(n)) : null;
       buildMap();
     }
   }
@@ -1205,10 +1245,12 @@ export function renderIso(t: number, dt: number) {
   // önemli noktalar: oyuncu ve önündeki yol, yolcular, araçlar, varış yeri. Bunları kapatan binalar
   // saydamlaşır, arkada kalanlar binanın üstüne siluetle çizilir
   const keys: Key[] = [];
-  const key = (x: number, y: number, col: string, car?: number[] | null, z = 0.25, pax?: any) => {
+  // fade: bu nokta önündeki binayı saydamlaştırır (oyuncu, yolu, varış, yakın yolcular);
+  // diğerleri (uzak yolcular, öbür araçlar) binayı saydamlaştırmaz, yalnızca siluetle görünür
+  const key = (x: number, y: number, col: string, car?: number[] | null, z = 0.25, pax?: any, fade = true) => {
     if (!inView(x, y)) return;
     const [sx, sy] = proj(x, y, z);
-    keys.push({ x, y, d: depth(x, y), sx, sy, col, car, pax });
+    keys.push({ x, y, d: depth(x, y), sx, sy, col, car, pax, fade });
   };
   if (G && spriteMode()) {
     const P = G.player,
@@ -1221,10 +1263,12 @@ export function renderIso(t: number, dt: number) {
       const r = routeTo(Math.round(P.x), Math.round(P.y), P.carry.dx, P.carry.dy);
       for (let i = 1; i < Math.min(r.length, 12); i++) key(r[i][0], r[i][1], '', undefined, 0);
     }
-    for (const p of G.pax) if (p.state === 'wait' || p.state === 'talk') key(p.x, p.y, NEON, undefined, 0.25, p);
+    const near = (x: number, y: number) => Math.abs(x - P.x) + Math.abs(y - P.y) < 9;
+    for (const p of G.pax)
+      if (p.state === 'wait' || p.state === 'talk') key(p.x, p.y, NEON, undefined, 0.25, p, near(p.x, p.y));
     for (const e of G.ents)
       if (!e.isPlayer)
-        key(e.x, e.y, e.kind === 'police' ? '#1c7ed6' : e.kind === 'tag' ? '#ff922b' : '#ffc20e', e.dir || [1, 0]);
+        key(e.x, e.y, e.kind === 'police' ? '#1c7ed6' : e.kind === 'tag' ? '#ff922b' : '#ffc20e', e.dir || [1, 0], 0.25, undefined, false);
   }
   /** binanın ekran kutusu bir önemli noktayı kapatıyor mu (bina noktadan önde ve kutusu üstünde) */
   const covered: Set<Key> = new Set();
@@ -1239,7 +1283,7 @@ export function renderIso(t: number, dt: number) {
         k.sy > box.y0 &&
         k.sy < box.y1 - S * 0.15
       ) {
-        hit = true;
+        if (k.fade) hit = true;
         if (k.col) covered.add(k);
       }
     return hit;
