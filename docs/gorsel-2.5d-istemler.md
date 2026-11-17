@@ -24,7 +24,9 @@ background (#D9D9D9), no ground, no shadow on the background, objects fully insi
 ```
 A 4x4 sheet of 16 different isometric building sprites for a city game, evenly spaced on a grid, each
 building on its own square plot, none touching or overlapping, all the same scale and the same viewing
-angle. Each one: a 1 to 2 storey modest Istanbul neighbourhood house with a patched roof and a small yard.
+angle. Each one: a small, low, SINGLE-storey Istanbul shanty-style neighbourhood house (gecekondu): ground
+floor only, no upper floor, low pitched or flat patched roof, a small yard. At most 3 of the 16 may have a
+second storey; the other 13 must be one storey high.
 Vary the wall colours, corrugated or tiled roofs, water tanks, satellite dishes, laundry lines, garden
 walls and small details.
 Style: Turkish satirical comic magazine illustration (Uykusuz / LeMan tradition). Bold black ink outline,
