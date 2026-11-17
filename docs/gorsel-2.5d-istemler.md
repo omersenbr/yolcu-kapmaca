@@ -158,8 +158,74 @@ Each one fills a whole city block: a 10 to 15 storey office tower, a residence t
 a hospital. Rooftop machinery, a few rooftop gardens, ordinary Istanbul look rather than futuristic.
 ```
 
-## Sonra (istersen)
+## Mevcut simge yapıların yenisi
 
-- **Mevcut 8 simge yapı** (Galata Kulesi, Kız Kulesi, Çamlıca Kulesi, Rumeli Hisarı, Ayasofya, Sultanahmet Camii, Topkapı, Dolmabahçe): beğenmediklerini aynı yöntemle yeniden çizdiririz.
-- **Köprüler:** yolun üstünden geçtikleri için ayrı hazırlanacak.
+Oyundaki 8 simge yapının daha aslına sadık hâli. Yine her yapı kendi düz arsasında; arsanın uzun kenarı sol alttan sağ üste.
+
+### 15. Kuleler ve hisar
+
+```
+A 2x2 sheet of 4 isometric landmark sprites, each on its own flat base plot, in this order.
+Draw each one as the REAL building looks today; do not add towers, domes or walls it does not have.
+1. Galata Tower: a tall cylindrical medieval stone tower (about 67 m) with a pointed conical lead-grey
+   roof; just below the roof a ring of arched windows with a narrow balcony around it. At its foot a
+   small cobbled square and a few old narrow 3-4 storey Galata houses.
+2. Maiden's Tower (Kız Kulesi): a tiny rocky islet in the sea with a low stone platform wall around it;
+   on it a small white stone building and a slender stone tower with a lead-grey domed top and a
+   flagpole. Sea water around the islet on the base plot.
+3. Çamlıca Tower: a very tall slender white telecommunication tower (about 370 m) rising from a wooded
+   hilltop; it flares out at the base, has glass-banded observation floors near the top and ends in a
+   long antenna mast. Pine trees and a small plaza around its foot.
+4. Rumeli Fortress (Rumeli Hisarı): a 15th-century stone fortress on a steep green slope going down to
+   the Bosphorus shore: three big towers (round and polygonal, some with pointed grey roofs) and
+   several small towers, joined by crenellated walls that climb the slope. Grass and trees inside the
+   walls. No modern buildings.
+```
+
+### 16. Camiler ve saraylar
+
+```
+A 2x2 sheet of 4 isometric landmark sprites, each on its own flat base plot, in this order.
+Draw each one as the REAL building looks today; do not add or remove minarets, domes or towers.
+1. Hagia Sophia: a massive building with one huge shallow lead-grey central dome on a ring of small
+   windows, two big half-domes on its sides, heavy sloping buttresses, ochre-pink plastered walls and
+   exactly four minarets at the corners (one of them in red brick, the others white stone).
+2. Blue Mosque (Sultanahmet Mosque): grey stone mosque with a big central lead-grey dome surrounded by
+   cascading half-domes and small domes, exactly six slender pencil minarets (four at the corners of
+   the mosque and two at the far corners of the courtyard), and a large courtyard ringed by an arcade
+   of small domes.
+3. Topkapı Palace: a palace complex of low buildings around green courtyards on a point above the sea:
+   the Tower of Justice (a square stone tower with a tall pointed conical lead roof) beside the domed
+   Imperial Council hall, the long palace kitchens with a row of tall chimneys, the Gate of Salutation
+   with two octagonal towers with pointed roofs, many small lead domes and big old trees.
+4. Dolmabahçe Palace: a long, low, white marble palace along the Bosphorus shore, with a richly
+   carved European baroque facade, a wide central ceremonial hall in the middle with a big lead-grey
+   roof dome, ornate waterfront gates and a quay with iron railings on the sea side, formal gardens on
+   the land side. Do not add a clock tower on the palace.
+```
+
+### 17. Köprüler
+
+Köprüler yolun üstünden geçtiği için oyuna bağlanmaları ayrı iş; şimdiden çizdirebilirsin.
+
+```
+A 2x2 sheet of 4 isometric bridge sprites in this order. Each bridge seen from the same isometric angle,
+running from the lower left to the upper right, with a short piece of shore at both ends and no water
+drawn under it (plain background). Draw each one as the REAL bridge looks.
+1. 15 July Martyrs Bridge (first Bosphorus Bridge): a suspension bridge with two slender steel towers,
+   each a simple portal of two legs joined at the top, two main cables, and diagonal zigzag hanger
+   cables (not vertical) holding a six-lane deck.
+2. Fatih Sultan Mehmet Bridge (second Bosphorus Bridge): a suspension bridge with two steel portal
+   towers, two main cables and vertical hanger cables, an eight-lane deck.
+3. Yavuz Sultan Selim Bridge (third Bosphorus Bridge): a very tall hybrid bridge with two A-shaped
+   concrete towers; fans of straight stay cables run from the towers to the deck, and suspension cables
+   with vertical hangers carry the middle of the span; a wide deck with road lanes and a rail track in
+   the middle.
+4. Galata Bridge (over the Golden Horn): a long low flat bridge on many short piers with a lifting
+   middle section; the upper level carries a road with tram tracks and is lined with fishermen holding
+   long rods over the railings; the lower level has a row of small fish restaurants under the road.
+```
+
+## Sonra
+
 - **Araçlar ve ağaçlar:** şimdilik yeterli.
