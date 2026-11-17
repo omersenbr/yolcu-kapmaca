@@ -467,5 +467,128 @@
   "news_head": "assets/ui/news_head.jpg",
   "page": "assets/ui/page.jpg",
   "cover": "assets/ui/cover.jpg"
+ },
+ "cars_iso": {
+  "_not": "2.5D araçlar (sabit kamera): 'on' aracın önü sol alta bakar, 'arka' araç sağ üste gider; diğer iki yön aynalanır. 'arka' yoksa o yönlerde üstten görsel katmanlanır. olcek: kaynak pikselin kare boyuna oranı için referans genişlik.",
+  "refGenislik": 270,
+  "araclar": {
+   "taxi1": {
+    "on": {
+     "file": "assets/cars_iso/taxi1_on.webp",
+     "w": 270,
+     "h": 188
+    },
+    "arka": {
+     "file": "assets/cars_iso/taxi1_arka.webp",
+     "w": 270,
+     "h": 186
+    }
+   },
+   "taxi2": {
+    "on": {
+     "file": "assets/cars_iso/taxi2_on.webp",
+     "w": 272,
+     "h": 189
+    },
+    "arka": {
+     "file": "assets/cars_iso/taxi2_arka.webp",
+     "w": 271,
+     "h": 188
+    }
+   },
+   "taxi3": {
+    "on": {
+     "file": "assets/cars_iso/taxi3_on.webp",
+     "w": 263,
+     "h": 230
+    },
+    "arka": {
+     "file": "assets/cars_iso/taxi3_arka.webp",
+     "w": 255,
+     "h": 208
+    }
+   },
+   "police1": {
+    "on": {
+     "file": "assets/cars_iso/police1_on.webp",
+     "w": 273,
+     "h": 188
+    },
+    "arka": {
+     "file": "assets/cars_iso/police1_arka.webp",
+     "w": 274,
+     "h": 188
+    }
+   },
+   "police2": {
+    "on": {
+     "file": "assets/cars_iso/police2_on.webp",
+     "w": 276,
+     "h": 192
+    },
+    "arka": {
+     "file": "assets/cars_iso/police2_arka.webp",
+     "w": 277,
+     "h": 191
+    }
+   },
+   "sivil": {
+    "on": {
+     "file": "assets/cars_iso/sivil_on.webp",
+     "w": 280,
+     "h": 194
+    },
+    "arka": {
+     "file": "assets/cars_iso/sivil_arka.webp",
+     "w": 280,
+     "h": 193
+    }
+   },
+   "tag1": {
+    "on": {
+     "file": "assets/cars_iso/tag1_on.webp",
+     "w": 269,
+     "h": 198
+    },
+    "arka": {
+     "file": "assets/cars_iso/tag1_arka.webp",
+     "w": 272,
+     "h": 187
+    }
+   },
+   "tag2": {
+    "on": {
+     "file": "assets/cars_iso/tag2_on.webp",
+     "w": 272,
+     "h": 189
+    },
+    "arka": {
+     "file": "assets/cars_iso/tag2_arka.webp",
+     "w": 274,
+     "h": 191
+    }
+   },
+   "tag3": {
+    "on": {
+     "file": "assets/cars_iso/tag3_on.webp",
+     "w": 267,
+     "h": 208
+    }
+   },
+   "tag4": {
+    "on": {
+     "file": "assets/cars_iso/tag4_on.webp",
+     "w": 271,
+     "h": 222
+    }
+   },
+   "tag5": {
+    "on": {
+     "file": "assets/cars_iso/tag5_on.webp",
+     "w": 305,
+     "h": 209
+    }
+   }
+  }
  }
 }

@@ -188,21 +188,7 @@ export function drawCar0(e, t) {
     }
   }
   ctx.restore();
-  if (e.carry && !carOpts.flat) {
-    const l = e.carry.look;
-    ctx.fillStyle = l.shirt;
-    ctx.strokeStyle = '#111';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.arc(x + TS * 0.36, y - TS * 0.36, TS * 0.15, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = l.skin;
-    ctx.beginPath();
-    ctx.arc(x + TS * 0.36, y - TS * 0.4, TS * 0.09, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-  }
+  if (e.carry && !carOpts.flat) drawCarryBadge(e);
   if (e.isPlayer && ORN !== 'none') {
     const of = MANIFEST.items.ornaments[ORN],
       oi = of ? img(of) : null;
@@ -243,4 +229,22 @@ export function drawAlarm(e, t) {
     ctx.textBaseline = 'middle';
     ctx.fillText('!', cx, cy + 1);
   }
+}
+/** yolcu taşıyan aracın sağ üstündeki küçük yolcu rozeti */
+export function drawCarryBadge(e) {
+  const x = px(e.x),
+    y = px(e.y);
+  const l = e.carry.look;
+  ctx.fillStyle = l.shirt;
+  ctx.strokeStyle = '#111';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(x + TS * 0.36, y - TS * 0.36, TS * 0.15, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = l.skin;
+  ctx.beginPath();
+  ctx.arc(x + TS * 0.36, y - TS * 0.4, TS * 0.09, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
 }

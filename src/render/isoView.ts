@@ -1,6 +1,6 @@
 /* ================= 2.5D GÖRÜNÜM AYARLARI =================
    Oyuncu Profil sayfasından seçer; cihazda saklanır (yk-gorunum, yk-iso-*).
-   egim: zeminin dikey ezilmesi (0,4 yatık – 0,95 tepeden); aci: kameranın aracın yönüne göre yana kaçıklığı (derece);
+   (2.5D araç çizimleri 45° açı ve ~0,5–0,6 eğim için çizildi; varsayılanlar buna göre.) egim: zeminin dikey ezilmesi (0,4 yatık – 0,95 tepeden); aci: kameranın aracın yönüne göre yana kaçıklığı (derece);
    yakin: yakınlık çarpanı; takip: kamera aracın yönünü izler (yön verme de araca göre olur). */
 import { load, save } from '../sim/storage';
 import { G } from '../sim/state';
@@ -11,8 +11,8 @@ const num = (key: string, def: number, lo: number, hi: number) => {
 };
 export const isoCfg = {
   on: load('yk-gorunum', '2.5d') !== 'ustten',
-  egim: num('yk-iso-egim', 0.66, 0.4, 0.95),
-  aci: num('yk-iso-aci', 32, 0, 45),
+  egim: num('yk-iso-egim2', 0.58, 0.4, 0.95),
+  aci: num('yk-iso-aci2', 45, 0, 45),
   yakin: num('yk-iso-yakin', 1.15, 0.7, 2),
   // varsayılan kapalı: sürekli dönen ekran dikkat dağıtıyor ve baş döndürüyor
   takip: load('yk-iso-donus', '0') === '1',
@@ -20,8 +20,8 @@ export const isoCfg = {
 export function setIso(patch: Partial<typeof isoCfg>) {
   Object.assign(isoCfg, patch);
   save('yk-gorunum', isoCfg.on ? '2.5d' : 'ustten');
-  save('yk-iso-egim', isoCfg.egim);
-  save('yk-iso-aci', isoCfg.aci);
+  save('yk-iso-egim2', isoCfg.egim);
+  save('yk-iso-aci2', isoCfg.aci);
   save('yk-iso-yakin', isoCfg.yakin);
   save('yk-iso-donus', isoCfg.takip ? '1' : '0');
 }

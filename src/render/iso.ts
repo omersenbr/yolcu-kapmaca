@@ -7,11 +7,11 @@
    Kamera aracın yönünü izler (ayar: src/render/isoView.ts). */
 import { img, ready } from '../core/assets';
 import { MANIFEST } from '../sim/content';
-import { G } from '../sim/state';
+import { G, ORN } from '../sim/state';
 import { hsh } from '../sim/util';
 import { COLS, RADARS, ROWS, isTunnel } from '../sim/grid';
 import { CHT, CHX, CHY, collectSprites, mapChunk, mapChunks, pal, setChunkCap, sprCell } from '../map/painter';
-import { carOpts, drawAlarm, drawCar, pickCarSpr } from './cars';
+import { carOpts, drawAlarm, drawCar, drawCarryBadge, pickCarSpr } from './cars';
 import { drawDest, drawPax } from './people';
 import { drawRemotes } from './remotes';
 import { smoothRemotes } from '../net/mp';
@@ -253,12 +253,79 @@ function drawTree(tr: Tree) {
   }
 }
 
-/* ---- araçlar: üstten görsel katmanlanır ---- */
+/* ---- araçlar: 2.5D çizim (sabit kamera) ---- */
+/** aracın 2.5D çizimi varsa onu çizer; yoksa (ya da kamera dönüyorsa) false döner ve katmanlı çizime düşülür */
+function drawCarSprite(e, t: number): boolean {
+  if (isoCfg.takip) return false; // dönen kamerada tek açılı çizim uymaz
+  const CI = MANIFEST.cars_iso,
+    A = CI && CI.araclar[e.spr];
+  if (!A) return false;
+  // aracın ekrandaki yönü: aşağı geliyorsa ön, yukarı gidiyorsa arka çizim; yatay yön aynalamayla
+  const d = e.dir || [0, -1],
+    sxv = d[0] * CS + d[1] * SN,
+    syv = -d[0] * SN + d[1] * CS,
+    front = syv > 0,
+    C = front ? A.on : A.arka;
+  if (!C) return false;
+  const im = img(C.file);
+  if (!ready(im)) return false;
+  const flip = front ? sxv > 0 : sxv < 0; // ön çizim sol alta, arka çizim sağ üste bakar
+  const x = px(e.x),
+    y = px(e.y),
+    blink = e.isPlayer && G.invuln > 0 && Math.floor(t * 10) % 2 === 0;
+  // yerde: gölge, oyuncu halkası, yardım halkası
+  ground(0);
+  ctx.fillStyle = 'rgba(0,0,0,.22)';
+  ctx.beginPath();
+  ctx.arc(x, y, TS * 0.46, 0, Math.PI * 2);
+  ctx.fill();
+  if (e.isPlayer || G.assist === e) {
+    ctx.strokeStyle = G.assist === e ? '#ff922b' : G.role === 'taxi' ? '#ffc20e' : '#8e98ff';
+    ctx.lineWidth = Math.max(2, TS * 0.09);
+    ctx.globalAlpha = blink ? 0.35 : 1;
+    ctx.beginPath();
+    ctx.arc(x, y, TS * 0.66, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+  screen();
+  const [X, Y] = proj(e.x, e.y, 0),
+    k = (S * 1.3) / CI.refGenislik,
+    w = C.w * k,
+    h = C.h * k;
+  ctx.globalAlpha = (isTunnel(Math.round(e.x), Math.round(e.y)) ? 0.5 : 1) * (blink ? 0.45 : 1);
+  if (flip) {
+    ctx.translate(X, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(im, -w / 2, Y - h * 0.62, w, h);
+    screen();
+  } else ctx.drawImage(im, X - w / 2, Y - h * 0.62, w, h);
+  ctx.globalAlpha = 1;
+  // kovalayan polis: tepe lambası yanıp söner
+  if (e.kind === 'police' && e.chase) {
+    const on = Math.floor(t * 6) % 2 === 0;
+    ctx.fillStyle =
+      e.spr === 'sivil' ? (on ? '#1c7ed6' : 'rgba(28,126,214,.3)') : on ? 'rgba(255,59,59,.6)' : 'rgba(59,139,255,.6)';
+    ctx.beginPath();
+    ctx.arc(X, Y - h * 0.5, S * (e.spr === 'sivil' ? 0.08 : 0.22), 0, Math.PI * 2);
+    ctx.fill();
+  }
+  if (e.isPlayer && ORN !== 'none') {
+    const of = MANIFEST.items.ornaments[ORN],
+      oi = of ? img(of) : null;
+    if (ready(oi)) ctx.drawImage(oi, X - S * 0.25, Y - h * 0.62 - S * 0.25, S * 0.5, S * 0.5);
+  }
+  if (e.carry) upright(e.x, e.y, 0.35, () => drawCarryBadge(e));
+  upright(e.x, e.y, 0.5, () => drawAlarm(e, t));
+  return true;
+}
+/* ---- araçlar (yedek): üstten görsel katmanlanır ---- */
 const LAYERS = 5,
   CAR_Z0 = 0.05,
   CAR_DZ = 0.05;
 function drawCarIso(e, t: number) {
   if (!e.spr) e.spr = pickCarSpr(e);
+  if (drawCarSprite(e, t)) return;
   const CSP = MANIFEST.cars[e.spr],
     AT = CSP && CSP.atlas,
     CIM = CSP ? img(AT ? AT.file : CSP.file) : null,
