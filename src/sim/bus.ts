@@ -14,7 +14,9 @@ export type SceneName =
   | 'tagVsTaxi'
   | 'stingDialog'
   | 'turfDialog'
-  | 'taxiCatchTag';
+  | 'taxiCatchTag'
+  | 'rideEvent'
+  | 'paxChat';
 
 export interface Bus {
   /** kısa bildirim; bad: kırmızı */
@@ -29,12 +31,14 @@ export interface Bus {
   radio(t: Ent, z: Zone | undefined): void;
   /** sahne aç (sinematik bitti); dünya bu sırada duraklatılmış durumda */
   scene(name: SceneName, arg?: Ent | Pax | Zone | boolean | number, arg2?: number, arg3?: number): void;
+  /** ödül/ceza anı: arayüz damga basar, ekranı sarsar, ses çalar (kind: data/dialoglar.json → juice) */
+  juice(kind: string, n?: number): void;
   /** gün bitti */
   end(why: 'time' | 'baglandi' | 'hapis' | 'ruhsat'): void;
 }
 
 const noop = () => {};
-export const bus: Bus = { toast: noop, hud: noop, frame: noop, flash: noop, radio: noop, scene: noop, end: noop };
+export const bus: Bus = { toast: noop, hud: noop, frame: noop, flash: noop, radio: noop, scene: noop, end: noop, juice: noop };
 export function bindBus(impl: Partial<Bus>) {
   Object.assign(bus, impl);
 }

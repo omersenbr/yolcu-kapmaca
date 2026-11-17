@@ -1,5 +1,5 @@
 // <auto-imports>
-import { DLG } from './content';
+import { DLG, ECO } from './content';
 import { DAY, DF, G, TL, addTagXP, mods, setDay, setG, tagLevel } from './state';
 import { T, dist, rnd } from './util';
 import { DAT, RADARS, STREETS, TAXI_START, ZONES, district, isBog, isBridge, isTunnel, zoneAt } from './grid';
@@ -10,6 +10,7 @@ import { clearWant } from './movement';
 import { pickDest, spawnPax, taximeter } from './passengers';
 import { randFar } from './pathfinding';
 import { bus } from './bus';
+import { newStats, rideDone, rideStart } from './ridelife';
 import type { SceneName } from './bus';
 // </auto-imports>
 /* ================= OYUN: yeni gün, yolcu alma/indirme, ücretler, kontrol noktaları ================= */
@@ -19,7 +20,20 @@ export interface ShiftOpts {
   startH: number;
   /** süre (saat); gün uzunluğu buna göre kısalır */
   span: number;
-  mods: { fareMul: number; demandMul: number; complaintMul: number; fuelMul: number };
+  mods: {
+    fareMul: number;
+    demandMul: number;
+    complaintMul: number;
+    fuelMul: number;
+    speedMul: number;
+    oldCar: boolean;
+  };
+  /** kariyer: günün havası (çizim için) */
+  hava?: string;
+  /** kariyer: müdavimlerle ilişki (kimlik → puan) */
+  mudavim?: Record<string, number>;
+  /** kariyer: günün dolar kuru (turist doları için) */
+  kur?: number;
   /** kariyer Tag’ci: sürülen aracın seviyesi (0–4) */
   tagLevel?: number;
   /** kariyerde oyuncunun sabit durağı */
@@ -31,7 +45,18 @@ export function newGame(role, shift?: ShiftOpts) {
   setDay(((DF().day || 480) * (shift ? shift.span : 24)) / 24);
   setG({
     ...(shift
-      ? { career: true, startH: shift.startH, span: shift.span, mods: shift.mods, tagLevel: shift.tagLevel }
+      ? {
+          career: true,
+          startH: shift.startH,
+          span: shift.span,
+          mods: shift.mods,
+          tagLevel: shift.tagLevel,
+          kur: shift.kur,
+          hava: shift.hava,
+          mudavimRel: shift.mudavim || {},
+          stats: newStats(),
+          combo: 0,
+        }
       : {}),
     role,
     time: DAY,
@@ -149,6 +174,7 @@ export function arrive(e) {
         G.money -= fine;
         fx(e.x, e.y, 'Radar −₺' + fine, '#d6402b');
         bus.toast(`Radar! Nitroyla hız sınırını aştın. Hız cezası −₺${fine}`, true);
+        bus.juice('radar');
         bus.flash();
         bus.hud();
       }
@@ -194,11 +220,13 @@ export function board(e, p) {
     pickDest(p, zz && zz.w >= 2 ? 'long' : 'any');
   }
   const P = G.player;
+  if (e.isPlayer) rideStart(p);
   if (e.isPlayer) {
     if (G.role === 'tag') {
       G.lastAct = 'aldın';
       G.lastLoc = district(Math.round(P.x), Math.round(P.y));
       if (!witness(P, 'aldın')) bus.toast(`${p.look.name} bindi, kimse görmedi. ${DAT[p.dest]} götür.`);
+      else bus.juice('goruldun');
     }
   } else if (e.kind === 'tag') {
     const n = npcWitness(e);
@@ -226,6 +254,7 @@ export function deliver(e) {
     G.money += f;
     fx(e.x, e.y, '+₺' + f, '#2f9e44');
     G.lastAct = 'indirdin';
+    rideDone(p, f, !!p.complained);
     if (!p.complained && Math.random() < L.tip) {
       const tp = 20 + Math.floor(Math.random() * 4) * 10;
       G.money += tp;
@@ -240,12 +269,14 @@ export function deliver(e) {
       addTagXP();
       if (tagLevel() > before) {
         G.player.spr = null;
+        bus.juice('seviye');
         setTimeout(() => bus.toast(T(DLG.tagLevels.up, { arac: TL().ad })), 2600);
       }
     }
     G.lastLoc = district(Math.round(e.x), Math.round(e.y));
-    if (!witness(e, 'indirdin'))
-      bus.toast(p.complained ? `${p.dest} teslim ama şikayetli. +₺${f}` : `${p.dest} teslim. +₺${f}`);
+    const seen = witness(e, 'indirdin');
+    if (!seen) bus.toast(p.complained ? `${p.dest} teslim ama şikayetli. +₺${f}` : `${p.dest} teslim. +₺${f}`);
+    bus.juice(seen ? 'goruldun' : p.complained ? 'sikayet' : 'teslimTag');
   } else {
     const before = G.money;
     const normal = taximeter(p.m, p.cross);
@@ -254,15 +285,33 @@ export function deliver(e) {
         cinematic(e.x, e.y, 0.6, 'viralDialog', p);
         return;
       }
-      G.money += p.fare;
-      fx(e.x, e.y, '+₺' + p.fare, '#2f9e44');
-      if (Math.random() < 0.2) {
+      // kariyer: turistlerin bir kısmı dolarla öder (hızlı günde rastgele çekilmez, eşitlik korunur)
+      let usd = 0;
+      if (G.career && G.kur && Math.random() < ECO.turist.dolarOrani) {
+        usd = Math.max(1, Math.round(p.fare / G.kur));
+        G.usd = (G.usd || 0) + usd;
+        fx(e.x, e.y, '+$' + usd, '#2f9e44');
+      } else {
+        G.money += p.fare;
+        fx(e.x, e.y, '+₺' + p.fare, '#2f9e44');
+      }
+      const otelSikayet = Math.random() < 0.2;
+      rideDone(p, usd ? 0 : p.fare, otelSikayet);
+      bus.juice(otelSikayet ? 'sikayet' : 'kazik');
+      if (otelSikayet) {
         G.money -= 1500;
         bus.toast(`Turist otelden şikayet etti! Taksimetresiz fahiş ücret cezası −₺1500`, true);
-      } else bus.toast(`${p.dest} teslim. Turistten ₺${p.fare} kazıkladın...`);
+      } else
+        bus.toast(
+          usd
+            ? T(DLG.kariyer.turistDolar, { hedef: p.dest, usd })
+            : `${p.dest} teslim. Turistten ₺${p.fare} kazıkladın...`,
+        );
     } else if (p.fixed) {
       G.money += p.fare;
       fx(e.x, e.y, '+₺' + p.fare, '#2f9e44');
+      rideDone(p, p.fare, !!p.lateComplain);
+      bus.juice(p.lateComplain ? 'sikayet' : 'teslim');
       if (p.lateComplain) {
         G.money -= 400;
         bus.toast(`${p.look.name}: “${DLG.pickup.lateComplain}” −₺400`, true);
@@ -289,7 +338,9 @@ export function deliver(e) {
         bus.toast(`Turist bahşiş bıraktı: “Teşekkür, çok iyi!” +₺${tip}`);
       }
       G.money += meter;
+      rideDone(p, meter, false);
       fx(e.x, e.y, '+₺' + meter, '#2f9e44');
+      bus.juice(meter > normal + 20 ? 'sisti' : 'teslim');
       if (!p.honest)
         bus.toast(
           meter > normal + 20 ? `${p.dest} teslim. Taksimetre şişti: +₺${meter}` : `${p.dest} teslim. +₺${meter}`,
@@ -325,6 +376,7 @@ export function checkpoint(ck) {
   if (P.carry && P.carry.fixed) {
     G.money -= 500;
     bus.toast('Sivil çevirme: taksimetre kapalı! −₺500', true);
+    bus.juice('ceza');
     bus.hud();
     return false;
   }

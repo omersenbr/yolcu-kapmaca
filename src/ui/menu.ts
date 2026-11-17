@@ -14,11 +14,25 @@ import { pageTurn } from './pageflip';
 import { newGame, nitro } from '../sim/game';
 import type { ShiftOpts } from '../sim/game';
 import { careerMode, nextShift, openCareer } from './career';
+import { mpEnabled, mpStart, mpStop, mpUrl, setMp } from '../net/mp';
+import { freeformOn, setFreeform, setVoice, voiceOn } from '../dialog/voice';
+import { clearLearned, myLearned } from '../sim/learn';
+import { isoCfg, setIso } from '../render/isoView';
+import { juiceReset } from './juice';
+import { countdown } from './ceremony';
+import { hudReset, initHudPlus, openPause } from './hudplus';
+import { initTutorial, startTutorial, stopTutorial, tutorialReset } from './tutorial';
+import { muted, setMuted } from '../audio/sound';
 // </auto-imports>
 /* ================= ANA EKRAN: kapak, profil, rol düğmeleri, alttan açılan sayfalar ================= */
 export function toMenu() {
+  mpStop();
   pageTurn();
   $('nitroBtn').hidden = true;
+  $('talkBtn').hidden = true;
+  $('taskCard').hidden = true;
+  $('pauseOv').hidden = true;
+  stopTutorial();
   $('adbtns').hidden = true;
   $('adOv').hidden = true;
   if (G) G.over = true;
@@ -34,8 +48,7 @@ export function toMenu() {
   window.dispatchEvent(new Event('resize'));
   $('start').hidden = false;
 }
-export let menuArm = 0,
-  pendingRole = null;
+export let pendingRole = null;
 export function openSheet(k) {
   document.querySelectorAll<HTMLElement>('#start .sheet').forEach((x) => (x.hidden = x.id !== 'sh-' + k));
   if (k === 'lbs') renderLB($('lb'));
@@ -91,6 +104,7 @@ export function paintDiff() {
     .forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.d === DIFF)));
 }
 export function startRole(r, shift?: ShiftOpts) {
+  juiceReset();
   document.body.classList.remove('inmenu');
   window.dispatchEvent(new Event('resize'));
   pageTurn();
@@ -112,9 +126,91 @@ export function startRole(r, shift?: ShiftOpts) {
       ? `Durağın: ${G.stand.name}. Burada yolcu alabilirsin, başka duraklarda dikkat!`
       : `Mahallen: ${G.home.name}. Taksiciler peşine düşerse buraya getir!`,
   );
+  mpStart(UNAME);
+  hudReset();
+  countdown();
+  startTutorial();
 }
 export function initMenu() {
   $('uname').value = UNAME;
+  // konuşma ayarları: serbest konuşma, sesli karakterler
+  const TU = DLG.serbestSohbet.ui;
+  $('talkTitle').textContent = TU.ayarBaslik;
+  $('talkFreeLbl').textContent = TU.ayarSerbest;
+  $('talkVoiceLbl').textContent = TU.ayarSes;
+  $('talkFree').checked = freeformOn();
+  $('talkVoice').checked = voiceOn();
+  $('talkFree').addEventListener('change', () => setFreeform($('talkFree').checked));
+  $('talkVoice').addEventListener('change', () => setVoice($('talkVoice').checked));
+  $('sfxLbl').textContent = TU.ayarEfekt;
+  $('sfxOn').checked = !muted;
+  $('sfxOn').addEventListener('change', () => setMuted(!$('sfxOn').checked));
+  // görünüm: 2.5D / üstten, eğim, açı, yakınlık, kamera takibi (değişiklik anında arkadaki haritada görünür)
+  const GV = DLG.gorunum;
+  $('viewTitle').textContent = GV.baslik;
+  $('viewM25').textContent = GV.mod25;
+  $('viewMUst').textContent = GV.modUst;
+  $('viewTiltLbl').textContent = GV.egim;
+  $('viewYawLbl').textContent = GV.aci;
+  $('viewZoomLbl').textContent = GV.yakin;
+  $('viewFollowLbl').textContent = GV.takip;
+  $('viewMode').value = isoCfg.on ? '2.5d' : 'ustten';
+  $('viewTilt').value = Math.round(isoCfg.egim * 100);
+  $('viewYaw').value = isoCfg.aci;
+  $('viewZoom').value = Math.round(isoCfg.yakin * 100);
+  $('viewFollow').checked = isoCfg.takip;
+  const viewSync = () => {
+    setIso({
+      on: $('viewMode').value !== 'ustten',
+      egim: +$('viewTilt').value / 100,
+      aci: +$('viewYaw').value,
+      yakin: +$('viewZoom').value / 100,
+      takip: $('viewFollow').checked,
+    });
+    $('viewIso').hidden = !isoCfg.on;
+  };
+  for (const id of ['viewMode', 'viewTilt', 'viewYaw', 'viewZoom', 'viewFollow']) {
+    $(id).addEventListener('input', viewSync);
+    $(id).addEventListener('change', viewSync);
+  }
+  $('viewIso').hidden = !isoCfg.on;
+  // öğretme modunda öğretilen cevaplar: dışa aktar (kopyala) ya da sil
+  const OG = DLG.sohbet.ogret;
+  $('learnTitle').textContent = OG.profilBaslik;
+  $('learnCopy').textContent = OG.profilKopyala;
+  $('learnClear').textContent = OG.profilSil;
+  const drawLearned = () => {
+    const L = myLearned();
+    $('learnCount').textContent = T(OG.profilSayi, { n: L.length });
+    ($('learnOut') as HTMLTextAreaElement).value = JSON.stringify(L, null, 1);
+  };
+  drawLearned();
+  document.querySelector('#start [data-sheet="prof"]')?.addEventListener('click', drawLearned);
+  $('learnCopy').addEventListener('click', async () => {
+    const ta = $('learnOut') as HTMLTextAreaElement;
+    ta.select();
+    try {
+      await navigator.clipboard.writeText(ta.value);
+    } catch (e) {
+      document.execCommand('copy');
+    }
+    $('learnCount').textContent = OG.profilKopyalandi;
+  });
+  $('learnClear').addEventListener('click', () => {
+    if (!confirm(OG.profilSilOnay)) return;
+    clearLearned();
+    drawLearned();
+  });
+  // çevrimiçi (deneme) ayarı
+  const MPT = DLG.cokOyunculu;
+  $('mpTitle').textContent = MPT.profilBaslik;
+  $('mpOnLbl').textContent = MPT.profilAcik;
+  $('mpUrlLbl').textContent = MPT.profilAdres;
+  $('mpNote').textContent = MPT.profilNot;
+  $('mpOn').checked = mpEnabled();
+  $('mpUrl').value = mpUrl();
+  $('mpOn').addEventListener('change', () => setMp($('mpOn').checked, $('mpUrl').value));
+  $('mpUrl').addEventListener('change', () => setMp($('mpOn').checked, $('mpUrl').value));
   $('uname').addEventListener('input', () => {
     $('nmWrap').classList.remove('err');
   });
@@ -129,20 +225,17 @@ export function initMenu() {
   $('ornTitle').textContent = DLG.shop.ornTitle;
   $('wpnTitle').textContent = DLG.shop.wpnTitle;
   paintGarage();
+  // menü düğmesi: çay molası (oyun durur; oradan ana menüye dönülür)
   $('menuBtn').addEventListener('click', () => {
-    if (G && !G.over && Date.now() > menuArm) {
-      menuArm = Date.now() + 3000;
-      $('menuBtn').dataset.ic = $('menuBtn').dataset.ic || $('menuBtn').innerHTML;
-      $('menuBtn').textContent = 'Çık?';
-      toast('Ana menüye dönmek için tekrar bas. Bu oyun kaydedilmez.');
-      setTimeout(() => {
-        $('menuBtn').innerHTML = $('menuBtn').dataset.ic || '☰';
-      }, 3000);
-      return;
-    }
-    menuArm = 0;
-    $('menuBtn').innerHTML = $('menuBtn').dataset.ic || $('menuBtn').innerHTML;
-    toMenu();
+    if (G && !G.over) openPause();
+    else toMenu();
+  });
+  initHudPlus(toMenu);
+  initTutorial();
+  $('tutorAgain').textContent = DLG.ogretici.tekrar;
+  $('tutorAgain').addEventListener('click', () => {
+    tutorialReset();
+    toast(DLG.ogretici.tekrarOldu);
   });
   document
     .querySelectorAll<HTMLElement>('#start [data-sheet]')

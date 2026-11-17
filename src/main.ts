@@ -14,9 +14,17 @@ import { initPathfinding } from './sim/pathfinding';
 import { update } from './sim/update';
 import { initBindings } from './ui/bindings';
 import { initCareer } from './ui/career';
+import { initMp } from './net/mp';
 // </auto-imports>
 import * as tagScenes from './dialog/tagScenes';
 import * as taxiScenes from './dialog/taxiScenes';
+import * as rideEvents from './dialog/rideEvents';
+import { board } from './sim/game';
+import { renderIso } from './render/iso';
+import { juice, juiceFrame } from './ui/juice';
+import { hudFrame } from './ui/hudplus';
+import { isoCfg } from './render/isoView';
+import * as mp from './net/mp';
 /* ================= GİRİŞ NOKTASI: veri ve görselleri yükle, modülleri başlat, döngüyü çalıştır ================= */
 import './styles/main.css';
 import mapUrl from '/data/harita.json?url';
@@ -29,7 +37,10 @@ export function loop(now) {
   const dt = Math.min(0.05, (now - lastFrame) / 1000);
   lastFrame = now;
   if (G && !G.over) update(dt);
-  render(now / 1000, dt);
+  if (isoCfg.on) renderIso(now / 1000, dt);
+  else render(now / 1000, dt);
+  juiceFrame(dt);
+  hudFrame();
   requestAnimationFrame(loop);
 }
 
@@ -56,6 +67,7 @@ export async function boot() {
   initBindings();
   initMenu();
   initCareer();
+  initMp();
   initInput();
   resize();
   cam.x = COLS * TS * 0.55;
@@ -70,6 +82,10 @@ export async function boot() {
       },
       tagScenes,
       taxiScenes,
+      rideEvents,
+      mp,
+      board,
+      juice,
     };
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildMap);
 }

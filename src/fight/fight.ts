@@ -1,12 +1,13 @@
 // <auto-imports>
-import { DLG } from '../sim/content';
+import { DLG, ECO } from '../sim/content';
 import { $ } from '../core/dom';
-import { DF, weapon } from '../sim/state';
+import { DF, G, weapon } from '../sim/state';
 import { T, clamp, esc, rnd } from '../sim/util';
 import { setBubble, stopTimer, ui } from '../dialog/comic';
 import { face } from '../dialog/portraits';
 import { LOOK } from '../sim/passengers';
 import type { Look } from '../sim/types';
+import { bus } from '../sim/bus';
 // </auto-imports>
 export interface FightOpts {
   bonus?: number;
@@ -34,6 +35,15 @@ export function fight(
   opt?: FightOpts,
 ): Promise<FightResult> {
   opt = opt || {};
+  // çok oyunculu: yardıma gelen ekip arkadaşı müttefik olur ve şansı artırır
+  if (G && G.mpAlly) {
+    opt = {
+      ...opt,
+      ally: opt.ally || (G.role === 'tag' ? LOOK.tagNpc : LOOK.taxi2),
+      allyName: G.mpAlly,
+      bonus: (opt.bonus || 0) + ECO.cokOyunculu.yardimBonus,
+    };
+  }
   return new Promise<FightResult>((res) => {
     const N = clamp(n, 1, 3);
     ui.panel.className = 'panel fight';
@@ -138,6 +148,7 @@ export function fight(
           requestAnimationFrame(tick);
           return;
         }
+        bus.juice(roll < ch ? 'kavgaKazandi' : 'kavgaKaybetti');
         res({ win: roll < ch, hits, rate: rateNow(), ch });
       };
       requestAnimationFrame(tick);

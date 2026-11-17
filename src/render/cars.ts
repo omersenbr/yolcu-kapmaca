@@ -66,6 +66,8 @@ export function pickCarSpr(e) {
   if (e.kind === 'police') return Math.random() < 0.12 ? 'sivil' : rnd(['police1', 'police2']);
   return rnd(['tag1', 'tag1', 'tag2', 'tag2', 'tag2', 'tag3', 'tag3', 'tag4', 'tag4', 'tag5']);
 }
+/** 2.5D görünüm aracı yatık düzlemde çizer; dik durması gereken parçaları (ünlem, yolcu rozeti) kendisi ekler */
+export const carOpts = { flat: false };
 export function drawCar(e, t) {
   const inT = isTunnel(Math.round(e.x), Math.round(e.y));
   if (inT) {
@@ -186,21 +188,7 @@ export function drawCar0(e, t) {
     }
   }
   ctx.restore();
-  if (e.carry) {
-    const l = e.carry.look;
-    ctx.fillStyle = l.shirt;
-    ctx.strokeStyle = '#111';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.arc(x + TS * 0.36, y - TS * 0.36, TS * 0.15, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = l.skin;
-    ctx.beginPath();
-    ctx.arc(x + TS * 0.36, y - TS * 0.4, TS * 0.09, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-  }
+  if (e.carry && !carOpts.flat) drawCarryBadge(e);
   if (e.isPlayer && ORN !== 'none') {
     const of = MANIFEST.items.ornaments[ORN],
       oi = of ? img(of) : null;
@@ -216,6 +204,12 @@ export function drawCar0(e, t) {
     ctx.arc(x, y, TS * 0.62 + Math.sin(t * 8) * TS * 0.06, 0, Math.PI * 2);
     ctx.stroke();
   }
+  if (!carOpts.flat) drawAlarm(e, t);
+}
+/** kovalayan / açığa çıkmış araç üstündeki ünlem balonu */
+export function drawAlarm(e, t) {
+  const x = px(e.x),
+    y = px(e.y);
   const alarm = (e.chase && !e.isPlayer) || (e.kind === 'tag' && !e.isPlayer && e.revealed > 0);
   if (alarm) {
     const bob = Math.sin(t * 10) * TS * 0.06,
@@ -235,4 +229,22 @@ export function drawCar0(e, t) {
     ctx.textBaseline = 'middle';
     ctx.fillText('!', cx, cy + 1);
   }
+}
+/** yolcu taşıyan aracın sağ üstündeki küçük yolcu rozeti */
+export function drawCarryBadge(e) {
+  const x = px(e.x),
+    y = px(e.y);
+  const l = e.carry.look;
+  ctx.fillStyle = l.shirt;
+  ctx.strokeStyle = '#111';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(x + TS * 0.36, y - TS * 0.36, TS * 0.15, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = l.skin;
+  ctx.beginPath();
+  ctx.arc(x + TS * 0.36, y - TS * 0.4, TS * 0.09, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
 }

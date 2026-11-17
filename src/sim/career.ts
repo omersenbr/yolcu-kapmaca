@@ -4,6 +4,7 @@
    ECO.tempo.cevrimdisiBirikimSaat kadar birikir; “kasayı topla” ile tahsil edilir. */
 import { ECO } from './content';
 import { clamp } from './util';
+import type { ShiftStats } from './ridelife';
 
 export type CarTier = 'eski' | 'yeni';
 export type Role = 'taxi' | 'tag';
@@ -32,6 +33,21 @@ export interface Career {
   kur: number;
   /** oyuncunun taksi durağı (bölge adı) */
   durak: string;
+  /** plaka piyasa (satış) fiyatı ve son gazete manşeti (olay kimliği) */
+  plakaFiyat: number;
+  manset: string;
+  /** günün havası (ECO.hava.durumlar id) */
+  hava: string;
+  /** son teslimlerin yıldızları */
+  puanlar: number[];
+  /** müdavimlerle ilişki */
+  mudavim: Record<string, number>;
+  /** günlük görevler (gerçek gün) */
+  gorevler: { gun: string; liste: { id: string; ilerleme: number; tamam: boolean }[] };
+  /** kilometre taşları: kimlik → takvim günü */
+  taslar: Record<string, number>;
+  /** en iyi vardiya (net) */
+  enIyi?: { net: number; rol: Role; gun: number };
   /** Tag garajı; mahalle: ilk Tag vardiyasında seçilen ev karesi */
   tag: { araclar: TagCar[]; mahalle?: [number, number] };
   /** son vardiyanın dökümü (gün sonu ekranı için) */
@@ -44,6 +60,13 @@ export interface ShiftResult {
   ucret: number;
   arkadas: number;
   komisyon: number;
+  /** turistlerden alınan dolar */
+  dolar: number;
+  /** bu vardiyada tamamlanan günlük görevler ve ödülleri */
+  gorevOdul?: number;
+  gorevler?: string[];
+  /** bu vardiyanın yıldız ortalaması */
+  puan?: number | null;
   net: number;
   ceza: number;
   neden: string;
@@ -51,6 +74,13 @@ export interface ShiftResult {
 /** eski kayıtları yeni alanlarla tamamla */
 export function migrate(c: Career) {
   if (!c.tag) c.tag = { araclar: [] };
+  if (!c.plakaFiyat) c.plakaFiyat = ECO.taksi.plakaSatis;
+  if (c.manset === undefined) c.manset = '';
+  if (!c.taslar) c.taslar = {};
+  if (!c.hava) c.hava = 'acik';
+  if (!c.puanlar) c.puanlar = [];
+  if (!c.mudavim) c.mudavim = {};
+  if (!c.gorevler) c.gorevler = { gun: '', liste: [] };
   return c;
 }
 
@@ -77,6 +107,13 @@ export function newCareer(now: number): Career {
     kur: ECO.doviz.kurBaslangic,
     durak: '',
     tag: { araclar: [] },
+    plakaFiyat: ECO.taksi.plakaSatis,
+    manset: '',
+    taslar: {},
+    hava: 'acik',
+    puanlar: [],
+    mudavim: {},
+    gorevler: { gun: '', liste: [] },
   };
 }
 
@@ -128,29 +165,55 @@ export function tagLevelFor(c: Career, now: number) {
 }
 const tagSpec = (seviye: number) => ECO.tag.araclar[seviye];
 
+/** günün havası */
+export const weather = (c: Career) => ECO.hava.durumlar.find((h) => h.id === c.hava) || ECO.hava.durumlar[0];
+/** yolcu puanı ortalaması (yoksa null) */
+export const ratingAvg = (c: Career) =>
+  c.puanlar.length ? c.puanlar.reduce((a, b) => a + b, 0) / c.puanlar.length : null;
+/** puanın ücrete etkisi: ortalama 4’ün üstü/altı */
+export function ratingMul(c: Career) {
+  const P = ECO.puan,
+    a = ratingAvg(c);
+  return a === null ? 1 : clamp(1 + (a - 4) * P.ucretEtkisi, P.alt, P.ust);
+}
 /** vardiya sırasındaki oyun çarpanları */
 export function shiftMods(c: Career, role: Role, now: number) {
   const V = ECO.vardiya,
-    busy = isBusyDay(c);
-  const yogun = busy ? V.yogunUcretCarpani : 1;
+    busy = isBusyDay(c),
+    h = weather(c);
+  const yogun = busy ? V.yogunUcretCarpani : 1,
+    talep = (busy ? V.yogunTalepCarpani : 1) * h.talep,
+    puan = ratingMul(c);
   if (role === 'tag') {
     const i = tagCarIndex(c, now);
     return {
-      fareMul: ECO.tag.ucretCarpani * yogun,
-      demandMul: busy ? V.yogunTalepCarpani : 1,
+      fareMul: ECO.tag.ucretCarpani * yogun * h.ucret * puan,
+      demandMul: talep,
       complaintMul: 1,
       fuelMul: i < 0 ? 1 : tagSpec(c.tag.araclar[i].seviye).benzin,
+      speedMul: h.hiz,
+      oldCar: i >= 0 && c.tag.araclar[i].seviye === 0,
     };
   }
   return {
-    fareMul: V.ucretCarpani * yogun,
-    demandMul: busy ? V.yogunTalepCarpani : 1,
+    fareMul: V.ucretCarpani * yogun * h.ucret * puan,
+    demandMul: talep,
     complaintMul: playerCarOld(c) ? ECO.araclar.eskiAracSikayetCarpani : 1,
     fuelMul: 1,
+    speedMul: h.hiz,
+    oldCar: playerCarOld(c),
   };
 }
 /** vardiya sonu: kazancı kasaya işle, takvimi ve kuru ilerlet */
-export function endShift(c: Career, earned: number, why: string, role: Role = 'taxi', now = Date.now()): ShiftResult {
+export function endShift(
+  c: Career,
+  earned: number,
+  why: string,
+  role: Role = 'taxi',
+  now = Date.now(),
+  usd = 0,
+  stats?: ShiftStats,
+): ShiftResult {
   const K = ECO.kariyer,
     TG = ECO.tag;
   let brut = earned,
@@ -183,14 +246,59 @@ export function endShift(c: Career, earned: number, why: string, role: Role = 't
   }
   const net = brut - ucret - ceza;
   c.kasa += net;
+  // hapis, ruhsat iptali ya da bağlanmada turist doları da gider
+  const dolar = why === 'time' ? usd : 0;
+  c.dolar += dolar;
   c.vardiya++;
-  if (c.vardiya % 2 === 0) {
-    c.gun++;
-    const D = ECO.doviz;
-    c.kur = clamp(c.kur * (1 + (Math.random() * 2 - 1) * D.gunlukOynama), D.kurAlt, D.kurUst);
+  if (c.vardiya % 2 === 0) newDay(c);
+  // yolcu puanı, müdavim ilişkileri, günlük görevler
+  let gorevOdul = 0,
+    gorevler: string[] = [],
+    puan: number | null = null;
+  if (stats) {
+    const P = ECO.puan,
+      M = ECO.mudavim;
+    if (stats.puanlar.length) {
+      puan = stats.puanlar.reduce((a, b) => a + b, 0) / stats.puanlar.length;
+      c.puanlar = c.puanlar.concat(stats.puanlar).slice(-P.son);
+    }
+    for (const id in stats.mudavim) c.mudavim[id] = clamp((c.mudavim[id] || 0) + stats.mudavim[id], M.alt, M.ust);
+    const g = applyTasks(c, stats, brut, role);
+    gorevOdul = g.odul;
+    gorevler = g.tamam;
   }
-  c.son = { rol: role, brut, ucret, arkadas, komisyon, net, ceza, neden: why };
+  if (!c.enIyi || net > c.enIyi.net) c.enIyi = { net, rol: role, gun: c.gun + 1 };
+  c.son = { rol: role, brut, ucret, arkadas, komisyon, dolar, net, ceza, neden: why, gorevOdul, gorevler, puan };
   return c.son;
+}
+
+/* ---- takvim günü: kur, plaka piyasası, manşet ---- */
+export function newDay(c: Career) {
+  c.gun++;
+  const D = ECO.doviz,
+    M = ECO.piyasa,
+    base = ECO.taksi.plakaSatis;
+  let kur = c.kur * (1 + (Math.random() * 2 - 1) * D.gunlukOynama),
+    plaka = c.plakaFiyat * (1 + (Math.random() * 2 - 1) * M.plakaGunlukOynama);
+  c.manset = '';
+  if (Math.random() < M.olayIhtimali) {
+    const o = M.olaylar[Math.floor(Math.random() * M.olaylar.length)];
+    kur *= 1 + o.kur;
+    plaka *= 1 + o.plaka;
+    c.manset = o.id;
+  }
+  c.kur = clamp(kur, D.kurAlt, D.kurUst);
+  // hava: ağırlıklı rastgele
+  const H = ECO.hava.durumlar;
+  let x = Math.random() * H.reduce((t, h) => t + h.agirlik, 0);
+  c.hava = H[H.length - 1].id;
+  for (const h of H) {
+    if ((x -= h.agirlik) < 0) {
+      c.hava = h.id;
+      break;
+    }
+  }
+  c.plakaFiyat = Math.round(clamp(plaka, base * M.plakaAlt, base * M.plakaUst) / 1000) * 1000;
 }
 
 /* ---- çevrimdışı birikim ---- */
@@ -266,7 +374,9 @@ export function claimDaily(c: Career, now: number) {
 
 /* ---- satın almalar ---- */
 export const carPrice = (tip: CarTier) => (tip === 'yeni' ? ECO.filo.yeniTaksi : ECO.filo.eskiTaksi);
-export const sharePrice = () => ECO.taksi.plakaSatis / 8;
+export const sharePrice = (c: Career) => c.plakaFiyat / 8;
+/** satarken alınan fiyat (bayi alış fiyatı) */
+export const shareSellPrice = (c: Career) => Math.round(sharePrice(c) * (1 - ECO.piyasa.satisMakasi));
 export function canBuyCar(c: Career, tip: CarTier) {
   return c.araclar.length < carSlots(c) && c.kasa >= carPrice(tip);
 }
@@ -276,17 +386,29 @@ export function buyCar(c: Career, tip: CarTier) {
   c.araclar.push({ tip });
   return true;
 }
-export const canBuyShare = (c: Career) => c.borc <= 0 && c.kasa >= sharePrice();
+export const canBuyShare = (c: Career) => c.borc <= 0 && c.kasa >= sharePrice(c);
 export function buyShare(c: Career) {
   if (!canBuyShare(c)) return false;
-  c.kasa -= sharePrice();
+  c.kasa -= sharePrice(c);
   c.plakaPay = Math.round((c.plakaPay + 1 / 8) * 1000) / 1000;
+  return true;
+}
+/** hisse satışı: borç yoksa ve kalan tam plakalar araçlara yetiyorsa */
+export function canSellShare(c: Career) {
+  if (c.borc > 0 || c.plakaPay < 0.125) return false;
+  const kalan = Math.round((c.plakaPay - 0.125) * 1000) / 1000;
+  return c.araclar.length <= ECO.filo.kiralikPlakaLimiti + Math.floor(kalan);
+}
+export function sellShare(c: Career) {
+  if (!canSellShare(c)) return false;
+  c.kasa += shareSellPrice(c);
+  c.plakaPay = Math.round((c.plakaPay - 0.125) * 1000) / 1000;
   return true;
 }
 /** kredili plaka: elde peşinat (hisseler dahil) varsa eksik kısmı krediyle tamamla */
 export function creditInfo(c: Career) {
   const K = ECO.kredi,
-    P = ECO.taksi.plakaSatis,
+    P = c.plakaFiyat,
     frac = c.plakaPay - Math.floor(c.plakaPay),
     eksik = (1 - frac) * P,
     pesinat = Math.max(0, K.pesinat * P - frac * P),
@@ -348,4 +470,77 @@ export function sellCar(c: Career, i: number) {
   c.kasa += Math.round(carPrice(a.tip) * ECO.kariyer.ikinciElOrani);
   c.araclar.splice(i, 1);
   return true;
+}
+
+/* ---- servet ve kilometre taşları ---- */
+export function wealth(c: Career) {
+  const R = ECO.kariyer.ikinciElOrani;
+  return Math.round(
+    c.kasa +
+      c.dolar * fx(c).satis +
+      c.araclar.reduce((t, a) => t + carPrice(a.tip) * R, 0) +
+      c.tag.araclar.reduce((t, a) => t + tagCarPrice(a.seviye) * R, 0) +
+      c.plakaPay * c.plakaFiyat * (1 - ECO.piyasa.satisMakasi) -
+      c.borc,
+  );
+}
+/** yeni ulaşılan taşları kaydeder ve döndürür */
+export function checkMilestones(c: Career): string[] {
+  const w = wealth(c),
+    has: Record<string, boolean> = {
+      ilkVardiya: c.vardiya > 0,
+      ilkTaksi: c.araclar.length > 0,
+      ilkHisse: c.plakaPay > 0,
+      ilkPlaka: c.plakaPay >= 1,
+      plakaAgasi: c.plakaPay >= 5,
+      ilkTag: c.tag.araclar.length > 0,
+      lukSedan: c.tag.araclar.some((a) => a.seviye === 4),
+      tagFilo: c.tag.araclar.length >= ECO.tag.filoLimiti,
+      servet1: w >= 1e6,
+      servet10: w >= 1e7,
+      servet50: w >= 5e7,
+      ilkDolar: c.dolar > 0,
+    };
+  const yeni: string[] = [];
+  for (const k in has)
+    if (has[k] && c.taslar[k] === undefined) {
+      c.taslar[k] = c.gun + 1;
+      yeni.push(k);
+    }
+  return yeni;
+}
+
+/* ---- günlük görevler (gerçek gün başına) ---- */
+export function refreshTasks(c: Career, now: number) {
+  const today = day(now);
+  if (c.gorevler.gun === today) return false;
+  const G = ECO.gorevler,
+    havuz = G.havuz.slice();
+  const liste = [];
+  for (let i = 0; i < G.gunluk && havuz.length; i++) {
+    const k = Math.floor(Math.random() * havuz.length);
+    liste.push({ id: havuz[k].id, ilerleme: 0, tamam: false });
+    havuz.splice(k, 1);
+  }
+  c.gorevler = { gun: today, liste };
+  return true;
+}
+export const taskDef = (id: string) => ECO.gorevler.havuz.find((g) => g.id === id);
+function applyTasks(c: Career, stats: ShiftStats, brut: number, role: Role) {
+  let odul = 0;
+  const tamam: string[] = [];
+  for (const t of c.gorevler.liste) {
+    const d = taskDef(t.id);
+    if (!d || t.tamam || (d.rol && d.rol !== role)) continue;
+    if (d.sayac === 'brut') t.ilerleme = Math.max(t.ilerleme, Math.max(0, brut));
+    else if (d.sayac === 'kombo') t.ilerleme = Math.max(t.ilerleme, stats.kombo);
+    else t.ilerleme += stats[d.sayac] || 0;
+    if (t.ilerleme >= d.hedef) {
+      t.tamam = true;
+      odul += d.odul;
+      tamam.push(t.id);
+    }
+  }
+  c.kasa += odul;
+  return { odul, tamam };
 }

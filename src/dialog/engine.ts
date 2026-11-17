@@ -1,8 +1,9 @@
 // <auto-imports>
-import { DLG } from '../sim/content';
+import { DLG, ECO } from '../sim/content';
 import { DF, G } from '../sim/state';
 import { T, clamp, rnd, shuffle } from '../sim/util';
 import { ask, meter, say } from './comic';
+import { toast, updHud } from '../ui/hud';
 import { DAT, DISTS, district } from '../sim/grid';
 import { FN, MN } from '../sim/passengers';
 import type { Pax, Vars } from '../sim/types';
@@ -56,6 +57,14 @@ export function expandOpts(list, v, ctx) {
   }
   return shuffle(out);
 }
+/** sorgu türü (cfg.react) → konuşan karakter tipi (küfür tepkisi ve “anlamadım” repliği için) */
+const KONUSAN: Record<string, string> = {
+  police: 'polis',
+  taxiPolice: 'polis',
+  taxi: 'taksici',
+  durak: 'durakci',
+  route: 'yolcu',
+};
 export async function interrogate(cfg) {
   const v = cfg.v,
     R = DLG.reactions[cfg.react];
@@ -68,12 +77,49 @@ export async function interrogate(cfg) {
     return [T(arr[0], vv), T(arr[1], vv)];
   };
   let key = 'start',
-    guard = 0;
+    guard = 0,
+    kacamak = 0,
+    pre = '';
   while (key && guard++ < 10) {
     const Q = cfg.nodes[key];
     if (!Q) break;
     const opts = expandOpts(Q.opts, v, cfg.ctx || {}).map((o) => ({ ...o, t: T(o.t, { ...v, ...(o.vars || {}) }) }));
-    const o = await ask(who(), T(Q.q, v), opts, null, DF().timer);
+    // serbest konuşma: seçeneklere uymayan cevap kaçamak sayılır, şüphe biraz artar ve soru tekrar gelir
+    const tur = KONUSAN[cfg.react] || 'polis',
+      SS = DLG.serbestSohbet,
+      E = ECO.serbestSohbet;
+    const o = await ask(who(), (pre ? pre + ' ' : '') + T(Q.q, v), opts, null, DF().timer, { serbest: true });
+    pre = '';
+    if (o.kacamak) {
+      kacamak++;
+      sus = clamp(sus + E.kacamakSupheArtisi, 0, 1);
+      meter(sus);
+      if (kacamak > E.kacamakSiniri) {
+        await say(who(), rnd(DLG.timeout));
+        break;
+      }
+      pre = SS.kacamak[tur];
+      guard--;
+      continue;
+    }
+    if (o.kufur) {
+      // küfür: hafifse şüphe artar ve sorgu sürer; ağırsa polis karakola, taksici/durakçı kavgaya, yolcu şikayete
+      const tepki = SS.tepki[tur][o.kufur];
+      if (o.kufur === 'hafif') {
+        sus = clamp(sus + E.hafifSupheArtisi, 0, 1);
+        meter(sus);
+        await say(who(), tepki);
+        continue;
+      }
+      meter(1);
+      if (tur === 'polis' && G) {
+        G.money -= E.hakaretCezasi;
+        toast(T(SS.hakaretToast, { ceza: E.hakaretCezasi }), true);
+        updHud();
+      }
+      await say(who(), tepki);
+      return tur === 'taksici' || tur === 'durakci' ? 'fight' : 'fail';
+    }
     if (o.timeout) {
       sus = clamp(sus + 0.3, 0, 1);
       meter(sus);

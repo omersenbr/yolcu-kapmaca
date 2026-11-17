@@ -27,6 +27,13 @@ eq(K.isBusyDay(c) ? 1 : 0, 0, '4. gün Perşembe: yoğun değil');
 c.gun = 4;
 eq(K.isBusyDay(c) ? 1 : 0, 1, '5. gün Cuma: yoğun');
 
+// turist doları kasaya, hapiste gider
+c = K.newCareer(t0);
+r = K.endShift(c, 5000, 'time', 'taxi', t0, 40);
+eq(c.dolar, 40, 'turist doları kariyer kasasına');
+r = K.endShift(c, 5000, 'hapis', 'taxi', t0, 40);
+eq(r.dolar, 0, 'hapiste turist doları da gider');
+
 // hapis: kazanç gider, kefalet
 c = K.newCareer(t0);
 r = K.endShift(c, 9000, 'hapis', 'taxi', t0);
@@ -80,12 +87,86 @@ eq(c.plakaPay, 1, 'kredili tam plaka');
 eq(K.shiftFee(c), ECO.filo.aracBakimVardiya, 'kendi plakanla yalnızca bakım');
 eq(K.carSlots(c), ECO.filo.kiralikPlakaLimiti + 1, 'tam plaka 1 araç hakkı ekler');
 
+// plaka piyasası ve hisse satışı
+c = K.newCareer(t0);
+for (let i = 0; i < 400; i++) K.newDay(c);
+eq(
+  +(
+    c.plakaFiyat >= ECO.taksi.plakaSatis * ECO.piyasa.plakaAlt &&
+    c.plakaFiyat <= ECO.taksi.plakaSatis * ECO.piyasa.plakaUst
+  ),
+  1,
+  'plaka fiyatı sınırlar içinde kalır',
+);
+c.kasa = 2e6;
+K.buyShare(c);
+eq(K.sharePrice(c), c.plakaFiyat / 8, 'hisse fiyatı piyasadan');
+const kasaOnce = c.kasa;
+K.sellShare(c);
+eq(
+  c.kasa - kasaOnce,
+  Math.round((c.plakaFiyat / 8) * (1 - ECO.piyasa.satisMakasi)),
+  'hisse alış fiyatından satılır (makas)',
+);
+c.kasa = 2e6;
+K.buyShare(c);
+K.buyCar(c, 'eski');
+K.buyCar(c, 'eski');
+eq(+K.canSellShare(c), 1, '2 araç kiralık plakayla çalışabilir: hisse satılabilir');
+
 // günlük giriş serisi
 c = K.newCareer(t0);
 eq(K.claimDaily(c, t0).odul, ECO.gelir.gunlukGiris[0] + ECO.gelir.ilkGunBonus, 'ilk giriş: seri + ilk gün bonusu');
 eq(K.claimDaily(c, t0) ? 1 : 0, 0, 'aynı gün ikinci ödül yok');
 eq(K.claimDaily(c, t0 + 86400e3).seri, 2, 'ertesi gün seri 2');
 eq(K.claimDaily(c, t0 + 4 * 86400e3).seri, 1, 'gün atlanırsa seri başa döner');
+
+// servet ve kilometre taşları
+c = K.newCareer(t0);
+c.kasa = 1e6;
+eq(K.wealth(c), 1e6, 'servet = kasa');
+K.buyCar(c, 'eski');
+eq(K.wealth(c), 1e6 - ECO.filo.eskiTaksi * (1 - ECO.kariyer.ikinciElOrani), 'araç ikinci el değeriyle sayılır');
+const taslar = K.checkMilestones(c);
+eq(+(taslar.includes('ilkTaksi') && !taslar.includes('ilkVardiya')), 1, 'ilk taksi taşı, vardiya taşı yok');
+eq(K.checkMilestones(c).length, 0, 'aynı taş iki kez verilmez');
+
+// günlük görevler, yolcu puanı, hava
+c = K.newCareer(t0);
+eq(+K.refreshTasks(c, t0), 1, 'günlük görevler çekildi');
+eq(c.gorevler.liste.length, ECO.gorevler.gunluk, '3 günlük görev');
+eq(+K.refreshTasks(c, t0 + 3600e3), 0, 'aynı gün görev yenilenmez');
+c.gorevler.liste = [
+  { id: 'teslim5', ilerleme: 3, tamam: false },
+  { id: 'brut15', ilerleme: 0, tamam: false },
+];
+const st = {
+  teslim: 2,
+  temiz: 2,
+  turist: 0,
+  kopru: 0,
+  havalimani: 0,
+  kombo: 2,
+  besYildiz: 1,
+  puanlar: [5, 3],
+  mudavim: { nuri: 1 },
+};
+const kasa0 = c.kasa;
+r = K.endShift(c, 9000, 'time', 'taxi', t0, 0, st);
+eq(r.gorevOdul, 15000, 'teslim5 tamam (3+2), brut15 değil (₺9 000)');
+eq(c.kasa - kasa0, 9000 - 1500 + 15000, 'görev ödülü kasaya');
+eq(K.ratingAvg(c), 4, 'puan ortalaması 4');
+eq(K.ratingMul(c), 1, 'ortalama 4: ücret etkisi yok');
+c.puanlar = [5, 5, 5];
+eq(K.ratingMul(c), 1 + ECO.puan.ucretEtkisi, '5 yıldız ortalaması: ücret +%4');
+eq(c.mudavim.nuri, 1, 'müdavim ilişkisi kaydedildi');
+c.hava = 'kar';
+eq(K.shiftMods(c, 'taxi', t0).speedMul, 0.75, 'karda araçlar yavaşlar');
+eq(
+  Math.round(K.shiftMods(c, 'taxi', t0).fareMul * 1000),
+  Math.round(ECO.vardiya.ucretCarpani * 1.2 * (1 + ECO.puan.ucretEtkisi) * 1000),
+  'kar ücreti ve puan çarpanı',
+);
 
 console.log(fail ? `\n${fail} test başarısız` : '\nKariyer hesapları doğru');
 process.exit(fail ? 1 : 0);

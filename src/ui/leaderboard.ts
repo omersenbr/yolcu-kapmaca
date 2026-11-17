@@ -2,6 +2,7 @@
 import { DF, UNAME } from '../sim/state';
 import { load, save } from '../sim/storage';
 import { esc } from '../sim/util';
+import { careerBoardHtml } from './career';
 // </auto-imports>
 /* ================= SIRALAMA: şimdilik yerel, rol başına ilk 10 ================= */
 export function loadLB() {
@@ -35,5 +36,5 @@ export function renderLB(el) {
         : '<p class="empty">Henüz kimse yok.</p>'
     }</section>`;
   };
-  el.innerHTML = col('taxi', 'Taksiciler', 'Oda Başkanı') + col('tag', 'Tag’ciler', 'Tag Başkanı');
+  el.innerHTML = col('taxi', 'Taksiciler', 'Oda Başkanı') + col('tag', 'Tag’ciler', 'Tag Başkanı') + careerBoardHtml();
 }

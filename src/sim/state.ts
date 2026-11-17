@@ -46,7 +46,7 @@ export function setDay(d) {
 /** saat: hızlı günde 05:00’ten başlayıp 24 saat; kariyer vardiyasında G.startH’ten G.span saat */
 export const hourNow = () => (G ? ((G.startH ?? START_H) + ((DAY - G.time) / DAY) * (G.span ?? 24)) % 24 : START_H);
 /** vardiya çarpanları (kariyer); hızlı günde hepsi 1 */
-const NO_MODS = { fareMul: 1, demandMul: 1, complaintMul: 1, fuelMul: 1 };
+const NO_MODS = { fareMul: 1, demandMul: 1, complaintMul: 1, fuelMul: 1, speedMul: 1, oldCar: false };
 export const mods = (): typeof NO_MODS => (G && G.mods) || NO_MODS;
 export function demand() {
   const d = demand0(),

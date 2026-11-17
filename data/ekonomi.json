@@ -176,5 +176,214 @@
     "_cezaNot": "Korsan taşımacılık cezası ~₺90 bin (2026); araç 24 gerçek saat otoparkta.",
     "arkadasAracSeviye": 1,
     "_arkadasNot": "Arkadaşının aracı kompakt sedan (seviye 2); kendi ilk aracın emektar hatchback olabilir: daha çok yakar ama pay vermezsin."
+  },
+  "turist": {
+    "_not": "Kariyer: kazıklanan turistlerin bir kısmı dolarla öder (ücret / kur). Dolar kariyer kasasında birikir.",
+    "dolarOrani": 0.5
+  },
+  "piyasa": {
+    "_not": "Plaka fiyatı her takvim günü oynar; bazen gazete manşeti olayı kuru ya da plakayı sarsar. Metinler dialoglar.json → kariyer.mansetler.",
+    "plakaGunlukOynama": 0.012,
+    "plakaAlt": 0.8,
+    "plakaUst": 1.35,
+    "_sinirNot": "plaka fiyatı başlangıç fiyatının %80–135’i arasında kalır",
+    "satisMakasi": 0.035,
+    "_makasNot": "plaka/hisse satarken alış fiyatı satıştan ~%3,5 düşük (bayi: 11,6 M alış / 12,0 M satış)",
+    "olayIhtimali": 0.25,
+    "olaylar": [
+      {
+        "id": "yeniPlaka",
+        "plaka": -0.08,
+        "kur": 0
+      },
+      {
+        "id": "taksiZam",
+        "plaka": 0.06,
+        "kur": 0
+      },
+      {
+        "id": "borsaIsindi",
+        "plaka": 0.05,
+        "kur": 0
+      },
+      {
+        "id": "tagYasak",
+        "plaka": 0.04,
+        "kur": 0
+      },
+      {
+        "id": "tagYasal",
+        "plaka": -0.06,
+        "kur": 0
+      },
+      {
+        "id": "kurUctu",
+        "plaka": 0.02,
+        "kur": 0.06
+      },
+      {
+        "id": "faizIndirim",
+        "plaka": 0.03,
+        "kur": -0.03
+      },
+      {
+        "id": "turizmRekor",
+        "plaka": 0.02,
+        "kur": -0.02
+      }
+    ]
+  },
+  "hava": {
+    "_not": "Her takvim günü bir hava durumu. talep: yolcu çarpanı, hiz: bütün araçların hız çarpanı, ucret: ücret çarpanı.",
+    "durumlar": [
+      {
+        "id": "acik",
+        "agirlik": 60,
+        "talep": 1,
+        "hiz": 1,
+        "ucret": 1
+      },
+      {
+        "id": "yagmur",
+        "agirlik": 22,
+        "talep": 1.4,
+        "hiz": 0.9,
+        "ucret": 1.1
+      },
+      {
+        "id": "kar",
+        "agirlik": 8,
+        "talep": 1.6,
+        "hiz": 0.75,
+        "ucret": 1.2
+      },
+      {
+        "id": "sis",
+        "agirlik": 10,
+        "talep": 1.1,
+        "hiz": 0.85,
+        "ucret": 1
+      }
+    ]
+  },
+  "gorevler": {
+    "_not": "Her gerçek gün 3 görev (havuzdan rastgele). hedef: sayaç değeri; odul: TL. Metinler dialoglar.json → kariyer.gorevler.",
+    "gunluk": 3,
+    "havuz": [
+      {
+        "id": "teslim5",
+        "sayac": "teslim",
+        "hedef": 5,
+        "odul": 15000
+      },
+      {
+        "id": "teslim12",
+        "sayac": "teslim",
+        "hedef": 12,
+        "odul": 40000
+      },
+      {
+        "id": "kopru2",
+        "sayac": "kopru",
+        "hedef": 2,
+        "odul": 12000
+      },
+      {
+        "id": "turist1",
+        "sayac": "turist",
+        "hedef": 1,
+        "odul": 10000,
+        "rol": "taxi"
+      },
+      {
+        "id": "havalimani1",
+        "sayac": "havalimani",
+        "hedef": 1,
+        "odul": 15000
+      },
+      {
+        "id": "temiz4",
+        "sayac": "temiz",
+        "hedef": 4,
+        "odul": 20000
+      },
+      {
+        "id": "kombo3",
+        "sayac": "kombo",
+        "hedef": 3,
+        "odul": 20000
+      },
+      {
+        "id": "yildiz5",
+        "sayac": "besYildiz",
+        "hedef": 3,
+        "odul": 18000
+      },
+      {
+        "id": "brut15",
+        "sayac": "brut",
+        "hedef": 15000,
+        "odul": 25000
+      },
+      {
+        "id": "tagGizli4",
+        "sayac": "teslim",
+        "hedef": 4,
+        "odul": 20000,
+        "rol": "tag"
+      }
+    ]
+  },
+  "puan": {
+    "_not": "Her teslimde 1–5 yıldız; son 30 teslimin ortalaması sonraki vardiyaların ücretine çarpan olur.",
+    "son": 30,
+    "ucretEtkisi": 0.04,
+    "_etkiNot": "ortalama 4’ün her puan üstü/altı için ±%4 (en fazla ±%6, en az −%8)",
+    "alt": 0.92,
+    "ust": 1.06,
+    "eskiAracCeza": 0.5
+  },
+  "kombo": {
+    "_not": "Şikayetsiz teslimatlar arası en fazla pencereSaat oyun saati geçerse kombo büyür; her adım ücrete +%5, en fazla +%25.",
+    "pencereSaat": 1.0,
+    "adim": 0.05,
+    "azami": 0.25
+  },
+  "olay": {
+    "_not": "Yolculuk sırasında (kariyer) bir kez, birkaç kare yol gidildikten sonra bu ihtimalle olay kartı açılır.",
+    "ihtimal": 0.22,
+    "mesafe": 4
+  },
+  "mudavim": {
+    "_not": "Tekrar eden karakterler: yolcu doğarken bu ihtimalle (aktif değilse) semtinde bir müdavim çıkar. İlişki −5…+10; bahşiş = ilişki × bahsisBasina (pozitifse).",
+    "ihtimal": 0.03,
+    "bahsisBasina": 300,
+    "artis": 1,
+    "sikayetCeza": 2,
+    "alt": -5,
+    "ust": 10
+  },
+  "cokOyunculu": {
+    "_not": "Ortak oturum (ilk adım). Sunucu: server/index.mjs. Ekip sınırı sunucuda (3).",
+    "port": 8787,
+    "gonderimHz": 10,
+    "yardimMesafe": 6,
+    "yardimBonus": 0.2
+  },
+  "serbestSohbet": {
+    "_not": "Serbest konuşmanın oyun etkileri.",
+    "hakaretCezasi": 2000,
+    "hafifSupheArtisi": 0.3,
+    "anlamadimSupheArtisi": 0.08,
+    "kacamakSupheArtisi": 0.12,
+    "kacamakSiniri": 2
+  },
+  "sohbet": {
+    "_not": "Yolcuyla sohbet: yıldıza toplam etki sınırı, ağır küfürde yolcu iner (ücret yok, şikayet).",
+    "puanUst": 1,
+    "puanAlt": -2,
+    "inisCezasi": 400,
+    "ogrenmeEsik": 0.6,
+    "ogrenilenPuan": 0.1
   }
 }

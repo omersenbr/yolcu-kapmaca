@@ -15,6 +15,7 @@ await page.addInitScript(() => {
   if (!sessionStorage.getItem('yk-test')) {
     localStorage.clear();
     localStorage.setItem('yk-name', 'Test Reis');
+    localStorage.setItem('yk-geri-sayim', '0'); localStorage.setItem('yk-ogretici', '0');
     sessionStorage.setItem('yk-test', '1');
   }
 });
@@ -52,7 +53,7 @@ const playShift = () => page.evaluate(async () => {
   return -1;
 });
 const frames = await playShift();
-check(frames > 0 && frames < 9000, `vardiya ~4 dakikada bitti (${frames} kare ≈ ${(frames / 30 / 60).toFixed(1)} dk)`);
+check(frames > 0 && frames < 11000, `vardiya ~4 dakikada (son yolcu ve sahnelerle en fazla ~6 dk) bitti (${frames} kare ≈ ${(frames / 30 / 60).toFixed(1)} dk)`);
 await page.evaluate(() => window.__fake.step(40, 1000 / 30)); // sayfa çevirme animasyonu bitsin
 await page.screenshot({ path: `${out}/02-vardiya-sonu.png` });
 const endTxt = await page.$eval('#end .card', (e) => e.innerText.replace(/\s+/g, ' '));
@@ -69,13 +70,16 @@ await page.waitForFunction(() => !document.getElementById('loading'), null, { ti
 await page.waitForTimeout(800);
 await page.click('#start .role[data-role="taxi"]');
 await page.waitForTimeout(400);
+await page.click('#careerBody .ctab[data-tab="garaj"]');
 await page.click('#careerBody button[data-act="eski"]');
 await page.waitForTimeout(300);
 const c = await page.evaluate(() => JSON.parse(localStorage.getItem('yk-kariyer')));
 check(c.araclar.length === 1 && c.kasa === 1550000 && c.vardiya === 1, `eski taksi alındı ve kayıt kalıcı (araç ${c.araclar.length}, kasa ₺${c.kasa}, vardiya ${c.vardiya})`);
-const fee = await page.$eval('#cs-taxi + .csec p', (e) => e.textContent);
+const fee = await page.$eval('.crolecard.taxi .csec p', (e) => e.textContent);
 check(/Kendi aracın/.test(fee) && /eski/.test(fee), `kendi araçla vardiya ücreti ve eski araç uyarısı (${fee.slice(0, 80)})`);
+await page.click('#careerBody .ctab[data-tab="garaj"]');
 await page.screenshot({ path: `${out}/03-garaj.png` });
+await page.click('#careerBody .ctab[data-tab="vardiya"]');
 
 // rol değiştir: aynı kasayla Tag vardiyası (arkadaşının aracı)
 await page.evaluate(() => window.__fake.start(9)); // sayfa yenilendi: sanal saati yeniden başlat
@@ -102,12 +106,22 @@ await page.waitForTimeout(400);
 const c2 = await page.evaluate(() => JSON.parse(localStorage.getItem('yk-kariyer')));
 check(c2.vardiya === 2 && c2.gun === 1 && c2.son.rol === 'tag', `ortak takvim: 2 vardiya = 1 gün (vardiya ${c2.vardiya}, gün ${c2.gun})`);
 check(Array.isArray(c2.tag.mahalle), 'Tag mahallesi kaydedildi');
+await page.click('#careerBody .ctab[data-tab="garaj"]');
 await page.click('#careerBody button[data-act="buyTag:0"]');
 await page.waitForTimeout(300);
-const tagTxt = await page.$eval('#cs-tag', (e) => e.parentElement.innerText);
+await page.click('#careerBody .ctab[data-tab="vardiya"]');
+const tagTxt = await page.$eval('.crolecard.tag', (e) => e.innerText);
 check(/Kendi aracın \(emektar bir hatchback\)/.test(tagTxt) && /benzin ×1,6/.test(tagTxt), 'Tag aracı alındı: arkadaş payı yok, eski araç çok yakar');
 await page.evaluate(() => document.getElementById('cs-tag').scrollIntoView());
 await page.screenshot({ path: `${out}/05-tag-garaj.png` });
+
+// sıralama sayfasında kariyer bölümü ve kilometre taşları
+await page.click('#sh-career .sx');
+await page.click('#start [data-sheet="lbs"]');
+await page.waitForTimeout(300);
+const lbTxt = await page.$eval('#lb', (e) => e.innerText);
+check(/Servet: ₺/.test(lbTxt) && /İlk kendi taksin/.test(lbTxt) && /İlk kendi Tag aracın/.test(lbTxt), 'sıralamada kariyer serveti ve kilometre taşları');
+await page.screenshot({ path: `${out}/06-siralama.png` });
 
 console.log(errors.length ? '\nHATALAR:\n' + errors.join('\n') : '\nKariyer testi geçti');
 await browser.close();

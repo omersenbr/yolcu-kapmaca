@@ -2036,6 +2036,1469 @@
   "baglandi": "Araç bağlandı: kazanç gitti, ceza kasadan; kendi aracınsa 24 saat otoparkta.",
   "sonYolcu": "Vardiya süresi doldu. Son yolcunu bırak, vardiya biter; yeni yolcu alma.",
   "sonYolcuEtiket": "Son yolcu",
-  "sonYolcuIndi": "Yolcun “Ben burada ineyim” deyip gitti. Ücret yok, vardiya bitti."
+  "sonYolcuIndi": "Yolcun “Ben burada ineyim” deyip gitti. Ücret yok, vardiya bitti.",
+  "turistDolar": "{hedef} teslim. Turist dolarla ödedi: +${usd}. Kur iyiyken bozdur!",
+  "sonucDolar": "Turistten dolar: +${usd}",
+  "mansetler": {
+   "yeniPlaka": "Belediye 2 bin yeni taksi plakası çıkaracak! Plaka fiyatları düştü.",
+   "taksiZam": "Taksimetreye zam geldi: plaka borsası hareketlendi.",
+   "borsaIsindi": "Plaka borsası ısındı: alıcılar kuyrukta.",
+   "tagYasak": "Tag’e yeni ceza: korsan taşımacılığa sıkı denetim. Plakalar değerlendi.",
+   "tagYasal": "Meclis’te Tag’i yasallaştıran teklif: plaka sahipleri tedirgin.",
+   "kurUctu": "Dolar rekor kırdı! Döviz bürolarında kuyruk.",
+   "faizIndirim": "Faiz indirildi: dolar geriledi, plaka talebi arttı.",
+   "turizmRekor": "Turizmde rekor yıl: döviz bolluğu kuru yatıştırdı."
+  },
+  "plakaPiyasa": "Plaka piyasası: satış ₺{satis} · alış ₺{alis} ({degisim})",
+  "hisseSat": "1/8 hisse sat · ₺{fiyat}",
+  "hisseSatildi": "Hisseni sattın: +₺{fiyat}",
+  "hisseSatilamaz": "Satamazsın: kredi borcun var ya da araçların için plakaya ihtiyacın var.",
+  "manset": "Manşet",
+  "siralamaBaslik": "Kariyer",
+  "servet": "Servet: {servet}",
+  "servetNot": "kasa + dolar + araçlar + plaka payı − borç",
+  "enIyiVardiya": "En iyi vardiya: {net} ({rol}, {gun}. gün)",
+  "taslarBaslik": "Kilometre taşları",
+  "tasYok": "Henüz yok. İlk vardiyana çık!",
+  "tasToast": "Kilometre taşı: {tas}!",
+  "taslar": {
+   "ilkVardiya": "İlk vardiya",
+   "ilkTaksi": "İlk kendi taksin",
+   "ilkHisse": "İlk plaka hissesi",
+   "ilkPlaka": "İlk tam plaka",
+   "plakaAgasi": "Plaka Ağası (5 plaka)",
+   "ilkTag": "İlk kendi Tag aracın",
+   "lukSedan": "Siyah lüks sedan",
+   "tagFilo": "Mahalle patronu (4 araç)",
+   "servet1": "Servet ₺1 milyon",
+   "servet10": "Servet ₺10 milyon",
+   "servet50": "Servet ₺50 milyon",
+   "ilkDolar": "İlk turist doları"
+  },
+  "hava": {
+   "acik": "Açık hava",
+   "yagmur": "Yağmurlu: herkes taksi arıyor, yollar kaygan",
+   "kar": "Karlı: yolcu bol, trafik kaplumbağa",
+   "sis": "Sisli: görüş düşük, dikkatli sür"
+  },
+  "havaKisa": {
+   "acik": "Açık",
+   "yagmur": "Yağmur",
+   "kar": "Kar",
+   "sis": "Sis"
+  },
+  "havaBaslik": "Hava",
+  "gorevBaslik": "Günlük görevler",
+  "gorevTamam": "Görev tamam: {gorev} · +₺{odul}",
+  "gorevSatir": "{gorev} ({ilerleme}/{hedef}) · ₺{odul}",
+  "puanBaslik": "Yolcu puanın",
+  "puanMetin": "Ortalama {puan} ★ (son {n} yolculuk) · ücret etkisi {etki}",
+  "puanYok": "Henüz puanın yok.",
+  "puanToast": "{yolcu}: {yildiz}",
+  "komboToast": "Kombo ×{kat}! +₺{ek}",
+  "komboBitti": "Kombo bozuldu.",
+  "sonucGorev": "Görev ödülleri: +₺{odul}",
+  "sonucPuan": "Bu vardiyanın puanı: {puan} ★",
+  "mudavimEtiket": "Müdavim: {ad}",
+  "mudavimDondu": "{ad} seni hatırladı: “{soz}”",
+  "mudavimBahsis": "{ad} bahşiş bıraktı: +₺{bahsis}",
+  "mudavimKustu": "{ad} sana küstü. Bir daha zor biner.",
+  "gorevler": {
+   "teslim5": "5 yolcu teslim et",
+   "teslim12": "12 yolcu teslim et",
+   "kopru2": "Boğaz’ı 2 kez geç",
+   "turist1": "Bir turist taşı",
+   "havalimani1": "Havalimanından yolcu al",
+   "temiz4": "Şikayetsiz 4 teslimat",
+   "kombo3": "3’lü kombo yap",
+   "yildiz5": "3 kez 5 yıldız al",
+   "brut15": "Bir vardiyada ₺15 000 kazan",
+   "tagGizli4": "Tag’de 4 yolcu teslim et"
+  },
+  "olayBaslik": "Yolculukta",
+  "olayBahsis": "(+₺{bahsis} bahşiş)",
+  "sekme": {
+   "vardiya": "Direksiyon",
+   "garaj": "Garaj",
+   "plaka": "Plaka",
+   "kasa": "Kasa"
+  },
+  "plakaPlaka": "34 T",
+  "plakaIlerleme": "Plakanın {pay}’i senin",
+  "eskiTaksi": "Eski taksi",
+  "yeniTaksi": "Yeni taksi",
+  "senin": "SENİN",
+  "pahali": "Kasa yetmez"
+ },
+ "yolculukOlaylari": [
+  {
+   "id": "muzik",
+   "rol": "any",
+   "soru": "{Ab}, şu radyoyu bir açsana. Arabesk mi olsun, pop mu?",
+   "secenekler": [
+    {
+     "t": "Arabesk aç, damardan",
+     "bahsis": 0,
+     "puan": 0.5,
+     "cevap": "Ah be abi, tam yerine geldi!"
+    },
+    {
+     "t": "Pop koyayım, neşelenelim",
+     "bahsis": 0,
+     "puan": 0.3,
+     "cevap": "Süper, bunu çok seviyorum!"
+    },
+    {
+     "t": "Radyo bozuk, kusura bakma",
+     "bahsis": 0,
+     "puan": -0.5,
+     "cevap": "Hıh. Peki."
+    }
+   ]
+  },
+  {
+   "id": "simit",
+   "rol": "any",
+   "soru": "Kahvaltı yapmadım, şu simitçinin önünde bir saniye dursak?",
+   "secenekler": [
+    {
+     "t": "Tabii, bekliyorum",
+     "bahsis": 120,
+     "puan": 0.7,
+     "cevap": "Sağ ol {ab}, bir de sana aldım!"
+    },
+    {
+     "t": "Duramam, trafik var",
+     "bahsis": 0,
+     "puan": -0.3,
+     "cevap": "Neyse, açlıktan ölmem herhalde."
+    }
+   ]
+  },
+  {
+   "id": "kestirme",
+   "rol": "taxi",
+   "soru": "Ben bir kestirme biliyorum, sağdan girsek?",
+   "secenekler": [
+    {
+     "t": "Siz bilirsiniz, girelim",
+     "bahsis": 0,
+     "puan": 0.5,
+     "cevap": "Gördün mü, beş dakika kazandık!"
+    },
+    {
+     "t": "Ben bu yolları ezbere bilirim",
+     "bahsis": 0,
+     "puan": -0.2,
+     "cevap": "Peki usta, sen bilirsin."
+    }
+   ]
+  },
+  {
+   "id": "telefon",
+   "rol": "any",
+   "soru": "(Yolcu telefonda bağırıyor) ...YOK ÖYLE BİR ŞEY! Pardon {ab}, sesi kısar mısın?",
+   "secenekler": [
+    {
+     "t": "Kıstım, rahat konuşun",
+     "bahsis": 50,
+     "puan": 0.4,
+     "cevap": "Eksik olma."
+    },
+    {
+     "t": "Arabada bağırmak yasak!",
+     "bahsis": 0,
+     "puan": -0.6,
+     "cevap": "Ne yasağı ya!"
+    }
+   ]
+  },
+  {
+   "id": "klima",
+   "rol": "any",
+   "soru": "Çok sıcak burası, klimayı açabilir miyiz?",
+   "secenekler": [
+    {
+     "t": "Hemen açıyorum",
+     "bahsis": 0,
+     "puan": 0.4,
+     "cevap": "Oh be, dünya varmış."
+    },
+    {
+     "t": "Cam açalım, klima yakıyor",
+     "bahsis": 0,
+     "puan": -0.2,
+     "cevap": "Saçım dağılacak ama neyse."
+    }
+   ]
+  },
+  {
+   "id": "uygulama",
+   "rol": "tag",
+   "soru": "Uygulamada araba başka görünüyor, bu sen misin?",
+   "secenekler": [
+    {
+     "t": "Benim, araba yeni değişti",
+     "bahsis": 0,
+     "puan": 0.2,
+     "cevap": "Tamam, sadece sordum."
+    },
+    {
+     "t": "Kardeşimin arabası, o hasta",
+     "bahsis": 0,
+     "puan": -0.4,
+     "cevap": "Hmm, biraz garip ama..."
+    }
+   ]
+  },
+  {
+   "id": "para",
+   "rol": "any",
+   "soru": "Bozuk param yok, IBAN’dan atsam olur mu?",
+   "secenekler": [
+    {
+     "t": "Olur, at",
+     "bahsis": 0,
+     "puan": 0.4,
+     "cevap": "Süper, hemen gönderiyorum."
+    },
+    {
+     "t": "Nakit lazım, ATM’de duralım",
+     "bahsis": 80,
+     "puan": -0.2,
+     "cevap": "Peki, üstü kalsın o zaman."
+    }
+   ]
+  }
+ ],
+ "mudavimler": [
+  {
+   "id": "nuri",
+   "ad": "Nuri Bey",
+   "prof": "kenar",
+   "pidx": 0,
+   "fem": false,
+   "semt": "Fatih",
+   "soz": {
+    "iyi": "Yine sen mi? Bugün şanslı günüm!",
+    "orta": "Merhaba usta, yine yollar bizi buluşturdu.",
+    "kotu": "Sen misin... Geçen sefer beni yolda bırakmıştın."
+   }
+  },
+  {
+   "id": "sevgul",
+   "ad": "Sevgül Hanım",
+   "prof": "zengin",
+   "pidx": 2,
+   "fem": true,
+   "semt": "Beşiktaş",
+   "soz": {
+    "iyi": "Ay canım, seni görünce içim rahatladı.",
+    "orta": "Merhabalar, Bebek’e gideceğiz.",
+    "kotu": "Bu sefer taksimetreyi açarsın umarım."
+   }
+  },
+  {
+   "id": "kaan",
+   "ad": "Kaan",
+   "prof": "ogrenci",
+   "pidx": 1,
+   "fem": false,
+   "semt": "Sarıyer",
+   "soz": {
+    "iyi": "Abi selam! Final haftası, uçur beni!",
+    "orta": "Selam abi, okula yetişmem lazım.",
+    "kotu": "Abi bu sefer düz git lütfen."
+   }
+  },
+  {
+   "id": "melek",
+   "ad": "Melek Abla",
+   "prof": "kenar",
+   "pidx": 3,
+   "fem": true,
+   "semt": "Bağcılar",
+   "soz": {
+    "iyi": "Oğlum sen geldin ya, kurban olayım!",
+    "orta": "Pazara gidiyoruz evladım.",
+    "kotu": "Hı, sen misin? Hadi neyse."
+   }
+  },
+  {
+   "id": "tarik",
+   "ad": "Tarık Bey",
+   "prof": "plaza",
+   "pidx": 2,
+   "fem": false,
+   "semt": "Levent",
+   "soz": {
+    "iyi": "Hep sen gel artık, toplantıya yetiştirirsin.",
+    "orta": "Levent, acil. Hızlı olursa memnun olurum.",
+    "kotu": "Bir dahakine başka araç çağırırım."
+   }
+  },
+  {
+   "id": "hans",
+   "ad": "Hans",
+   "prof": "turist",
+   "pidx": 1,
+   "fem": false,
+   "semt": "Sultanahmet",
+   "soz": {
+    "iyi": "My friend! Good driver, very good!",
+    "orta": "Hello again, Taksim please.",
+    "kotu": "You again... no tricks this time, okay?"
+   }
+  }
+ ],
+ "cokOyunculu": {
+  "baglanamadi": "Sunucuya bağlanılamadı. Adresi Profil’den kontrol et.",
+  "baglandi": "Çevrimiçi! Şehirde {n} oyuncu daha var.",
+  "ekipDolu": "{ekip} dolu: bir ekipte en fazla 3 kişi.",
+  "katildi": "{ad} şehre girdi ({ekip}).",
+  "yardimaGeldi": "{ad} yardıma geldi! Kavgada yanında.",
+  "yardimaGittin": "Arkadaşının yanına koştun!",
+  "yardimDugme": "{ad} sıkıştı: yardıma git!",
+  "sorguSimge": "?",
+  "kavgaSesleri": [
+   "PAT!",
+   "KÜT!"
+  ],
+  "profilBaslik": "Çevrimiçi (deneme)",
+  "profilAcik": "Kariyerde çevrimiçi oyna",
+  "profilAdres": "Sunucu adresi",
+  "profilNot": "Aynı duraktan ya da mahalleden en fazla 3 arkadaş. Durağını ve mahalleni kariyer sayfasından seç.",
+  "durakSec": "Durağın",
+  "mahalleSec": "Tag mahallen",
+  "durakDegisti": "Yeni durağın: {durak}",
+  "mahalleDegisti": "Yeni mahallen: {mahalle}"
+ },
+ "serbestSohbet": {
+  "_not": "Sorgularda serbest konuşma: oyuncunun cümlesi en yakın cevap seçeneğine eşlenir (src/sim/nlu.ts). Seçeneklere isteğe bağlı 'anahtar' listesi eklenebilir.",
+  "esik": 0.45,
+  "dolgu": [
+   "ve",
+   "bir",
+   "bu",
+   "şu",
+   "o",
+   "da",
+   "de",
+   "mi",
+   "mı",
+   "mu",
+   "mü",
+   "ne",
+   "ben",
+   "sen",
+   "biz",
+   "siz",
+   "onu",
+   "bunu",
+   "abi",
+   "abla",
+   "kardeşim",
+   "ya",
+   "yani",
+   "işte",
+   "hani",
+   "ki",
+   "ama",
+   "için",
+   "gibi",
+   "çok",
+   "şey",
+   "valla",
+   "vallahi",
+   "memur",
+   "bey",
+   "efendim",
+   "hocam",
+   "amirim",
+   "reis",
+   "usta",
+   "ağabey",
+   "lütfen",
+   "sadece",
+   "bence",
+   "tamam"
+  ],
+  "esAnlamli": [
+   [
+    "akraba",
+    "kuzen",
+    "amca",
+    "dayı",
+    "teyze",
+    "hala",
+    "yeğen",
+    "enişte",
+    "kardeş",
+    "abim",
+    "ablam",
+    "bacanak",
+    "kayınço",
+    "yenge"
+   ],
+   [
+    "arkadaş",
+    "kanka",
+    "dost",
+    "ahbap",
+    "tanıdık",
+    "komşu"
+   ],
+   [
+    "iş",
+    "mesai",
+    "şirket",
+    "ofis",
+    "toplantı",
+    "işyeri",
+    "patron"
+   ],
+   [
+    "para",
+    "ücret",
+    "ödeme",
+    "nakit",
+    "kuruş",
+    "lira",
+    "fiyat"
+   ],
+   [
+    "almadım",
+    "almıyorum",
+    "bedava",
+    "parasız",
+    "karşılıksız",
+    "ücretsiz"
+   ],
+   [
+    "uygulama",
+    "aplikasyon",
+    "telefon",
+    "tag"
+   ],
+   [
+    "havalimanı",
+    "havaalanı",
+    "uçak",
+    "terminal"
+   ],
+   [
+    "hayır",
+    "değil",
+    "yok",
+    "olmaz",
+    "asla"
+   ],
+   [
+    "evet",
+    "tabii",
+    "doğru",
+    "aynen",
+    "elbette"
+   ],
+   [
+    "hasta",
+    "hastane",
+    "acil",
+    "doktor"
+   ],
+   [
+    "yol",
+    "güzergah",
+    "kestirme",
+    "trafik"
+   ],
+   [
+    "özür",
+    "pardon",
+    "kusura",
+    "affedersin"
+   ],
+   [
+    "kaçmak",
+    "kaç",
+    "gaz",
+    "bas"
+   ]
+  ],
+  "kufur": {
+   "agir": [
+    "amk",
+    "aq",
+    "amına",
+    "amına koyayım",
+    "orospu",
+    "orospu çocuğu",
+    "piç",
+    "siktir",
+    "sikerim",
+    "sik",
+    "yarrak",
+    "göt",
+    "pezevenk",
+    "şerefsiz",
+    "gavat",
+    "kahpe",
+    "oç",
+    "ibne"
+   ],
+   "hafif": [
+    "salak",
+    "aptal",
+    "gerizekalı",
+    "geri zekalı",
+    "mal",
+    "ulan",
+    "lan",
+    "hıyar",
+    "dangalak",
+    "eşek",
+    "öküz",
+    "embesil",
+    "ahmak",
+    "dallama"
+   ]
+  },
+  "tepki": {
+   "polis": {
+    "agir": "Sen memura hakaret mi ediyorsun?! Kelepçeyi tak, karakola gidiyoruz!",
+    "hafif": "Ağzını topla! Bir daha duyarsam tutanağa geçerim."
+   },
+   "taksici": {
+    "agir": "Sen kime küfrediyorsun lan! İn aşağı!",
+    "hafif": "Bana bak, terbiyeli konuş, yoksa fena olur!"
+   },
+   "durakci": {
+    "agir": "Bizim durakta bana küfür eden doğmadı! Çocuklar, gelin!",
+    "hafif": "Laflarına dikkat et, burası bizim durak!"
+   },
+   "yolcu": {
+    "agir": "Bir de küfür mü ediyorsun! Şikayet ediyorum, polisi arıyorum!",
+    "hafif": "Ne biçim konuşuyorsunuz siz?! Şikayet edeceğim!"
+   }
+  },
+  "anlamadim": {
+   "polis": "Ne dedin? Doğru düzgün cevap ver!",
+   "taksici": "Ne diyorsun sen, anlamadım!",
+   "durakci": "Lafı dolandırma, ne diyorsun?",
+   "yolcu": "Pardon, ne dediniz? Anlamadım."
+  },
+  "ui": {
+   "yer": "Söyle ya da yaz…",
+   "gonder": "Söyle",
+   "mikrofon": "Konuş",
+   "dinliyor": "Dinliyorum…",
+   "sesYok": "Bu tarayıcıda ses tanıma yok; yazarak cevap verebilirsin.",
+   "izinYok": "Mikrofon izni yok; yazarak cevap verebilirsin.",
+   "ayarBaslik": "Konuşma",
+   "ayarSerbest": "Serbest konuşma: sorgularda ve yolcularla (yaz ya da konuş)",
+   "ayarSes": "Karakterler sesli konuşsun",
+   "ayarEfekt": "Ses efektleri ve titreşim"
+  },
+  "hakaretToast": "Memura hakaret cezası: −₺{ceza}",
+  "kacamak": {
+   "polis": "Lafı dolandırma! Soruma cevap ver.",
+   "taksici": "Konuyu değiştirme, soruya cevap ver!",
+   "durakci": "Bana masal anlatma, ne iş yapıyorsun burada?",
+   "yolcu": "O değil soru, bana neden bu yoldan geldiğini söyle!"
+  }
+ },
+ "sohbet": {
+  "_not": "Yolcuyla serbest sohbet (yolculuk sırasında “Konuş”). Oyuncunun cümlesi bir konuya eşlenir (src/sim/nlu.ts → bestOption); cevap yolcunun profiline göre seçilir (profil yoksa 'genel'). puan: yolcunun vereceği yıldıza etkisi (yolculuk başına toplam en fazla +1). Hiçbir cümle cevapsız kalmaz: konu bulunamazsa 'dolgu' cevaplarından biri.",
+  "baslik": "Yolcuyla sohbet",
+  "konusDugme": "Konuş",
+  "bitir": "Sohbeti bitir",
+  "yer": "Yolcuya bir şey söyle…",
+  "acilis": {
+   "genel": [
+    "Buyrun {ab}?",
+    "Efendim?",
+    "Hı, dinliyorum."
+   ],
+   "turist": [
+    "Yes? Ne demek, sorry?",
+    "Hello! Konuş, I listen."
+   ]
+  },
+  "konular": [
+   {
+    "id": "selam",
+    "anahtar": [
+     "merhaba",
+     "selam",
+     "selamün aleyküm",
+     "günaydın",
+     "iyi akşamlar",
+     "iyi günler",
+     "hoş geldin"
+    ],
+    "puan": 0.1,
+    "cevap": {
+     "genel": [
+      "Merhaba, hoş bulduk.",
+      "Aleyküm selam {ab}, kolay gelsin.",
+      "Selam, iyi günler."
+     ],
+     "turist": [
+      "Hello! Merhaba!",
+      "Hi hi, merhaba, çok güzel!"
+     ],
+     "ogrenci": [
+      "Selam abi!",
+      "Selaam, naber?"
+     ],
+     "zengin": [
+      "Merhabalar.",
+      "İyi günler, teşekkür ederim."
+     ]
+    }
+   },
+   {
+    "id": "nasilsin",
+    "anahtar": [
+     "nasılsın",
+     "nasılsınız",
+     "naber",
+     "ne haber",
+     "iyi misin",
+     "keyifler",
+     "ne var ne yok"
+    ],
+    "puan": 0.2,
+    "cevap": {
+     "genel": [
+      "İyiyim sağ ol, sen nasılsın?",
+      "Şükür, idare ediyoruz.",
+      "Yorgunum ama iyiyim, sağ ol."
+     ],
+     "turist": [
+      "I am very good! İstanbul beautiful!",
+      "Good good, a little tired, much walking."
+     ],
+     "ogrenci": [
+      "Vize haftası abi, berbatım.",
+      "İyi abi, okul yoruyor işte."
+     ],
+     "plaza": [
+      "Toplantıdan toplantıya koşuyorum, sorma.",
+      "Mailler bitmiyor ama iyiyim."
+     ],
+     "kenar": [
+      "Ne olsun be evladım, hayat pahalı.",
+      "İyiyim de geçim zor, sen nasılsın?"
+     ],
+     "zengin": [
+      "Gayet iyiyim, sorduğunuz için teşekkürler."
+     ]
+    }
+   },
+   {
+    "id": "nereye",
+    "anahtar": [
+     "nereye",
+     "nereye gidiyoruz",
+     "adres",
+     "hedef",
+     "nerede ineceksin",
+     "nerede indireyim",
+     "hangi semt"
+    ],
+    "puan": 0.05,
+    "cevap": {
+     "genel": [
+      "{hedefDat} gidiyoruz ya {ab}.",
+      "{hedef}, unuttun mu?",
+      "{hedefDat}, mümkünse hızlıca."
+     ],
+     "turist": [
+      "{hedef}, please! Is it far?",
+      "{hedef}... I show you on phone?"
+     ]
+    }
+   },
+   {
+    "id": "trafik",
+    "anahtar": [
+     "trafik",
+     "sıkışık",
+     "kalabalık",
+     "yoğun",
+     "kuyruk",
+     "korna"
+    ],
+    "puan": 0.15,
+    "cevap": {
+     "genel": [
+      "Bu şehirde trafik hiç bitmiyor.",
+      "Ah ah, eskiden böyle değildi.",
+      "Trafikte yaşıyoruz resmen."
+     ],
+     "turist": [
+      "Traffic! Too much car, wow.",
+      "In my city also traffic, but not like this!"
+     ],
+     "plaza": [
+      "Bu yüzden toplantılara geç kalıyorum.",
+      "Evden çalışmak varken..."
+     ],
+     "kenar": [
+      "Otobüsle iki saat sürüyor, o yüzden bindim."
+     ]
+    }
+   },
+   {
+    "id": "hava",
+    "anahtar": [
+     "hava",
+     "yağmur",
+     "kar",
+     "sıcak",
+     "soğuk",
+     "güneş",
+     "sis",
+     "bunaltıcı"
+    ],
+    "puan": 0.1,
+    "cevap": {
+     "genel": [
+      "Bu havada yürünmez, iyi ki bindim.",
+      "Hava da bir garip bugün.",
+      "Mevsimler şaşırdı vallahi."
+     ],
+     "turist": [
+      "Weather is crazy today!",
+      "In my country more cold, here nice."
+     ]
+    }
+   },
+   {
+    "id": "futbol",
+    "anahtar": [
+     "maç",
+     "futbol",
+     "takım",
+     "gol",
+     "lig",
+     "derbi",
+     "galatasaray",
+     "cimbom",
+     "aslan",
+     "fenerbahçe",
+     "fener",
+     "kanarya",
+     "beşiktaş",
+     "kartal",
+     "başakşehir",
+     "milli takım",
+     "hakem",
+     "şampiyon"
+    ],
+    "puan": 0.2,
+    "cevap": {
+     "genel": [
+      "Ben pek futbolla ilgilenmem.",
+      "Maçları arada izlerim, o kadar.",
+      "Hakemler yine rezaletti!"
+     ],
+     "turist": [
+      "Football! Galatasaray, yes yes, I know!",
+      "Very loud fans here, I like!"
+     ],
+     "gs": [
+      "Maçtan geliyorum {ab}, sesim kısıldı! {takim} bugün döktürdü!",
+      "Sorma, hakem yine bize karşıydı ama {takim} yıkılmaz!",
+      "Hayatım {takim}, başka bir şey sorma!"
+     ],
+     "fb": [
+      "Maçtan geliyorum {ab}, sesim kısıldı! {takim} bugün döktürdü!",
+      "Sorma, hakem yine bize karşıydı ama {takim} yıkılmaz!",
+      "Hayatım {takim}, başka bir şey sorma!"
+     ],
+     "bjk": [
+      "Maçtan geliyorum {ab}, sesim kısıldı! {takim} bugün döktürdü!",
+      "Sorma, hakem yine bize karşıydı ama {takim} yıkılmaz!",
+      "Hayatım {takim}, başka bir şey sorma!"
+     ],
+     "bsk": [
+      "Maçtan geliyorum {ab}, sesim kısıldı! {takim} bugün döktürdü!",
+      "Sorma, hakem yine bize karşıydı ama {takim} yıkılmaz!",
+      "Hayatım {takim}, başka bir şey sorma!"
+     ],
+     "milli": [
+      "Milli maçtan geliyorum, ne maçtı ama!",
+      "Bu kadroyla Dünya Kupası’na gideriz {ab}!"
+     ]
+    }
+   },
+   {
+    "id": "is",
+    "anahtar": [
+     "iş",
+     "işten",
+     "çalışıyor",
+     "meslek",
+     "ne iş",
+     "mesai",
+     "patron",
+     "toplantı",
+     "maaş"
+    ],
+    "puan": 0.15,
+    "cevap": {
+     "genel": [
+      "Bir şirkette çalışıyorum, işte öyle.",
+      "Maaş yetmiyor ama çalışıyoruz.",
+      "İş güç, koşturmaca."
+     ],
+     "ogrenci": [
+      "Okuyorum abi, part time da kafede çalışıyorum.",
+      "Öğrenciyim, iş daha yok."
+     ],
+     "plaza": [
+      "Proje müdürüyüm, sorma, stresli.",
+      "Danışmanlık, yani toplantı."
+     ],
+     "zengin": [
+      "Aile şirketiyle ilgileniyorum.",
+      "Biraz gayrimenkul, biraz yatırım."
+     ],
+     "turist": [
+      "I am tourist, holiday! No work!",
+      "I am teacher in my country."
+     ],
+     "kenar": [
+      "Pazarda tezgâhım var evladım.",
+      "Emekliyim, torunlara bakıyorum."
+     ]
+    }
+   },
+   {
+    "id": "aile",
+    "anahtar": [
+     "aile",
+     "çocuk",
+     "eş",
+     "karın",
+     "kocan",
+     "anne",
+     "baba",
+     "torun",
+     "evli"
+    ],
+    "puan": 0.2,
+    "cevap": {
+     "genel": [
+      "İki çocuğum var, maşallah yaramazlar.",
+      "Annemi ziyarete gidiyorum.",
+      "Ailem Anadolu’da, ben burada tek başımayım."
+     ],
+     "ogrenci": [
+      "Ailem Ankara’da, burada yurtta kalıyorum."
+     ],
+     "turist": [
+      "My family is in hotel, I go shopping alone!"
+     ]
+    }
+   },
+   {
+    "id": "muzik",
+    "anahtar": [
+     "müzik",
+     "şarkı",
+     "radyo",
+     "arabesk",
+     "pop",
+     "türkü",
+     "rock",
+     "konser",
+     "şarkıcı"
+    ],
+    "puan": 0.2,
+    "cevap": {
+     "genel": [
+      "Açarsan dinlerim, güzel olur.",
+      "Ben eski şarkıları severim.",
+      "Arabesk olsun ama çok acıklı olmasın!"
+     ],
+     "konser": [
+      "Konserden geliyorum, kulaklarım hâlâ çınlıyor!",
+      "Muhteşemdi, sesi efsane!"
+     ],
+     "ogrenci": [
+      "Abi rap aç, rap!"
+     ],
+     "turist": [
+      "Turkish music! Tarkan! I know!"
+     ]
+    }
+   },
+   {
+    "id": "para",
+    "anahtar": [
+     "kaç para",
+     "ücret",
+     "taksimetre",
+     "fiyat",
+     "ne kadar tutar",
+     "pahalı",
+     "ucuz",
+     "indirim"
+    ],
+    "puan": -0.05,
+    "cevap": {
+     "genel": [
+      "Taksimetre ne yazarsa, ama şişirme lütfen.",
+      "Normal ücret neyse o.",
+      "Pahalı olmasın {ab}, öğrenci değilim ama zenginim de yok."
+     ],
+     "turist": [
+      "How much? Not expensive please!",
+      "Taximeter, yes? Normal price?"
+     ],
+     "zengin": [
+      "Önemli değil, siz rahat olun."
+     ]
+    }
+   },
+   {
+    "id": "kestirme",
+    "anahtar": [
+     "kestirme",
+     "yol",
+     "güzergah",
+     "navigasyon",
+     "harita",
+     "sapak",
+     "köprü",
+     "tünel"
+    ],
+    "puan": 0.0,
+    "cevap": {
+     "genel": [
+      "Sen bilirsin, ama yolu uzatma.",
+      "En kısa yoldan lütfen.",
+      "Navigasyon başka yol gösteriyor ama..."
+     ],
+     "turist": [
+      "You know best way, I trust!",
+      "Google says other way, hmm..."
+     ]
+    }
+   },
+   {
+    "id": "siyaset",
+    "anahtar": [
+     "siyaset",
+     "seçim",
+     "parti",
+     "hükümet",
+     "başkan",
+     "milletvekili",
+     "oy"
+    ],
+    "puan": -0.1,
+    "cevap": {
+     "genel": [
+      "Siyaset konuşmayalım {ab}, sinirim bozulur.",
+      "Aman, bırak şimdi bunları.",
+      "Her şey çok pahalı, gerisini sen düşün."
+     ],
+     "turist": [
+      "No politics, I am on holiday!"
+     ]
+    }
+   },
+   {
+    "id": "saka",
+    "anahtar": [
+     "fıkra",
+     "şaka",
+     "komik",
+     "güldür",
+     "espri",
+     "temel"
+    ],
+    "puan": 0.25,
+    "cevap": {
+     "genel": [
+      "Hahaha, sen de amma komiksin!",
+      "Temel bir gün taksiye binmiş... yok, sen anlat.",
+      "Gülmekten öldüm, dikkat et yola!"
+     ],
+     "turist": [
+      "Haha, I don't understand but haha!"
+     ]
+    }
+   },
+   {
+    "id": "iltifat",
+    "anahtar": [
+     "teşekkür",
+     "sağ ol",
+     "eyvallah",
+     "çok iyisin",
+     "harika",
+     "süper",
+     "saygılar",
+     "rica ederim",
+     "güzel",
+     "nazik"
+    ],
+    "puan": 0.25,
+    "cevap": {
+     "genel": [
+      "Asıl ben teşekkür ederim.",
+      "Ne güzel insansın {ab}.",
+      "Rica ederim, sen de çok iyisin."
+     ],
+     "turist": [
+      "Thank you! Teşekkür! Very nice!"
+     ]
+    }
+   },
+   {
+    "id": "ozur",
+    "anahtar": [
+     "özür",
+     "pardon",
+     "kusura bakma",
+     "affedersin",
+     "pardon"
+    ],
+    "puan": 0.15,
+    "cevap": {
+     "genel": [
+      "Önemli değil.",
+      "Olur öyle, dert etme.",
+      "Tamam tamam, sorun yok."
+     ],
+     "turist": [
+      "No problem! Sorun yok!"
+     ]
+    }
+   },
+   {
+    "id": "puan",
+    "anahtar": [
+     "yıldız",
+     "puan",
+     "beş yıldız",
+     "yorum",
+     "uygulama"
+    ],
+    "puan": 0.0,
+    "cevap": {
+     "genel": [
+      "Güzel götürürsen beş yıldız veririm.",
+      "Bakalım, yol nasıl geçecek.",
+      "Puanı sonunda veririm {ab}."
+     ]
+    }
+   },
+   {
+    "id": "veda",
+    "anahtar": [
+     "görüşürüz",
+     "hoşça kal",
+     "iyi günler dilerim",
+     "güle güle",
+     "kendine iyi bak",
+     "iyi yolculuklar"
+    ],
+    "puan": 0.1,
+    "cevap": {
+     "genel": [
+      "Sen de kendine iyi bak.",
+      "Görüşmek üzere {ab}.",
+      "İyi kazançlar sana."
+     ],
+     "turist": [
+      "Bye bye! Güle güle!"
+     ]
+    }
+   }
+  ],
+  "takimlar": {
+   "gs": [
+    "galatasaray",
+    "cimbom",
+    "aslan",
+    "sarı kırmızı"
+   ],
+   "fb": [
+    "fenerbahçe",
+    "fener",
+    "kanarya",
+    "sarı lacivert"
+   ],
+   "bjk": [
+    "beşiktaş",
+    "kartal",
+    "siyah beyaz"
+   ],
+   "bsk": [
+    "başakşehir"
+   ]
+  },
+  "taraftar": {
+   "ayni": [
+    "Sen de mi {takim} taraftarısın? Gel kardeşim, bugün kazandık!",
+    "{takim} başka sevda başka! Ver elini {ab}!",
+    "Oo, demek {takim}! Bugün bütün yollar bize açık!"
+   ],
+   "rakip": [
+    "Ne?! {takim} mı? Şaka yapıyorsun herhalde!",
+    "O takımın adını bu arabada anma {ab}, sinirim bozuluyor!",
+    "{takim} mı? Bugün o tarafa hiç bulaşma bence."
+   ],
+   "puanAyni": 0.5,
+   "puanRakip": -0.6,
+   "milli": [
+    "Bugün takım tutmak yok, hepimiz milli takımlıyız!",
+    "Kulüp kavgası sonra, bugün ay yıldız günü!"
+   ]
+  },
+  "dolgu": {
+   "genel": [
+    "Hıhı, öyle mi?",
+    "Haklısın aslında.",
+    "Bilmem ki {ab}, olabilir.",
+    "Ha, anladım.",
+    "Vallahi doğru söylüyorsun.",
+    "Hmm, ilginç."
+   ],
+   "turist": [
+    "Sorry, my Turkish is little...",
+    "Ah, okay okay!",
+    "I don't understand but yes!"
+   ],
+   "ogrenci": [
+    "Aynen abi.",
+    "Valla öyle.",
+    "Haha, olabilir."
+   ],
+   "kenar": [
+    "Ne diyorsun evladım, duymadım.",
+    "Öyle öyle."
+   ]
+  },
+  "kufur": {
+   "hafif": {
+    "genel": [
+     "Ne biçim konuşuyorsun sen? Kibar ol biraz.",
+     "Ayıp oluyor ama, düzgün konuş!"
+    ],
+    "turist": [
+     "Hey! Not nice!"
+    ]
+   },
+   "agir": {
+    "genel": [
+     "Durdur arabayı! İniyorum, bir de şikayet edeceğim!",
+     "Bu ne terbiyesizlik! Hemen in diyorum, indir beni!"
+    ],
+    "turist": [
+     "Stop the car! I go! I call police!"
+    ]
+   },
+   "inisToast": "{yolcu} küfür yüzünden indi. Ücret yok, şikayet var."
+  },
+  "takimAdlari": {
+   "gs": "Galatasaray",
+   "fb": "Fenerbahçe",
+   "bjk": "Beşiktaş",
+   "bsk": "Başakşehir"
+  },
+  "ogrenilen": [],
+  "_ogrenilenNot": "Öğretme modunda öğretilip dışa aktarılan soru-cevaplar buraya eklenir: {s: oyuncunun cümlesi, c: yolcunun cevabı, p: yolcu tipi (yoksa herkes)}.",
+  "ogret": {
+   "mod": "Öğretme modu",
+   "elSerbest": "Eller serbest (mikrofon kendiliğinden açılsın)",
+   "sor": "Bunu bilmiyorum. Buna ne cevap vereyim?",
+   "duzelt": "Bu cevabı değiştir",
+   "duzeltSor": "Peki, “{soru}” denince ne diyeyim?",
+   "tamam": "Tamam, öğrendim. Bundan sonra şöyle derim: “{cevap}”",
+   "vazgec": "Vazgeç",
+   "vazgecildi": "Peki, boş ver.",
+   "kufurOlmaz": "Bunu öğrenemem, çok ayıp. Başka bir cevap söyle.",
+   "kapsamHerkes": "Bütün yolcular böyle desin",
+   "kapsamTip": "Sadece bu yolcu tipi",
+   "yerCevap": "Yolcunun vereceği cevabı söyle…",
+   "profilBaslik": "Öğrettiklerim",
+   "profilSayi": "{n} cevap öğretildi.",
+   "profilKopyala": "Kopyala",
+   "profilKopyalandi": "Kopyalandı. Claude’a yapıştır, oyuna eklesin.",
+   "profilSil": "Hepsini sil",
+   "profilSilOnay": "Öğrettiğin bütün cevaplar silinsin mi?"
+  }
+ },
+ "gorunum": {
+  "baslik": "Görünüm",
+  "mod25": "2.5D (eğik kamera)",
+  "modUst": "Üstten",
+  "egim": "Eğim",
+  "aci": "Açı",
+  "yakin": "Yakınlık",
+  "takip": "Kamera aracın yönünü izlesin (ekran döner; kaydırma araca göre: yukarı düz, sol/sağ dön)"
+ },
+ "juice": {
+  "_not": "Ödül/ceza damgaları (src/ui/juice.ts). iyi: sarı patlama, kotu: kırmızı damga. {n}: kombo sayısı. Taksici ve Tag’ci aynı olaya farklı bakar.",
+  "teslim": {
+   "iyi": true,
+   "metin": [
+    "HELAL!",
+    "YAĞ GİBİ!",
+    "BİR SONRAKİNE!",
+    "KAPIDAN KAPIYA!"
+   ]
+  },
+  "sisti": {
+   "iyi": true,
+   "metin": [
+    "TAKSİMETRE ŞAHA KALKTI!",
+    "YOLU UZATTIN, KESEYİ DOLDURDUN!",
+    "BOĞAZ TURU DAHİL!"
+   ]
+  },
+  "kazik": {
+   "iyi": true,
+   "metin": [
+    "KAZIK ATILDI!",
+    "WELCOME TO İSTANBUL!",
+    "TURİST TARİFESİ!"
+   ]
+  },
+  "teslimTag": {
+   "iyi": true,
+   "metin": [
+    "KİMSE GÖRMEDİ!",
+    "TERTEMİZ İŞ!",
+    "BEŞ YILDIZLIK!",
+    "DURAKÇILARIN HABERİ YOK!"
+   ]
+  },
+  "goruldun": {
+   "iyi": false,
+   "metin": [
+    "GÖRÜLDÜN!",
+    "DURAK UYANDI!",
+    "BAS GAZA!"
+   ]
+  },
+  "sikayet": {
+   "iyi": false,
+   "metin": [
+    "ŞİKAYET!",
+    "ZABITAYA YAZILDIN!",
+    "BİR YILDIZ!"
+   ]
+  },
+  "radar": {
+   "iyi": false,
+   "metin": [
+    "FLAŞ!",
+    "CEZA YAZILDI!",
+    "GÜLÜMSE, ÇEKİLDİN!"
+   ]
+  },
+  "ceza": {
+   "iyi": false,
+   "metin": [
+    "ÇEVİRME!",
+    "CEZA!"
+   ]
+  },
+  "kombo": {
+   "iyi": true,
+   "metin": [
+    "KOMBO ×{n}!",
+    "SERİ ×{n}!"
+   ]
+  },
+  "yildiz5": {
+   "iyi": true,
+   "metin": [
+    "★★★★★"
+   ]
+  },
+  "seviye": {
+   "iyi": true,
+   "metin": [
+    "YENİ ARABA!",
+    "SEVİYE ATLADIN!"
+   ]
+  },
+  "kavgaKazandi": {
+   "iyi": true,
+   "metin": [
+    "HAYDARİ!",
+    "YERE SERDİN!",
+    "PATAKLADIN!"
+   ]
+  },
+  "kavgaKaybetti": {
+   "iyi": false,
+   "metin": [
+    "NAKAVT!",
+    "DAYAĞI YEDİN!"
+   ]
+  },
+  "para": {
+   "iyi": true,
+   "metin": []
+  },
+  "kactin": {
+   "iyi": true,
+   "metin": [
+    "SIYRILDIN!",
+    "TOZ OL!",
+    "DURAKÇILAR TOZ YUTTU!"
+   ]
+  },
+  "yuttular": {
+   "iyi": true,
+   "metin": [
+    "YUTTULAR!",
+    "KUZENİMMİŞ, EVET!",
+    "İNANDILAR!"
+   ]
+  },
+  "siyrildin": {
+   "iyi": true,
+   "metin": [
+    "PAÇAYI KURTARDIN!",
+    "İYİ ÇALIŞMALAR AMİRİM!"
+   ]
+  }
+ },
+ "toren": {
+  "_not": "Vardiya başı geri sayım ve gün sonu gazete manşeti (src/ui/ceremony.ts).",
+  "geriSayim": {
+   "taxi": "TAKSİMETRE AÇIK!",
+   "tag": "UYGULAMA AÇIK!"
+  },
+  "manset": {
+   "time": {
+    "taxi": [
+     "TAKSİCİ ESNAFI GÜNÜ KÂRLA KAPATTI",
+     "TAKSİMETRE BUGÜN DE DURMADI",
+     "DURAKTA BAYRAM HAVASI"
+    ],
+    "tag": [
+     "TAG’Cİ GÜNÜ KAZASIZ BELASIZ ATLATTI",
+     "UYGULAMA KAPANDI, CEP DOLDU",
+     "DURAKÇILAR BUGÜN DE ELİ BOŞ DÖNDÜ"
+    ]
+   },
+   "zarar": {
+    "taxi": [
+     "ESNAF DERTLİ: “BENZİNE ÇALIŞTIK”",
+     "TAKSİMETRE ÇALIŞTI, KASA BOŞ"
+    ],
+    "tag": [
+     "TAG’Cİ ZARARDA: “ARABA BOŞUNA YANDI”",
+     "UYGULAMA KAPANDI, CEP DELİK"
+    ]
+   },
+   "baglandi": [
+    "TAG ARACI OTOPARKA ÇEKİLDİ!",
+    "DURAKÇILAR SEVİNÇTEN HALAY ÇEKTİ"
+   ],
+   "hapis": [
+    "KAVGACI TAKSİCİ NEZARETTE!",
+    "DURAK KAVGASI KARAKOLDA BİTTİ"
+   ],
+   "ruhsat": [
+    "VİRAL VİDEO RUHSAT YAKTI!",
+    "TURİST YAYINDA, TAKSİCİ YANDA"
+   ]
+  },
+  "damga": {
+   "rekor": "YENİ REKOR!",
+   "zarar": "ZARAR!",
+   "baglandi": "BAĞLANDI!",
+   "hapis": "NEZARET!",
+   "ruhsat": "İPTAL!",
+   "iyi": "HAYIRLI OLSUN!"
+  },
+  "seviyeBaslik": "YENİ ARABA!",
+  "seviyeAlt": "Artık {arac} sürüyorsun. Yolcular daha sabırlı, bahşiş daha bol."
+ },
+ "arayuz": {
+  "_not": "Oyun içi arayüz: mola, görev kartı (src/ui/hudplus.ts).",
+  "molaBaslik": "ÇAY MOLASI",
+  "molaMetin": {
+   "taxi": "Durakta çay demlendi. Taksimetre seni bekliyor.",
+   "tag": "Telefonu sessize aldın. Uygulama “molada” görünüyor."
+  },
+  "devam": "Yola devam",
+  "cik": "Ana menüye dön",
+  "cikNot": "Bu gün kaydedilmez.",
+  "gorevBaslik": "BUGÜNÜN İŞLERİ",
+  "hizliBaslik": "HEDEF",
+  "hizliRekor": "Rekoru kır: {rekor}",
+  "hizliRekorYok": "İlk rekorunu yaz!",
+  "haritaIpucu": "Haritaya dokun: büyüt"
+ },
+ "ogretici": {
+  "_not": "İlk oyunda rol başına bir kez gösterilen kısa öğretici (src/ui/tutorial.ts). bekle: kaydir | bin | teslim | dokun.",
+  "gec": "Geç",
+  "tamam": "Tamam",
+  "tekrar": "Öğreticiyi yeniden göster",
+  "tekrarOldu": "Bir sonraki oyunda öğretici yeniden çıkacak.",
+  "taxi": {
+   "ad": "Durak Reisi",
+   "adim": [
+    {
+     "bekle": "kaydir",
+     "metin": "Hoş geldin çırak! Parmağını kaydır, taksi o yöne döner. Kavşaktan önce kaydırırsan kavşakta döner."
+    },
+    {
+     "bekle": "bin",
+     "metin": "Pembe çizgili olanlar yolcu. Yanına yanaş, kendisi biner. Kısa mesafeyse bahaneni hazırla!"
+    },
+    {
+     "bekle": "teslim",
+     "metin": "Yeşil çizgiyi izle, yolcuyu bırak. Yolu uzatırsan taksimetre şişer… ama şikayet de yersin."
+    },
+    {
+     "bekle": "dokun",
+     "metin": "Sarı yıldırım nitro. Ama radarın önünden nitroyla geçme, flaş patlar!"
+    },
+    {
+     "bekle": "dokun",
+     "metin": "Bir de şu Tag’ciler var. Ünlemli aracı görürsen peşine düş, yolcusunu sorgula. Hadi rastgele!"
+    }
+   ]
+  },
+  "tag": {
+   "ad": "Kuzen",
+   "adim": [
+    {
+     "bekle": "kaydir",
+     "metin": "Kuzen, hoş geldin! Parmağını kaydır, araba o yöne döner. Kavşaktan önce kaydırırsan kavşakta döner."
+    },
+    {
+     "bekle": "bin",
+     "metin": "Pembe çizgili yolcuya yanaş. Ama taksici ya da polis görürse peşine düşer, etrafı kolla!"
+    },
+    {
+     "bekle": "teslim",
+     "metin": "Yeşil çizgiyi izle, yolcuyu indir. Biri peşine düşerse mahallene kaç, yeşil halkada güvendesin."
+    },
+    {
+     "bekle": "dokun",
+     "metin": "Sarı yıldırım nitro. Kaçarken iş görür ama radara yakalanma."
+    },
+    {
+     "bekle": "dokun",
+     "metin": "Sivil çevirme görünmez, sorulursa “kuzenim” de. Yakalanırsan avukat var. Hadi kolay gelsin!"
+    }
+   ]
+  }
  }
 }

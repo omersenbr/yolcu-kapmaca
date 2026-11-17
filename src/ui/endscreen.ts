@@ -8,11 +8,17 @@ import { addLB, renderLB } from './leaderboard';
 import { pageTurn } from './pageflip';
 import { LOOK } from '../sim/passengers';
 import { careerEndScreen } from './career';
+import { mpStop } from '../net/mp';
+import { endReveal } from './ceremony';
 // </auto-imports>
 /* ================= GÜN SONU: gazete manşeti, rekor, sıralama ================= */
 export function endGame(why) {
+  mpStop();
   pageTurn();
   $('nitroBtn').hidden = true;
+  $('talkBtn').hidden = true;
+  $('taskCard').hidden = true;
+  $('tutor').hidden = true;
   $('adbtns').hidden = true;
   $('adOv').hidden = true;
   if (G.over) return;
@@ -65,4 +71,5 @@ export function endGame(why) {
   } else fd.hidden = true;
   renderLB($('lbEnd'));
   $('end').hidden = false;
+  endReveal(why, final, final > best && final > 0);
 }

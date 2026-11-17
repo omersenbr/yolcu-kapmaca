@@ -39,7 +39,8 @@ async function inputFor(page, f) {
 // bilinçli fark: yeni sürümde emoji yok (stil kuralı); karşılaştırmada emojiler yok sayılır
 const noEmoji = (x) => x.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{26FF}]\uFE0F?\s?/gu, '');
 const snapRaw = (page) => page.evaluate(() => ({
-  hud: document.querySelector('.hud').innerText.replace(/\s+/g, ' ').trim(),
+  // bilgi şeridinin değerleri kimlikle okunur (yeni sürümde şerit simgeli ve kasa animasyonlu)
+  hud: ['money', 'timeLbl', 'time', 'paxLbl', 'pax'].map((id) => document.getElementById(id).textContent).join(' ').replace(/\s+/g, ' ').trim(),
   panel: document.getElementById('comic').hidden ? '' : document.getElementById('panel').innerText.replace(/\s+/g, ' ').trim().slice(0, 160),
   end: document.getElementById('end').hidden ? '' : document.getElementById('endTitle').textContent,
   img: document.getElementById('cv').toDataURL('image/png'),
@@ -72,7 +73,7 @@ const mk = async (url) => {
   p.errors = [];
   p.on('pageerror', (e) => p.errors.push(e.message));
   await p.addInitScript(fakeClock);
-  await p.addInitScript(() => { localStorage.setItem('yk-name', 'Test Reis'); localStorage.setItem('yk-diff', 'orta'); });
+  await p.addInitScript(() => { localStorage.setItem('yk-name', 'Test Reis'); localStorage.setItem('yk-diff', 'orta'); localStorage.setItem('yk-geri-sayim', '0'); localStorage.setItem('yk-ogretici', '0'); localStorage.setItem('yk-serbest', '0'); localStorage.setItem('yk-gorunum', 'ustten'); localStorage.setItem('yk-ses', '0'); });
   await p.goto(url);
   await p.waitForFunction(() => !document.getElementById('loading'), null, { timeout: 30000 });
   await p.waitForTimeout(2500); // görseller ve yazı tipleri otursun

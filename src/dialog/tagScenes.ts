@@ -13,6 +13,7 @@ import { clearChases, onPlayer, startChase } from '../sim/ai';
 import { inHome } from '../sim/game';
 import { LOOK } from '../sim/passengers';
 import type { Vars } from '../sim/types';
+import { juice } from '../ui/juice';
 // </auto-imports>
 /* ================= TAG’Cİ SAHNELERİ ================= */
 /* ---- Tag sürücüsü taksicilere yakalandı ---- */
@@ -42,6 +43,7 @@ export async function tagVsTaxi(n) {
   });
   const chasers = G.ents.filter((e) => onPlayer(e) && e.kind === 'taxi');
   if (res === 'escape') {
+    juice('kactin');
     for (const e of chasers) e.stun = 1.8;
     G.invuln = 2.6;
     await sayL(O.escape, v);
@@ -50,6 +52,7 @@ export async function tagVsTaxi(n) {
     return;
   }
   if (res === 'pass') {
+    juice('yuttular');
     ui.panel.className = 'panel taxi';
     setCast([
       { svg: face(LOOK.taxi1, 'smile'), name: 'Taksici' },
@@ -136,6 +139,7 @@ export async function tagVsPolice(sivil) {
     ctx: p ? { name: p.look.name, fem: p.look.fem } : {},
   });
   if (res === 'pass') {
+    juice('yuttular');
     setCast([
       { svg: face(LOOK.police, 'neutral'), name: v.polis },
       { svg: face(LOOK.tag, 'smile'), name: 'Sen' },

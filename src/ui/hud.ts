@@ -37,7 +37,7 @@ export function initHud() {
 /* ================= HUD / ARAYÜZ ================= */
 export function updHud() {
   if (!G) return;
-  $('money').textContent = (G.money < 0 ? '−₺' : '₺') + Math.abs(G.money);
+  $('money').textContent = (G.money < 0 ? '−₺' : '₺') + Math.abs(G.money) + (G.usd ? ' +$' + G.usd : '');
   {
     const h = hourNow(),
       hh = Math.floor(h),

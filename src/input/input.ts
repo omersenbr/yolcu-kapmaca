@@ -3,14 +3,17 @@ import { ui } from '../dialog/comic';
 import { cv, resize } from '../render/view';
 import { nitro } from '../sim/game';
 import { setWant } from '../sim/movement';
+import { relativeSteer, steerDir, swipeDir } from '../render/isoView';
 // </auto-imports>
 /* ================= GİRDİ: parmak kaydırma, ok tuşları/WASD, sorularda 1–4, nitro Shift/N ================= */
 export let sx = 0,
   sy = 0,
-  down = false;
+  down = false,
+  fired = false;
 export function initInput() {
   cv.addEventListener('pointerdown', (e) => {
     down = true;
+    fired = false;
     sx = e.clientX;
     sy = e.clientY;
     try {
@@ -22,7 +25,13 @@ export function initInput() {
     const dx = e.clientX - sx,
       dy = e.clientY - sy;
     if (Math.max(Math.abs(dx), Math.abs(dy)) < 16) return;
-    setWant(Math.abs(dx) > Math.abs(dy) ? [Math.sign(dx), 0] : [0, Math.sign(dy)]);
+    // araca göre yön verirken bir kaydırma tek komuttur: araç dönünce aynı hareket yeniden yorumlanıp
+    // kendi kendine sağ sol yapmasın
+    if (relativeSteer()) {
+      if (fired) return;
+      fired = true;
+    }
+    setWant(swipeDir(dx, dy));
     sx = e.clientX;
     sy = e.clientY;
   });
@@ -61,7 +70,7 @@ export function initInput() {
     }[e.key.toLowerCase()];
     if (m) {
       e.preventDefault();
-      setWant(m);
+      setWant(steerDir(m));
     }
   });
   window.addEventListener('resize', resize);

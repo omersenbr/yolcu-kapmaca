@@ -57,7 +57,7 @@ export function decide(e) {
 }
 /* hız çarpanları: otoyol/köprü/tünel 1,35, cadde 1,12, sokak 1; nitro ×1,65 */
 export function speedOf(e) {
-  const w = DF().world;
+  const w = DF().world * mods().speedMul; // kariyer: hava (yağmur, kar, sis) herkesi yavaşlatır
   const tt = tch(Math.round(e.x), Math.round(e.y)),
     rf = tt === 'A' || tt === 'K' || tt === 'T' ? 1.35 : tt === 'c' ? 1.12 : 1;
   if (e.isPlayer) return 4.5 * w * rf * (G.nitro > 0 ? 1.65 : 1);

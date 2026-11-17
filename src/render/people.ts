@@ -1,6 +1,7 @@
 // <auto-imports>
 import { img, ready } from '../core/assets';
-import { MANIFEST } from '../sim/content';
+import { DLG, MANIFEST } from '../sim/content';
+import { T } from '../sim/util';
 import { G } from '../sim/state';
 import { TS, ctx, px, rr, star } from './view';
 // </auto-imports>
@@ -116,13 +117,17 @@ export function drawPerson(L, x, y, s, t, ph, waving) {
   ctx.arc(x + s * 0.045, y - s * 0.24, s * 0.018, 0, Math.PI * 2);
   ctx.fill();
 }
+/** 2.5D görünüm yolcunun yerdeki halkasını ve figürünü ayrı çizer (figüre neon hat çekmek için) */
+export const paxOpts = { part: 'all' as 'all' | 'halo' | 'figure' };
 export function drawPax(p, t) {
   const boss = p.look.tourist;
   const x = px(p.x) - TS * 0.18,
     y = px(p.y) - TS * (boss ? 0.3 : 0.12),
     s = TS * (boss ? 1.45 : 1.05);
   const pulse = 0.5 + 0.5 * Math.sin(t * 4 + p.ph);
-  if (boss) {
+  if (paxOpts.part === 'figure') {
+    /* halka yok */
+  } else if (boss) {
     const cx0 = x + TS * 0.12,
       cy0 = y + s * 0.4;
     ctx.save();
@@ -151,6 +156,7 @@ export function drawPax(p, t) {
     ctx.ellipse(x + TS * 0.18, y + s * 0.4, TS * 0.5, TS * 0.22, 0, 0, Math.PI * 2);
     ctx.fill();
   }
+  if (paxOpts.part === 'halo') return;
   {
     const k = p.look.prof,
       pf = k && MANIFEST.passengers.map[k],
@@ -182,6 +188,24 @@ export function drawPax(p, t) {
     ctx.fillStyle = '#111';
     ctx.fillText(lab, bx, by + 1);
     return;
+  }
+  // kariyer: müdavim etiketi
+  if (p.mudavim) {
+    const bx = x + TS * 0.18,
+      by = y - s * 0.95;
+    ctx.font = `700 ${Math.round(TS * 0.26)}px "Grandstander","Archivo",system-ui,sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const lab = T(DLG.kariyer.mudavimEtiket, { ad: p.look.name }),
+      w = ctx.measureText(lab).width + TS * 0.3;
+    ctx.fillStyle = '#2f9e44';
+    ctx.strokeStyle = '#111';
+    ctx.lineWidth = 2;
+    rr(ctx, bx - w / 2, by - TS * 0.19, w, TS * 0.38, TS * 0.12);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.fillText(lab, bx, by + 1);
   }
   if (G.role === 'taxi') {
     if ((t + p.ph) % 3 < 1.6) {
