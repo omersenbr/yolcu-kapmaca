@@ -17,7 +17,7 @@ const page = await browser.newPage({ viewport: { width: 390, height: 844 }, devi
 const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
 await page.addInitScript(fakeClock);
-await page.addInitScript(() => { localStorage.setItem('yk-name', 'Test Reis'); localStorage.setItem('yk-diff', 'orta'); localStorage.setItem('yk-geri-sayim', '0'); });
+await page.addInitScript(() => { localStorage.setItem('yk-name', 'Test Reis'); localStorage.setItem('yk-diff', 'orta'); localStorage.setItem('yk-geri-sayim', '0'); localStorage.setItem('yk-ogretici', '0'); });
 await page.goto(url);
 await page.waitForFunction(() => !document.getElementById('loading'), null, { timeout: 30000 });
 await page.waitForTimeout(2500);

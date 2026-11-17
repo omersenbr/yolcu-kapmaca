@@ -18,6 +18,7 @@ export function endGame(why) {
   $('nitroBtn').hidden = true;
   $('talkBtn').hidden = true;
   $('taskCard').hidden = true;
+  $('tutor').hidden = true;
   $('adbtns').hidden = true;
   $('adOv').hidden = true;
   if (G.over) return;

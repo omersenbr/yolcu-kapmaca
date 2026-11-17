@@ -3443,5 +3443,62 @@
   "hizliRekor": "Rekoru kır: {rekor}",
   "hizliRekorYok": "İlk rekorunu yaz!",
   "haritaIpucu": "Haritaya dokun: büyüt"
+ },
+ "ogretici": {
+  "_not": "İlk oyunda rol başına bir kez gösterilen kısa öğretici (src/ui/tutorial.ts). bekle: kaydir | bin | teslim | dokun.",
+  "gec": "Geç",
+  "tamam": "Tamam",
+  "tekrar": "Öğreticiyi yeniden göster",
+  "tekrarOldu": "Bir sonraki oyunda öğretici yeniden çıkacak.",
+  "taxi": {
+   "ad": "Durak Reisi",
+   "adim": [
+    {
+     "bekle": "kaydir",
+     "metin": "Hoş geldin çırak! Parmağını kaydır, taksi o yöne döner. Kavşaktan önce kaydırırsan kavşakta döner."
+    },
+    {
+     "bekle": "bin",
+     "metin": "Pembe çizgili olanlar yolcu. Yanına yanaş, kendisi biner. Kısa mesafeyse bahaneni hazırla!"
+    },
+    {
+     "bekle": "teslim",
+     "metin": "Yeşil çizgiyi izle, yolcuyu bırak. Yolu uzatırsan taksimetre şişer… ama şikayet de yersin."
+    },
+    {
+     "bekle": "dokun",
+     "metin": "Sarı yıldırım nitro. Ama radarın önünden nitroyla geçme, flaş patlar!"
+    },
+    {
+     "bekle": "dokun",
+     "metin": "Bir de şu Tag’ciler var. Ünlemli aracı görürsen peşine düş, yolcusunu sorgula. Hadi rastgele!"
+    }
+   ]
+  },
+  "tag": {
+   "ad": "Kuzen",
+   "adim": [
+    {
+     "bekle": "kaydir",
+     "metin": "Kuzen, hoş geldin! Parmağını kaydır, araba o yöne döner. Kavşaktan önce kaydırırsan kavşakta döner."
+    },
+    {
+     "bekle": "bin",
+     "metin": "Pembe çizgili yolcuya yanaş. Ama taksici ya da polis görürse peşine düşer, etrafı kolla!"
+    },
+    {
+     "bekle": "teslim",
+     "metin": "Yeşil çizgiyi izle, yolcuyu indir. Biri peşine düşerse mahallene kaç, yeşil halkada güvendesin."
+    },
+    {
+     "bekle": "dokun",
+     "metin": "Sarı yıldırım nitro. Kaçarken iş görür ama radara yakalanma."
+    },
+    {
+     "bekle": "dokun",
+     "metin": "Sivil çevirme görünmez, sorulursa “kuzenim” de. Yakalanırsan avukat var. Hadi kolay gelsin!"
+    }
+   ]
+  }
  }
 }

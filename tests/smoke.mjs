@@ -16,7 +16,7 @@ const page = await browser.newPage({ viewport: { width: 390, height: 844 }, devi
 const errors = [];
 page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
 page.on('console', (m) => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
-await page.addInitScript(() => { localStorage.setItem('yk-name', 'Test Reis'); });
+await page.addInitScript(() => { localStorage.setItem('yk-name', 'Test Reis'); localStorage.setItem('yk-ogretici', '0'); });
 await page.goto(url);
 await page.waitForSelector('#loading', { state: 'detached', timeout: 30000 }).catch(() => {});
 await page.waitForTimeout(800);

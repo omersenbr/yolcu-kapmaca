@@ -21,6 +21,7 @@ import { isoCfg, setIso } from '../render/isoView';
 import { juiceReset } from './juice';
 import { countdown } from './ceremony';
 import { hudReset, initHudPlus, openPause } from './hudplus';
+import { initTutorial, startTutorial, stopTutorial, tutorialReset } from './tutorial';
 import { muted, setMuted } from '../audio/sound';
 // </auto-imports>
 /* ================= ANA EKRAN: kapak, profil, rol düğmeleri, alttan açılan sayfalar ================= */
@@ -31,6 +32,7 @@ export function toMenu() {
   $('talkBtn').hidden = true;
   $('taskCard').hidden = true;
   $('pauseOv').hidden = true;
+  stopTutorial();
   $('adbtns').hidden = true;
   $('adOv').hidden = true;
   if (G) G.over = true;
@@ -127,6 +129,7 @@ export function startRole(r, shift?: ShiftOpts) {
   mpStart(UNAME);
   hudReset();
   countdown();
+  startTutorial();
 }
 export function initMenu() {
   $('uname').value = UNAME;
@@ -228,6 +231,12 @@ export function initMenu() {
     else toMenu();
   });
   initHudPlus(toMenu);
+  initTutorial();
+  $('tutorAgain').textContent = DLG.ogretici.tekrar;
+  $('tutorAgain').addEventListener('click', () => {
+    tutorialReset();
+    toast(DLG.ogretici.tekrarOldu);
+  });
   document
     .querySelectorAll<HTMLElement>('#start [data-sheet]')
     .forEach((b) => b.addEventListener('click', () => openSheet(b.dataset.sheet)));
