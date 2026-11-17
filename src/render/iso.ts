@@ -554,32 +554,44 @@ interface Key {
   pax?: any;
 }
 /* ---- yolcunun neon hattı: figür ayrı tuvale çizilir, rengi neona boyanıp her yöne kaydırılarak
-   arkasına basılır; böylece hat figürün kendi biçimini izler ---- */
-let figCv: HTMLCanvasElement | null = null,
+   arkasına basılır; böylece hat figürün kendi biçimini izler. Pahalı olduğu için sonuç yolcu başına
+   önbelleğe alınır ve birkaç karede bir yenilenir (el sallama yine akıcı görünür). ---- */
+const NEON_STEP = 6, // kaç karede bir yenilenir
+  NEON_DIRS = 8,
+  NEON_MAX = 80; // önbellekteki en fazla yolcu
+let neonFrame = 0,
+  neonSeq = 0,
+  figCv: HTMLCanvasElement | null = null,
   tintCv: HTMLCanvasElement | null = null;
-function paxFigure(p, t) {
-  const [X, Y] = proj(p.x, p.y, 0),
-    w = S * 3.2,
-    h = S * 3.8,
-    ox = X - w / 2,
-    oy = Y - h + S * 0.9,
-    W = Math.ceil(w * DPR),
-    H = Math.ceil(h * DPR);
+interface NeonEntry {
+  cv: HTMLCanvasElement;
+  ghost: HTMLCanvasElement | null;
+  f: number;
+  s: number;
+  W: number;
+  H: number;
+}
+const neonCache = new Map<any, NeonEntry>();
+const neonBox = () => ({ w: S * 3.2, h: S * 3.8, up: S * 0.9 });
+const sized = (c: HTMLCanvasElement, W: number, H: number) => {
+  if (c.width !== W || c.height !== H) {
+    c.width = W;
+    c.height = H;
+  } else c.getContext('2d').clearRect(0, 0, W, H);
+  return c.getContext('2d');
+};
+/** figürü figCv’ye, neon boyalı kopyasını tintCv’ye çizer (ekran konumundan bağımsız) */
+function paxFigure(p, t, W: number, H: number) {
+  const { w, h, up } = neonBox(),
+    s = S / TS;
   if (!figCv) {
     figCv = document.createElement('canvas');
     tintCv = document.createElement('canvas');
   }
-  for (const c of [figCv, tintCv])
-    if (c.width < W || c.height < H) {
-      c.width = Math.max(c.width, W);
-      c.height = Math.max(c.height, H);
-    }
-  const f = figCv.getContext('2d'),
-    main = ctx,
-    s = S / TS;
-  f.setTransform(1, 0, 0, 1, 0, 0);
-  f.clearRect(0, 0, W + 2, H + 2);
-  f.setTransform(DPR * s, 0, 0, DPR * s, DPR * (X - px(p.x) * s - ox), DPR * (Y - px(p.y) * s - oy));
+  const f = sized(figCv, W, H),
+    main = ctx;
+  // yolcunun ayak noktası tuvalde (w/2, h − up)
+  f.setTransform(DPR * s, 0, 0, DPR * s, DPR * (w / 2 - px(p.x) * s), DPR * (h - up - px(p.y) * s));
   setCtx(f);
   paxOpts.part = 'figure';
   try {
@@ -588,57 +600,69 @@ function paxFigure(p, t) {
     paxOpts.part = 'all';
     setCtx(main);
   }
-  const g = tintCv.getContext('2d');
-  g.globalCompositeOperation = 'copy';
+  const g = sized(tintCv, W, H);
   g.drawImage(figCv, 0, 0);
   g.globalCompositeOperation = 'source-in';
   g.fillStyle = NEON;
   g.fillRect(0, 0, W, H);
   g.globalCompositeOperation = 'source-over';
-  return { ox, oy, w, h, W, H };
 }
-function stampNeon(r: { ox: number; oy: number; w: number; h: number; W: number; H: number }, rad: number) {
-  for (let i = 0; i < 12; i++) {
-    const a = (i / 12) * Math.PI * 2;
-    ctx.drawImage(tintCv, 0, 0, r.W, r.H, r.ox + Math.cos(a) * rad, r.oy + Math.sin(a) * rad, r.w, r.h);
+const neonRad = () => Math.max(1.2, S * 0.035) * DPR; // ince hat
+function stamp(g: CanvasRenderingContext2D, W: number, H: number) {
+  const r = neonRad();
+  for (let i = 0; i < NEON_DIRS; i++) {
+    const a = (i / NEON_DIRS) * Math.PI * 2;
+    g.drawImage(tintCv, 0, 0, W, H, Math.cos(a) * r, Math.sin(a) * r, W, H);
   }
 }
-/** bekleyen yolcu: yerdeki halka, neon hat, figür */
+/** yolcunun önbellekteki neon hatlı figürü (gerekirse yeniler) */
+function neonEntry(p, t): NeonEntry {
+  const { w, h } = neonBox(),
+    W = Math.ceil(w * DPR),
+    H = Math.ceil(h * DPR);
+  let e = neonCache.get(p);
+  if (e && e.s === S && neonFrame - e.f < NEON_STEP) return e;
+  if (!e) {
+    if (neonCache.size >= NEON_MAX) neonCache.delete(neonCache.keys().next().value);
+    e = { cv: document.createElement('canvas'), ghost: null, f: 0, s: 0, W, H };
+    neonCache.set(p, e);
+  }
+  paxFigure(p, t, W, H);
+  const g = sized(e.cv, W, H);
+  stamp(g, W, H);
+  g.drawImage(figCv, 0, 0);
+  // bina arkası için yalnızca hat (içi boş); tintCv bu karede hazırken üretilir
+  if (!e.ghost) e.ghost = document.createElement('canvas');
+  const r = sized(e.ghost, W, H);
+  stamp(r, W, H);
+  r.globalCompositeOperation = 'destination-out';
+  r.drawImage(figCv, 0, 0);
+  r.globalCompositeOperation = 'source-over';
+  // ilk çizimde yenileme anı yolcuya göre kaydırılır: hepsi aynı karede yenilenip takılma yapmasın
+  Object.assign(e, { f: e.s ? neonFrame : neonFrame - (neonSeq++ % NEON_STEP), s: S, W, H });
+  return e;
+}
+function blitNeon(p, c: HTMLCanvasElement, W: number, H: number) {
+  const [X, Y] = proj(p.x, p.y, 0),
+    { w, h, up } = neonBox();
+  screen();
+  ctx.drawImage(c, 0, 0, W, H, X - w / 2, Y - h + up, w, h);
+}
+/** bekleyen yolcu: yerdeki halka, neon hatlı figür */
 function drawPaxNeon(p, t) {
   upright(p.x, p.y, 0, () => {
     paxOpts.part = 'halo';
     drawPax(p, t);
     paxOpts.part = 'all';
   });
-  const r = paxFigure(p, t);
-  screen();
-  stampNeon(r, Math.max(2, S * 0.075));
-  ctx.drawImage(figCv, 0, 0, r.W, r.H, r.ox, r.oy, r.w, r.h);
+  const e = neonEntry(p, t);
+  blitNeon(p, e.cv, e.W, e.H);
 }
-/** bina arkasında kalan yolcu: yalnızca figürün neon hattı (içi boş) binanın üstüne */
-let ringCv: HTMLCanvasElement | null = null;
+/** bina arkasında kalan yolcu: yalnızca figürün neon hattı binanın üstüne */
 function drawPaxGhost(p, t) {
-  const r = paxFigure(p, t),
-    pulse = 0.75 + 0.25 * Math.sin(t * 6),
-    rad = Math.max(2, S * 0.075) * DPR;
-  if (!ringCv) ringCv = document.createElement('canvas');
-  if (ringCv.width < r.W || ringCv.height < r.H) {
-    ringCv.width = Math.max(ringCv.width, r.W);
-    ringCv.height = Math.max(ringCv.height, r.H);
-  }
-  const g = ringCv.getContext('2d');
-  g.setTransform(1, 0, 0, 1, 0, 0);
-  g.clearRect(0, 0, r.W + 2, r.H + 2);
-  for (let i = 0; i < 12; i++) {
-    const a = (i / 12) * Math.PI * 2;
-    g.drawImage(tintCv, 0, 0, r.W, r.H, Math.cos(a) * rad, Math.sin(a) * rad, r.W, r.H);
-  }
-  g.globalCompositeOperation = 'destination-out';
-  g.drawImage(figCv, 0, 0, r.W, r.H, 0, 0, r.W, r.H);
-  g.globalCompositeOperation = 'source-over';
-  screen();
-  ctx.globalAlpha = pulse;
-  ctx.drawImage(ringCv, 0, 0, r.W, r.H, r.ox, r.oy, r.w, r.h);
+  const e = neonEntry(p, t);
+  ctx.globalAlpha = 0.75 + 0.25 * Math.sin(t * 6);
+  blitNeon(p, e.ghost, e.W, e.H);
   ctx.globalAlpha = 1;
 }
 function drawSilhouette(k: Key, t: number) {
@@ -831,6 +855,7 @@ function drawDestBeam(dx: number, dy: number, left: number, t: number) {
 
 /* ---- kare ---- */
 export function renderIso(t: number, dt: number) {
+  neonFrame++;
   screen();
   ctx.fillStyle = pal.water;
   ctx.fillRect(0, 0, VW, VH);
