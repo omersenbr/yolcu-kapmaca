@@ -15,6 +15,7 @@ await page.addInitScript(() => {
   if (!sessionStorage.getItem('yk-test')) {
     localStorage.clear();
     localStorage.setItem('yk-name', 'Test Reis');
+    localStorage.setItem('yk-geri-sayim', '0');
     sessionStorage.setItem('yk-test', '1');
   }
 });

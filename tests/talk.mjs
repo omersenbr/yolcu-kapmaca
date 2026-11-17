@@ -63,7 +63,7 @@ if (await page.$('.freeform input')) {
   check(/hakaret/.test(await bubble()), 'ağır küfür: polis “memura hakaret” dedi');
   const money1 = await page.evaluate(() => window.__yk.G.money);
   check(money0 - money1 === 2000, `memura hakaret cezası ₺${money0 - money1}`);
-  check(/−₺2000/.test(await page.$eval('#money', (e) => e.textContent)), 'ceza bilgi şeridinde görünüyor');
+  check(await page.evaluate(() => document.getElementById('money').textContent === (window.__yk.G.money < 0 ? '−₺' : '₺') + Math.abs(window.__yk.G.money)), 'ceza bilgi şeridine işlendi');
   await page.screenshot({ path: `${out}/03-agir-kufur.png` });
 } else check(false, 'ağır küfür için soru kalmadı');
 // yolcuyla sohbet: Konuş düğmesi, her cümleye cevap, taraftar atışması, ağır küfürde yolcu iner
