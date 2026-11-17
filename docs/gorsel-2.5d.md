@@ -1,5 +1,7 @@
 # 2.5D görseller: ne çizilecek, nasıl istenecek
 
+> Kopyala-yapıştır hazır istemler: `docs/gorsel-2.5d-istemler.md`. Bu belge genel planı anlatır.
+
 2.5D görünüm şu an eldeki üstten görselleri kodda uyarlıyor (`src/render/iso.ts`). Bu belge, onların yerine geçecek gerçek 2.5D çizimlerin listesi ve Gemini istemleridir. Stil kuralları `docs/stil-rehberi.md` ile aynı kalır.
 
 ## Kamera (bütün çizimler için tek açı)
