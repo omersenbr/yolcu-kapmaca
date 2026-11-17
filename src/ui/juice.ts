@@ -25,6 +25,9 @@ const vibrate = (ms: number | number[]) => {
 };
 
 /* ---- kasa: gösterilen değer gerçeğe doğru yuvarlanır ---- */
+/** bu tutarın altındaki kazanç ve kesintiler animasyonsuz (yalnızca sayaç değişir) */
+const MIN_GAIN = 50,
+  MIN_LOSS = 100;
 let shown: number | null = null,
   lastMoney: number | null = null,
   lastUsd = 0;
@@ -47,8 +50,12 @@ export function juiceFrame(dt: number) {
   const d = G.money - lastMoney;
   if (d) {
     lastMoney = G.money;
-    if (Math.abs(d) >= 5) fly(d);
-    if (d < 0) bump('neg');
+    // benzin, köprü, tünel gibi küçük kesintiler sessiz geçer; yalnızca kayda değer para hareketi canlanır
+    if (d >= MIN_GAIN) fly(d);
+    else if (d <= -MIN_LOSS) {
+      fly(d);
+      bump('neg');
+    }
   }
   if ((G.usd || 0) > lastUsd) {
     lastUsd = G.usd;
