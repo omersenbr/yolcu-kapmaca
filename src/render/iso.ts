@@ -41,7 +41,7 @@ import {
   drawWeather,
   light,
 } from './render';
-import { DPR, TS, VH, VW, cam, ctx, px } from './view';
+import { DPR, TS, VH, VW, cam, ctx, px, rr } from './view';
 import { heading, isoCfg, lmState } from './isoView';
 
 const INK = '#141414';
@@ -200,32 +200,78 @@ function cellActive(b: Cell) {
   const whole = spriteMode() && !!isoSheet(b.cat);
   return b.whole ? whole : !whole;
 }
-/** binanın 2.5D çizimi: nesne genişliği haritadaki yerinin “dolu” oranı kadar, alt ucu yerin alt köşesinde */
-function drawCellSprite(b: Cell): boolean {
-  if (!spriteMode()) return false;
+/* ---- yolu görünür tutmak: binalar basık, kapatan binalar saydam, arkada kalanlar siluetle ---- */
+/** dikey basıklık: bina, simge yapı, ağaç (yalnızca yerden yukarı kalan kısım basılır) */
+const SQ_BINA = 0.6,
+  SQ_SIMGE = 0.7,
+  SQ_AGAC = 0.8;
+interface Box {
+  x0: number;
+  y0: number;
+  x1: number;
+  y1: number;
+}
+/** görseli tabanı (yere oturan kısmı, ekranda foot yüksekliği) bozulmadan, üst kısmı sq oranında basık çizer; ekran kutusunu döner */
+function drawSquashed(
+  im: HTMLImageElement,
+  sx: number,
+  sy: number,
+  sw: number,
+  sh: number,
+  X: number,
+  bottom: number,
+  k: number,
+  foot: number,
+  sq: number,
+  flip = false,
+  draw = true,
+): Box {
+  const dw = sw * k,
+    fs = Math.min(sh, foot / k), // tabanın kaynaktaki yüksekliği
+    top = (sh - fs) * k * sq,
+    box = { x0: X - dw / 2, y0: bottom - fs * k - top, x1: X + dw / 2, y1: bottom };
+  if (!draw) return box;
+  screen();
+  if (flip) {
+    ctx.translate(X, 0);
+    ctx.scale(-1, 1);
+    X = 0;
+  }
+  if (fs > 0.5) ctx.drawImage(im, sx, sy + sh - fs, sw, fs, X - dw / 2, bottom - fs * k, dw, fs * k + 0.5);
+  ctx.drawImage(im, sx, sy, sw, sh - fs, X - dw / 2, box.y0, dw, top + 0.5);
+  screen();
+  return box;
+}
+/** binanın 2.5D çizimi: nesne genişliği haritadaki yerinin “dolu” oranı kadar, alt ucu yerin alt köşesinde.
+    draw=false: yalnızca ekran kutusunu hesaplar (saydamlık için) */
+function cellSprite(b: Cell, draw = true): Box | null {
+  if (!spriteMode()) return null;
   const SI = isoSheet(b.cat);
-  if (!SI) return false;
+  if (!SI) return null;
   // tür sayfası birden çok sayfadan oluşabilir (mahalle: tek ve iki katlı); yere göre karıştırılır
   const ix = (b.i + Math.floor(hsh(Math.round(b.x * 3) + 11, Math.round(b.y * 5) + 7) * SI.count)) % SI.count,
     slot = b.w / (1 - 2 * INSET), // binanın haritadaki yeri (kare)
     plot = slot * Math.SQRT2 * S * (SI.dolu || 0.96), // yerin ekrandaki genişliği
     k = plot / SI.w[ix],
-    [X, Y] = proj(b.x + b.w / 2, b.y + b.w / 2, 0);
-  screen();
-  const bottom = Y + plot * K * 0.5 + plot * (SI.kaide ?? 0.05);
-  ctx.drawImage(
+    [X, Y] = proj(b.x + b.w / 2, b.y + b.w / 2, 0),
+    kaide = plot * (SI.kaide ?? 0.05),
+    bottom = Y + plot * K * 0.5 + kaide;
+  return drawSquashed(
     img(SI.file),
     (ix % SI.cols) * SI.cw,
     Math.floor(ix / SI.cols) * SI.ch,
     SI.cw,
-    SI.ch,
-    X - (SI.cw * k) / 2,
-    bottom - (SI.ch - 2) * k,
-    SI.cw * k,
-    SI.ch * k,
+    SI.ch - 2,
+    X,
+    bottom,
+    k,
+    plot * K + kaide,
+    SQ_BINA,
+    false,
+    draw,
   );
-  return true;
 }
+const drawCellSprite = (b: Cell) => !!cellSprite(b);
 function drawCell(b: Cell, night: number) {
   if (drawCellSprite(b)) return;
   const P: [number, number][] = [
@@ -310,16 +356,17 @@ function drawTree(tr: Tree) {
     ctx.beginPath();
     ctx.ellipse(X, Y, tr.s * S * 0.32, tr.s * S * 0.32 * K, 0, 0, Math.PI * 2);
     ctx.fill();
-    ctx.drawImage(
+    drawSquashed(
       img(TI.file),
       (ix % TI.cols) * TI.cw,
       Math.floor(ix / TI.cols) * TI.ch,
       TI.cw,
-      TI.ch,
-      X - (TI.cw * k) / 2,
-      Y + 2 * k - TI.ch * k,
-      TI.cw * k,
-      TI.ch * k,
+      TI.ch - 2,
+      X,
+      Y,
+      k,
+      0,
+      SQ_AGAC,
     );
     return;
   }
@@ -478,24 +525,72 @@ const lmReady = (n: string) => {
   const L = MANIFEST.landmarks_iso && MANIFEST.landmarks_iso.yapilar[n];
   return L && ready(img(L.file)) ? L : null;
 };
-function drawLandmark(m: Lm) {
+function drawLandmark(m: Lm, draw = true): Box | null {
   const L = lmReady(m.name);
-  if (!L) return;
+  if (!L) return null;
   // çizimde arsanın uzun kenarı sol alttan sağ üste (haritada x yönü); alan derinse aynalanır
   const flip = m.h > m.w,
     wScr = (m.w + m.h) * S * CS * 0.98,
     k = wScr / L.w,
     [X] = proj(m.x + m.w / 2 - 0.5, m.y + m.h / 2 - 0.5, 0),
     [, Yb] = proj(m.x - 0.5, m.y + m.h - 0.5, 0),
-    bottom = Yb + wScr * 0.03,
-    h = L.h * k;
-  screen();
-  if (flip) {
-    ctx.translate(X, 0);
-    ctx.scale(-1, 1);
-    ctx.drawImage(img(L.file), -wScr / 2, bottom - h, wScr, h);
+    foot = (m.w * SN + m.h * CS) * S * K + wScr * 0.03,
+    bottom = Yb + wScr * 0.03;
+  return drawSquashed(img(L.file), 0, 0, L.w, L.h, X, bottom, k, foot, SQ_SIMGE, flip, draw);
+}
+
+/** binanın arkasında kalan önemli nesnenin siluet işareti (binanın üstüne çizilir) */
+interface Key {
+  x: number;
+  y: number;
+  d: number;
+  sx: number;
+  sy: number;
+  col: string;
+  car?: number[] | null;
+}
+function drawSilhouette(k: Key, t: number) {
+  const pulse = 0.75 + 0.25 * Math.sin(t * 6);
+  ctx.lineJoin = 'round';
+  if (k.car) {
+    // araç: yere paralel yuvarlak gövde, rengiyle
+    ground(0.18);
+    const a = Math.atan2(k.car[1], k.car[0]);
+    ctx.translate(px(k.x), px(k.y));
+    ctx.rotate(a);
+    const L = TS * 0.9,
+      W = TS * 0.48;
+    ctx.globalAlpha = 0.45 * pulse;
+    ctx.fillStyle = k.col;
+    rr(ctx, -L / 2, -W / 2, L, W, W * 0.35);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = TS * 0.09;
+    ctx.strokeStyle = k.col;
+    ctx.stroke();
+    ctx.lineWidth = TS * 0.03;
+    ctx.strokeStyle = '#141414';
+    ctx.stroke();
+  } else {
+    // insan: baş ve gövde
     screen();
-  } else ctx.drawImage(img(L.file), X - wScr / 2, bottom - h, wScr, h);
+    const s = S * 0.36;
+    ctx.globalAlpha = 0.55 * pulse;
+    ctx.fillStyle = k.col;
+    ctx.beginPath();
+    ctx.ellipse(k.sx, k.sy - s * 0.75, s * 0.42, s * 0.62, 0, 0, Math.PI * 2);
+    ctx.moveTo(k.sx + s * 0.3, k.sy - s * 1.75);
+    ctx.arc(k.sx, k.sy - s * 1.75, s * 0.3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = Math.max(2, S * 0.06);
+    ctx.strokeStyle = k.col;
+    ctx.stroke();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#141414';
+    ctx.stroke();
+  }
+  screen();
 }
 
 /* ---- kare ---- */
@@ -585,6 +680,44 @@ export function renderIso(t: number, dt: number) {
   const objs: [number, () => void][] = [];
   const pd = G ? depth(G.player.x, G.player.y) : 0,
     psx = G ? proj(G.player.x, G.player.y, 0)[0] : 0;
+  // önemli noktalar: oyuncu ve önündeki yol, yolcular, araçlar, varış yeri. Bunları kapatan binalar
+  // saydamlaşır, arkada kalanlar binanın üstüne siluetle çizilir
+  const keys: Key[] = [];
+  const key = (x: number, y: number, col: string, car?: number[] | null, z = 0.25) => {
+    if (!inView(x, y)) return;
+    const [sx, sy] = proj(x, y, z);
+    keys.push({ x, y, d: depth(x, y), sx, sy, col, car });
+  };
+  if (G && spriteMode()) {
+    const P = G.player,
+      d = P.dir || [0, -1];
+    key(P.x, P.y, G.role === 'taxi' ? '#ffc20e' : '#8e98ff', d);
+    for (let n = 1; n <= 4; n++) key(P.x + d[0] * n, P.y + d[1] * n, '', undefined, 0); // gideceği yol
+    if (P.carry) key(P.carry.dx, P.carry.dy, '#2f9e44', undefined, 0);
+    for (const p of G.pax)
+      if (p.state === 'wait' || p.state === 'talk') key(p.x, p.y, p.look.tourist ? '#ffd43b' : '#ffc20e');
+    for (const e of G.ents)
+      if (!e.isPlayer)
+        key(e.x, e.y, e.kind === 'police' ? '#1c7ed6' : e.kind === 'tag' ? '#ff922b' : '#ffc20e', e.dir || [1, 0]);
+  }
+  /** binanın ekran kutusu bir önemli noktayı kapatıyor mu (bina noktadan önde ve kutusu üstünde) */
+  const covered: Set<Key> = new Set();
+  const occludes = (bd: number, box: Box | null) => {
+    if (!box) return false;
+    let hit = false;
+    for (const k of keys)
+      if (
+        bd > k.d + 0.25 &&
+        k.sx > box.x0 + S * 0.1 &&
+        k.sx < box.x1 - S * 0.1 &&
+        k.sy > box.y0 &&
+        k.sy < box.y1 - S * 0.15
+      ) {
+        hit = true;
+        if (k.col) covered.add(k);
+      }
+    return hit;
+  };
   {
     const i0 = Math.max(0, Math.floor((CX - R) / CHT)),
       i1 = Math.min(CHX - 1, Math.floor((CX + R) / CHT)),
@@ -602,15 +735,19 @@ export function renderIso(t: number, dt: number) {
             my = b.y + b.w / 2;
           if (!inView(mx, my)) continue;
           const d = depth(mx, my);
-          // aracın önünü kapatan binalar yarı saydam
-          const hide = G && d - pd > 0.3 && d - pd < 1.2 + b.h * 2.2 && Math.abs(proj(mx, my, 0)[0] - psx) < S * 0.9;
+          // kapatan binalar yarı saydam: çizimli binada ekran kutusuyla, kutu binada aracın önü
+          const box = keys.length ? cellSprite(b, false) : null;
+          const hide = box
+            ? occludes(d, box)
+            : G && d - pd > 0.3 && d - pd < 1.2 + b.h * 2.2 && Math.abs(proj(mx, my, 0)[0] - psx) < S * 0.9;
           objs.push([
             d,
             () => {
               if (hide) {
                 screen();
-                ctx.globalAlpha = 0.3;
+                ctx.globalAlpha = 0.32;
               }
+              ctx.globalAlpha = hide ? 0.32 : 1;
               drawCell(b, L.night);
               ctx.globalAlpha = 1;
             },
@@ -622,8 +759,18 @@ export function renderIso(t: number, dt: number) {
       for (const m of landmarks()) {
         const cx = m.x + m.w / 2 - 0.5,
           cy = m.y + m.h / 2 - 0.5;
-        if (Math.abs(cx - CX) < R + 6 && Math.abs(cy - CY) < R + 6 && lmReady(m.name))
-          objs.push([depth(cx, cy), () => drawLandmark(m)]);
+        if (Math.abs(cx - CX) < R + 6 && Math.abs(cy - CY) < R + 6 && lmReady(m.name)) {
+          const d = depth(cx, cy),
+            hide = occludes(d, drawLandmark(m, false));
+          objs.push([
+            d,
+            () => {
+              ctx.globalAlpha = hide ? 0.4 : 1;
+              drawLandmark(m);
+              ctx.globalAlpha = 1;
+            },
+          ]);
+        }
       }
   }
   if (G) {
@@ -667,6 +814,7 @@ export function renderIso(t: number, dt: number) {
   objs.sort((a, b) => a[0] - b[0]);
   for (const o of objs) o[1]();
   ctx.globalAlpha = 1;
+  for (const k of covered) drawSilhouette(k, t);
   if (G) {
     smoothRemotes(dt);
     ground(0.25);
