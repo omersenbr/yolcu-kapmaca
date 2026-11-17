@@ -251,12 +251,21 @@ function cellSprite(b: Cell, draw = true): Box | null {
   const SI = isoSheet(b.cat);
   if (!SI) return null;
   // tür sayfası birden çok sayfadan oluşabilir (mahalle: tek ve iki katlı); yere göre karıştırılır
-  const ix = (b.i + Math.floor(hsh(Math.round(b.x * 3) + 11, Math.round(b.y * 5) + 7) * SI.count)) % SI.count,
+  // yeni (2. sürüm) çizimler çoğunlukta, eskiler arada bir: yere göre sabit seçim
+  const h1 = hsh(Math.round(b.x * 3) + 11, Math.round(b.y * 5) + 7),
+    h2 = hsh(Math.round(b.y * 7) + 3, Math.round(b.x * 3) + 19),
+    nNew = SI.yeni || 0,
+    ix = nNew
+      ? h2 < (SI.yeniPay ?? 0.75)
+        ? (b.i + Math.floor(h1 * nNew)) % nNew
+        : nNew + ((b.i + Math.floor(h1 * (SI.count - nNew))) % (SI.count - nNew))
+      : (b.i + Math.floor(h1 * SI.count)) % SI.count,
+    per = (v: any, d: number) => (Array.isArray(v) ? v[ix] : (v ?? d)),
     slot = b.w / (1 - 2 * INSET), // binanın haritadaki yeri (kare)
-    plot = slot * Math.SQRT2 * S * (SI.dolu || 0.96), // yerin ekrandaki genişliği
+    plot = slot * Math.SQRT2 * S * per(SI.dolu, 0.96), // yerin ekrandaki genişliği
     k = plot / SI.w[ix],
     [X, Y] = proj(b.x + b.w / 2, b.y + b.w / 2, 0),
-    kaide = plot * (SI.kaide ?? 0.05),
+    kaide = plot * per(SI.kaide, 0.05),
     bottom = Y + plot * K * 0.5 + kaide;
   return drawSquashed(
     img(SI.file),
@@ -510,6 +519,8 @@ interface Lm {
   y: number;
   w: number;
   h: number;
+  /** başka bir yapının çizimini kullan */
+  img?: string;
 }
 let LMS: Lm[] | null = null;
 function landmarks(): Lm[] {
@@ -519,11 +530,30 @@ function landmarks(): Lm[] {
   if (!L) return LMS;
   for (const [n, fp] of Object.entries((MAP && MAP.simge_alanlari) || {}) as [string, number[]][])
     if (L[n]) LMS.push({ name: n, x: fp[0], y: fp[1], w: fp[2], h: fp[3] });
+  // Ataşehir finans merkezi Maslak’ın çizimini kullanır
+  const at = MAP && MAP.simge_alanlari && MAP.simge_alanlari['Ataşehir finans merkezi'];
+  if (at && L['Maslak gökdelenleri'])
+    LMS.push({ name: 'Ataşehir finans merkezi', img: 'Maslak gökdelenleri', x: at[0], y: at[1], w: at[2], h: at[3] });
   const kk = LMK && LMK['Kız Kulesi'];
   if (kk && L['Kız Kulesi']) LMS.push({ name: 'Kız Kulesi', x: kk[0] - 1.2, y: kk[1] - 1.2, w: 3.4, h: 3.4 });
+  // havalimanı terminali: pistlerin altında, üstten görünümdeki yerinde
+  if (L['Havalimanı terminali'])
+    for (const a of (MAP && MAP.havalimanlari) || []) {
+      const [ax0, , ax1, ay1] = a,
+        Wt = Math.min(20, (ax1 - ax0) * 0.7);
+      LMS.push({ name: 'Havalimanı terminali', x: (ax0 + ax1) / 2 - Wt / 2, y: ay1 - 6, w: Wt, h: 7 });
+    }
+  // Avrasya Tüneli ağızları
+  if (L['Avrasya Tüneli girişi'])
+    for (const [tx, ty] of [
+      [92.5, 184.6],
+      [152.5, 182.6],
+    ])
+      LMS.push({ name: 'Avrasya Tüneli girişi', x: tx - 2, y: ty - 1.5, w: 4, h: 3 });
   return LMS;
 }
 const lmReady = (n: string) => {
+  if (n === 'Ataşehir finans merkezi') n = 'Maslak gökdelenleri';
   const L = MANIFEST.landmarks_iso && MANIFEST.landmarks_iso.yapilar[n];
   return L && ready(img(L.file)) ? L : null;
 };
