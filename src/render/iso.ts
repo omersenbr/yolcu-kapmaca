@@ -306,7 +306,7 @@ export function renderIso(t: number, dt: number) {
   {
     const want = head + yaw,
       diff = ((want - ang + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
-    ang += diff * Math.min(1, dt * 3.2);
+    ang += diff * Math.min(1, dt * 1.8); // yavaş dönüş: ani savrulma olmasın
   }
   let tg = { x: COLS * TS * 0.55, y: ROWS * TS * 0.7 };
   if (G)

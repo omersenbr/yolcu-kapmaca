@@ -3230,6 +3230,6 @@
   "egim": "Eğim",
   "aci": "Açı",
   "yakin": "Yakınlık",
-  "takip": "Kamera aracın yönünü izlesin (kaydırma araca göre: yukarı düz, sol/sağ dön)"
+  "takip": "Kamera aracın yönünü izlesin (ekran döner; kaydırma araca göre: yukarı düz, sol/sağ dön)"
  }
 }
