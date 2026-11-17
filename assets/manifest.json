@@ -1239,14 +1239,14 @@
    "Volkswagen Arena": {
     "file": "assets/landmarks_iso/volkswagen-arena.webp",
     "w": 495,
-    "h": 379,
+    "h": 377,
     "taban": [
      0,
      214,
      228,
-     377,
-     493,
-     211
+     376,
+     494,
+     209
     ]
    },
    "Zorlu PSM": {
@@ -1290,15 +1290,15 @@
    },
    "Maslak gökdelenleri": {
     "file": "assets/landmarks_iso/maslak-gokdelenleri.webp",
-    "w": 491,
-    "h": 455,
+    "w": 403,
+    "h": 453,
     "taban": [
      0,
-     303,
-     282,
+     332,
+     195,
      452,
-     488,
-     326
+     402,
+     324
     ]
    },
    "Havalimanı terminali": {
