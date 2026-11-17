@@ -63,6 +63,13 @@ Vite + TypeScript + düz canvas. Kod `src/` altında modüllere bölündü; ayr�
 7. **Çok oyunculu** (ilk adım yapıldı: ortak oturum, ekip, yardım; sırada yetkili sunucu ve oyuncular arası etkileşim): Açık dünya (semt kontrolü: her semtte durak ve mahalle; taksiciler durakları para, savaş ya da diplomasiyle alır; Tag ekipleri aynı mahalleden en fazla 3 kişi, komşu mahallelere yayılır; bölge bakım maliyeti; kalıcı dünya için Firebase benzeri sunucu; haftalık sezon) ve hızlı maç modu Plaka Ağası (agar.io benzeri filo). Önce botlarla tek oyunculu denenecek.
 8. **Para kazanma:** Ödüllü reklamlar (telsiz istihbaratı, benzin, avukat/torpil son şans), kozmetik satış (süsler, boya, durak tabelası, mahalle bayrağı). Önce Türkiye, sonra şehir paketleriyle yurt dışı.
 
+## Bekleyen kararlar (kullanıcı “sonra hatırlat” dedi)
+
+- **Kayıtlı hesap:** kariyer şu an yalnızca telefonun tarayıcısında (localStorage) tutuluyor; telefon/tarayıcı değişince, site verisi silinince ya da iPhone Safari uzun süre girilmeyince kaybolur. Plan: Firebase ile Google girişi (ya da e-posta kodu), kariyer verisinin bulutta kaydı ve eşitleme, ortak sıralama (hile önlemeyle). Kullanıcının bir Firebase projesi açması gerekecek; adımlar anlatılacak.
+- **Çok oyunculu:** ilk adım (ortak oturum, ekip, yardım) yerel ağda çalışıyor ama internette sunucu yok. Sıra: 1) internette sunucu (Firebase ya da küçük bir sunucu; hesap ve ödeme kullanıcıda), 2) giriş ve bulutta kayıt, 3) şehrin sunucuda dönmesi (gerçek kapışma), 4) durak/mahalle/sezon tasarımı. 1–2 birkaç gün, 3 haftalar.
+- **Kullanıcının fark ettiği basit sorunlar:** son 2.5D görsel turundan sonra not etti, henüz söylemedi; sorulacak.
+- **Köprüler:** `assets/bridges_iso/` hazır, oyuna bağlanmadı. Havalimanı terminali çevre sokaklara taşıyor, küçültülebilir.
+
 ## Bilinen notlar
 
 - Kapak görselindeki Tag aracı çivit sedan değil, beyaz; ileride düzeltilmiş kapakla değiştirilecek.
