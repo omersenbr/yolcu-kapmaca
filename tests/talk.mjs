@@ -101,7 +101,7 @@ check(/ne cevap vereyim/.test(await bubble()), 'öğretme modu: yolcu “buna ne
 await say('Rastgele {ab}, lüfer çıkarsa bana da getir.');
 check(/öğrendim/.test(await bubble()), `öğrendi: ${(await bubble()).slice(0, 90)}`);
 await say('balığa çıkacağım bugün');
-check(/Rastgele ab(i|la), lüfer/.test(await bubble()), `benzer cümlede öğrettiğim cevabı verdi: ${(await bubble()).slice(0, 70)}`);
+check(/Rastgele abi, lüfer/.test(await bubble()), `benzer cümlede öğrettiğim cevabı verdi: ${(await bubble()).slice(0, 70)}`);
 await page.click('.chattools button'); // bu cevabı değiştir
 await say('Bu havada balık mı olur!');
 await say('bugün balığa çıkacağım');

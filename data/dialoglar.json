@@ -783,7 +783,7 @@
  },
  "pickup": {
   "caption": "{semt}, kaldırımda el sallayan biri.",
-  "greet": "Merhaba {ab}, {hedefDat} gidecektim.",
+  "greet": "Merhaba {sabi}, {hedefDat} gidecektim.",
   "greetAgain": "Yine mi sen? {hedefDat} gidecektim, bu sefer düzgün götürür müsün?",
   "info": "Mesafe: {km} km, tahmini ₺{ücret}",
   "infoBridge": " (köprü dahil)",
@@ -2134,7 +2134,7 @@
   {
    "id": "muzik",
    "rol": "any",
-   "soru": "{Ab}, şu radyoyu bir açsana. Arabesk mi olsun, pop mu?",
+   "soru": "{Sabi}, şu radyoyu bir açsana. Arabesk mi olsun, pop mu?",
    "secenekler": [
     {
      "t": "Arabesk aç, damardan",
@@ -2197,7 +2197,7 @@
   {
    "id": "telefon",
    "rol": "any",
-   "soru": "(Yolcu telefonda bağırıyor) ...YOK ÖYLE BİR ŞEY! Pardon {ab}, sesi kısar mısın?",
+   "soru": "(Yolcu telefonda bağırıyor) ...YOK ÖYLE BİR ŞEY! Pardon {sabi}, sesi kısar mısın?",
    "secenekler": [
     {
      "t": "Kıstım, rahat konuşun",
@@ -2615,7 +2615,7 @@
   "yer": "Yolcuya bir şey söyle…",
   "acilis": {
    "genel": [
-    "Buyrun {ab}?",
+    "Buyrun {sabi}?",
     "Efendim?",
     "Hı, dinliyorum."
    ],
@@ -2640,7 +2640,7 @@
     "cevap": {
      "genel": [
       "Merhaba, hoş bulduk.",
-      "Aleyküm selam {ab}, kolay gelsin.",
+      "Aleyküm selam {sabi}, kolay gelsin.",
       "Selam, iyi günler."
      ],
      "turist": [
@@ -2710,7 +2710,7 @@
     "puan": 0.05,
     "cevap": {
      "genel": [
-      "{hedefDat} gidiyoruz ya {ab}.",
+      "{hedefDat} gidiyoruz ya {sabi}.",
       "{hedef}, unuttun mu?",
       "{hedefDat}, mümkünse hızlıca."
      ],
@@ -2809,28 +2809,28 @@
       "Very loud fans here, I like!"
      ],
      "gs": [
-      "Maçtan geliyorum {ab}, sesim kısıldı! {takim} bugün döktürdü!",
+      "Maçtan geliyorum {sabi}, sesim kısıldı! {takim} bugün döktürdü!",
       "Sorma, hakem yine bize karşıydı ama {takim} yıkılmaz!",
       "Hayatım {takim}, başka bir şey sorma!"
      ],
      "fb": [
-      "Maçtan geliyorum {ab}, sesim kısıldı! {takim} bugün döktürdü!",
+      "Maçtan geliyorum {sabi}, sesim kısıldı! {takim} bugün döktürdü!",
       "Sorma, hakem yine bize karşıydı ama {takim} yıkılmaz!",
       "Hayatım {takim}, başka bir şey sorma!"
      ],
      "bjk": [
-      "Maçtan geliyorum {ab}, sesim kısıldı! {takim} bugün döktürdü!",
+      "Maçtan geliyorum {sabi}, sesim kısıldı! {takim} bugün döktürdü!",
       "Sorma, hakem yine bize karşıydı ama {takim} yıkılmaz!",
       "Hayatım {takim}, başka bir şey sorma!"
      ],
      "bsk": [
-      "Maçtan geliyorum {ab}, sesim kısıldı! {takim} bugün döktürdü!",
+      "Maçtan geliyorum {sabi}, sesim kısıldı! {takim} bugün döktürdü!",
       "Sorma, hakem yine bize karşıydı ama {takim} yıkılmaz!",
       "Hayatım {takim}, başka bir şey sorma!"
      ],
      "milli": [
       "Milli maçtan geliyorum, ne maçtı ama!",
-      "Bu kadroyla Dünya Kupası’na gideriz {ab}!"
+      "Bu kadroyla Dünya Kupası’na gideriz {sabi}!"
      ]
     }
    },
@@ -2953,7 +2953,7 @@
      "genel": [
       "Taksimetre ne yazarsa, ama şişirme lütfen.",
       "Normal ücret neyse o.",
-      "Pahalı olmasın {ab}, öğrenci değilim ama zenginim de yok."
+      "Pahalı olmasın {sabi}, öğrenci değilim ama zenginim de yok."
      ],
      "turist": [
       "How much? Not expensive please!",
@@ -3003,7 +3003,7 @@
     "puan": -0.1,
     "cevap": {
      "genel": [
-      "Siyaset konuşmayalım {ab}, sinirim bozulur.",
+      "Siyaset konuşmayalım {sabi}, sinirim bozulur.",
       "Aman, bırak şimdi bunları.",
       "Her şey çok pahalı, gerisini sen düşün."
      ],
@@ -3052,7 +3052,7 @@
     "cevap": {
      "genel": [
       "Asıl ben teşekkür ederim.",
-      "Ne güzel insansın {ab}.",
+      "Ne güzel insansın {sabi}.",
       "Rica ederim, sen de çok iyisin."
      ],
      "turist": [
@@ -3095,7 +3095,7 @@
      "genel": [
       "Güzel götürürsen beş yıldız veririm.",
       "Bakalım, yol nasıl geçecek.",
-      "Puanı sonunda veririm {ab}."
+      "Puanı sonunda veririm {sabi}."
      ]
     }
    },
@@ -3113,7 +3113,7 @@
     "cevap": {
      "genel": [
       "Sen de kendine iyi bak.",
-      "Görüşmek üzere {ab}.",
+      "Görüşmek üzere {sabi}.",
       "İyi kazançlar sana."
      ],
      "turist": [
@@ -3147,12 +3147,12 @@
   "taraftar": {
    "ayni": [
     "Sen de mi {takim} taraftarısın? Gel kardeşim, bugün kazandık!",
-    "{takim} başka sevda başka! Ver elini {ab}!",
+    "{takim} başka sevda başka! Ver elini {sabi}!",
     "Oo, demek {takim}! Bugün bütün yollar bize açık!"
    ],
    "rakip": [
     "Ne?! {takim} mı? Şaka yapıyorsun herhalde!",
-    "O takımın adını bu arabada anma {ab}, sinirim bozuluyor!",
+    "O takımın adını bu arabada anma {sabi}, sinirim bozuluyor!",
     "{takim} mı? Bugün o tarafa hiç bulaşma bence."
    ],
    "puanAyni": 0.5,
@@ -3166,7 +3166,7 @@
    "genel": [
     "Hıhı, öyle mi?",
     "Haklısın aslında.",
-    "Bilmem ki {ab}, olabilir.",
+    "Bilmem ki {sabi}, olabilir.",
     "Ha, anladım.",
     "Vallahi doğru söylüyorsun.",
     "Hmm, ilginç."
@@ -3500,5 +3500,10 @@
     }
    ]
   }
+ },
+ "surucuHitap": {
+  "_not": "Yolcunun sürücüye hitabı ({sabi}, {Sabi}). {ab} ise sürücünün yolcuya hitabı (yolcunun cinsiyetinden).",
+  "sabi": "abi",
+  "Sabi": "Abi"
  }
 }

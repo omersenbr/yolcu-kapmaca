@@ -540,8 +540,8 @@ function landmarks(): Lm[] {
   if (L['Havalimanı terminali'])
     for (const a of (MAP && MAP.havalimanlari) || []) {
       const [ax0, , ax1, ay1] = a,
-        Wt = Math.min(20, (ax1 - ax0) * 0.7);
-      LMS.push({ name: 'Havalimanı terminali', x: (ax0 + ax1) / 2 - Wt / 2, y: ay1 - 6, w: Wt, h: 7 });
+        Wt = Math.min(12, (ax1 - ax0) * 0.5);
+      LMS.push({ name: 'Havalimanı terminali', x: (ax0 + ax1) / 2 - Wt / 2, y: ay1 - 5, w: Wt, h: 5 });
     }
   // Avrasya Tüneli ağızları
   if (L['Avrasya Tüneli girişi'])
@@ -560,15 +560,72 @@ const lmReady = (n: string) => {
 function drawLandmark(m: Lm, draw = true): Box | null {
   const L = lmReady(m.name);
   if (!L) return null;
-  // çizimde arsanın uzun kenarı sol alttan sağ üste (haritada x yönü); alan derinse aynalanır
-  const flip = m.h > m.w,
-    wScr = (m.w + m.h) * S * CS * 0.98,
-    k = wScr / L.w,
-    [X] = proj(m.x + m.w / 2 - 0.5, m.y + m.h / 2 - 0.5, 0),
-    [, Yb] = proj(m.x - 0.5, m.y + m.h - 0.5, 0),
-    foot = (m.w * SN + m.h * CS) * S * K + wScr * 0.03,
-    bottom = Yb + wScr * 0.03;
+  // alanın ekrandaki eşkenar dörtgeni: sol, alt, sağ köşeler
+  const x0 = m.x - 0.5,
+    y0 = m.y - 0.5,
+    x1 = x0 + m.w,
+    y1 = y0 + m.h;
+  const P = [proj(x0, y0, 0), proj(x1, y0, 0), proj(x1, y1, 0), proj(x0, y1, 0)];
+  const left = P.reduce((a, b) => (b[0] < a[0] ? b : a)),
+    right = P.reduce((a, b) => (b[0] > a[0] ? b : a)),
+    bot = P.reduce((a, b) => (b[1] > a[1] ? b : a));
+  const dist = (a: number[], b: number[]) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+  const Lab = dist(left, bot),
+    Lbr = dist(bot, right);
+  // görselin tabanı (en sol, en alt, en sağ noktalar): alana sığacak en büyük ölçek; aynalama gerekirse aynala
+  const [xl, yl, xb, yb, xr, yr] = L.taban || [0, L.h * 0.75, L.w / 2, L.h, L.w, L.h * 0.75];
+  const ia = Math.hypot(xb - xl, yb - yl) || 1,
+    ib = Math.hypot(xr - xb, yr - yb) || 1;
+  const k1 = Math.min(Lab / ia, Lbr / ib),
+    k2 = Math.min(Lab / ib, Lbr / ia),
+    flip = k2 > k1 * 1.02,
+    k = Math.max(k1, k2) * 0.95;
+  // taban merkezi alan merkezine
+  const ecx = flip ? L.w - (xl + xr) / 2 : (xl + xr) / 2,
+    ecy = (yl + yr) / 2,
+    pcx = (left[0] + right[0]) / 2,
+    pcy = (left[1] + right[1]) / 2,
+    X = pcx + (L.w / 2 - ecx) * k,
+    bottom = pcy + (L.h - ecy) * k,
+    foot = (L.h - (yl + yr - yb)) * k;
   return drawSquashed(img(L.file), 0, 0, L.w, L.h, X, bottom, k, foot, SQ_SIMGE, flip, draw);
+}
+
+/* ---- köprüler: görselin iki ucu yolun iki ucuna oturur, zemin katmanında çizilir ---- */
+const BRIDGES: { name: string; a: number[]; b: number[] }[] = [
+  { name: 'Yavuz Sultan Selim Köprüsü', a: [130.5, 40], b: [140.5, 40] },
+  { name: 'FSM Köprüsü', a: [130.5, 76], b: [140.5, 76] },
+  { name: '15 Temmuz Şehitler Köprüsü', a: [130.5, 116], b: [140.5, 116] },
+  { name: 'Galata Köprüsü', a: [116, 145.5], b: [116, 152.5] },
+];
+export const bridgeReady = (n: string) => {
+  const B = MANIFEST.bridges_iso && MANIFEST.bridges_iso.kopruler[n];
+  return B && ready(img(B.file)) ? B : null;
+};
+function drawBridge(br: { name: string; a: number[]; b: number[] }) {
+  const B = bridgeReady(br.name);
+  if (!B) return;
+  let pa = proj(br.a[0], br.a[1], 0),
+    pb = proj(br.b[0], br.b[1], 0);
+  if (pb[0] < pa[0]) [pa, pb] = [pb, pa];
+  let [el, er] = B.uclar as number[][];
+  // görselin eğimi yolunkiyle ters ise aynala
+  const flip = Math.sign(er[1] - el[1]) !== Math.sign(pb[1] - pa[1]);
+  if (flip)
+    [el, er] = [
+      [B.w - er[0], er[1]],
+      [B.w - el[0], el[1]],
+    ];
+  const k = Math.hypot(pb[0] - pa[0], pb[1] - pa[1]) / Math.hypot(er[0] - el[0], er[1] - el[1]),
+    ox = pa[0] - el[0] * k,
+    oy = pa[1] - el[1] * k;
+  screen();
+  if (flip) {
+    ctx.translate(ox + B.w * k, oy);
+    ctx.scale(-1, 1);
+    ctx.drawImage(img(B.file), 0, 0, B.w * k, B.h * k);
+    screen();
+  } else ctx.drawImage(img(B.file), ox, oy, B.w * k, B.h * k);
 }
 
 /** binanın arkasında kalan önemli nesnenin siluet işareti (binanın üstüne çizilir) */
@@ -909,10 +966,12 @@ export function renderIso(t: number, dt: number) {
   cam.y += (tg.y - cam.y) * k;
   {
     // ayakta çizilen simge yapılar zemine basılmasın; görseller yüklendikçe harita parçaları yeniden çizilir
-    const sig = spriteMode() ? landmarks().filter((m) => lmReady(m.name)).length : -1;
+    const sig = spriteMode()
+      ? landmarks().filter((m) => lmReady(m.name)).length + 100 * BRIDGES.filter((b) => bridgeReady(b.name)).length
+      : -1;
     if (sig !== lmState.sig) {
       lmState.sig = sig;
-      painterOpts.skipLm = sig >= 0 ? (n: string) => !!lmReady(n) : null;
+      painterOpts.skipLm = sig >= 0 ? (n: string) => !!(lmReady(n) || bridgeReady(n)) : null;
       buildMap();
     }
   }
@@ -967,6 +1026,7 @@ export function renderIso(t: number, dt: number) {
     [140, 30, 194, 0.09, 2],
   ])
     drawFerry((x0 + ((Math.sin(ft * sp + ph) + 1) / 2) * span) * TS, y * TS, true, t);
+  if (painterOpts.skipLm) for (const br of BRIDGES) drawBridge(br);
   const L = light();
   // sıralı nesneler: [derinlik, çizim]
   const objs: [number, () => void][] = [];

@@ -30,6 +30,9 @@ export function baseVars(p: Pax | null): Vars {
     soruNerede: al ? 'Nereden aldın' : 'Nerede bıraktın',
     soruNeredeSiz: al ? 'nereden binmişti' : 'nerede indi',
   };
+  // yolcunun sürücüye hitabı (oyuncu karakteri erkek): {sabi}
+  v.sabi = DLG.surucuHitap.sabi;
+  v.Sabi = DLG.surucuHitap.Sabi;
   if (p) {
     v.yolcu = p.look.name;
     v.ab = p.look.fem ? 'abla' : 'abi';

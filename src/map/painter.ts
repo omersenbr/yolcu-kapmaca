@@ -273,7 +273,7 @@ export function paintRegion(m, c0, r0, c1, r1) {
     };
     for (const [br] of MAP.kopruler) {
       const b = BRS[br];
-      if (!b) continue;
+      if (!b || (painterOpts.skipLm && painterOpts.skipLm(b[0]))) continue;
       const L = LMD[b[0]],
         Wt = b[1],
         Ht = (Wt * L.h) / L.w,
@@ -286,7 +286,10 @@ export function paintRegion(m, c0, r0, c1, r1) {
       const L = LMD['Galata Köprüsü'],
         Wt = 10,
         Ht = (Wt * L.h) / L.w;
-      if (!(116 + Ht < c0 - 1 || 116 - Ht > c1 + 1 || 155 < r0 || 144 > r1)) {
+      if (
+        !(116 + Ht < c0 - 1 || 116 - Ht > c1 + 1 || 155 < r0 || 144 > r1) &&
+        !(painterOpts.skipLm && painterOpts.skipLm('Galata Köprüsü'))
+      ) {
         m.save();
         m.translate(116.5 * TS, 149.5 * TS);
         m.rotate(Math.PI / 2);
