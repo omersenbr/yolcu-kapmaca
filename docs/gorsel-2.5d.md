@@ -23,32 +23,40 @@ background, object fully inside the frame with margin.
 
 ## 1. Araçlar (en önce; en çok göze batan bunlar)
 
-11 araç: `taxi1`, `taxi2`, `taxi3`, `police1`, `police2`, `sivil`, `tag1`–`tag5`. Araçlar haritada dört yöne gider; izometrik görünümde bu iki çizim eder, diğer ikisi aynalanır:
+Referans görsel yüklemek gerekmez: 11 aracın hepsi tek sayfada, yazıyla tarif edilerek istenir. Araçlar haritada dört yöne gider; izometrik görünümde bu iki sayfa eder (önden ve arkadan), diğer iki yön aynalanır. Yani toplam **iki istem, iki görsel**.
 
-- **önden** (araç sağ alta doğru bakar; ön ve sol yan görünür)
-- **arkadan** (araç sağ üste doğru gider; arka ve sol yan görünür)
-
-Toplam 22 çizim. Dosya adları: `taxi1_on.png`, `taxi1_arka.png`, …
-
-Önden istemi (referans olarak aracın üstten çizimini ekle):
+Önden sayfası:
 
 ```
-Isometric game sprite of the SAME car as in the reference image (same colour, same body type, same
-roof details), seen from the front-left: the car points towards the lower right of the image, its front
-and left side are visible, the roof is visible from above. Single car, centred.
+A sheet of 11 different isometric car sprites for a city game, arranged in a grid of 4 columns and
+3 rows (last cell empty), evenly spaced, none touching or overlapping, all the same scale.
+Every car is seen from the SAME angle, front-left: it points towards the lower right of the image,
+its front and left side are visible, the roof is visible from above.
+The cars, in reading order:
+1. Yellow Istanbul taxi sedan, small yellow roof sign (no text), black-yellow checker stripe along the side.
+2. Yellow Istanbul taxi sedan, slightly different body, same roof sign and checker stripe.
+3. Yellow taxi minivan (boxy people carrier), roof sign, checker stripe.
+4. White police sedan with blue stripes along the sides and a red-blue light bar on the roof.
+5. White police sedan, slightly different body, blue side stripes, red-blue roof light bar.
+6. Plain black unmarked sedan, no roof equipment.
+7. Old worn beige hatchback, faded paint, a little rust.
+8. Indigo-blue compact sedan.
+9. Teal-green modern hatchback with a dark glass roof.
+10. Steel-blue compact SUV with a sunroof.
+11. Black luxury sedan, long and low, with a sunroof.
 [ortak kısım]
 ```
 
-Arkadan istemi:
+Arkadan sayfası: aynı istem, yalnızca açı cümlesi değişir:
 
 ```
-Isometric game sprite of the SAME car as in the reference image, seen from the rear-left: the car
-drives away towards the upper right of the image, its rear and left side are visible, the roof is
-visible from above. Single car, centred.
-[ortak kısım]
+Every car is seen from the SAME angle, rear-left: it drives away towards the upper right of the image,
+its rear and left side are visible, the roof is visible from above.
 ```
 
-Araca özel notlar: taksi sarı, tavanda taksi lambası (yazısız); polis beyaz-mavi, tavanda lamba çubuğu; `sivil` düz gri sedan, lambasız (lambayı oyun çizer); `tag1` emektar hatchback, `tag2` kompakt sedan, `tag3` yeni hatchback, `tag4` kompakt SUV, `tag5` siyah lüks sedan.
+İki sayfayı aynı sohbette art arda iste (“now the same 11 cars, same order, same colours, seen from the rear-left”); böylece önden ve arkadan çizimler aynı araç gibi durur. Sayfadaki sıra oyundaki adlara karşılık gelir: 1–3 `taxi1`–`taxi3`, 4–5 `police1`–`police2`, 6 `sivil`, 7–11 `tag1`–`tag5`; kesip adlandırmayı betik yapar.
+
+Sayfada araçlar birbirine karışırsa ya da sayı tutmazsa iki sayfaya böl: taksiler ve polisler (1–6), Tag araçları (7–11).
 
 ## 2. Binalar
 
