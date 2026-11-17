@@ -120,6 +120,8 @@ const semtPool: Record<string, number[][]> = {};
 /** yolcu doğarken (kariyer): ara sıra aktif olmayan bir müdavimi kendi semtinde çıkar */
 export function maybeSpawnMudavim(): Pax | null {
   if (!G.career || Math.random() >= ECO.mudavim.ihtimal) return null;
+  // aynı anda en fazla birkaç müdavim (şehir müdavimle dolmasın)
+  if (G.pax.filter((p) => p.mudavim).length >= (ECO.mudavim.enFazla ?? 1)) return null;
   const free = DLG.mudavimler.filter(
     (m) => !G.pax.some((p) => p.mudavim === m.id) && relation(m.id) > ECO.mudavim.alt + 1,
   );
