@@ -313,7 +313,7 @@ export function paintRegion(m, c0, r0, c1, r1) {
       m.setLineDash([]);
     }
     const tx = (ax0 + ax1) / 2;
-    {
+    if (!(painterOpts.skipLm && painterOpts.skipLm('Havalimanı terminali'))) {
       const L = LMD['Havalimanı terminali'],
         Wt = Math.min(20, (ax1 - ax0) * 0.7),
         Ht = (Wt * L.h) / L.w;
@@ -367,7 +367,7 @@ export function paintRegion(m, c0, r0, c1, r1) {
         );
       }
     }
-    {
+    if (!(painterOpts.skipLm && painterOpts.skipLm('Avrasya Tüneli girişi'))) {
       const L = LMD['Avrasya Tüneli girişi'];
       for (const [px2, py2] of [
         [92.5, 184.6],
