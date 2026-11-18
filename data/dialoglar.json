@@ -2112,7 +2112,7 @@
    "temiz4": "Şikayetsiz 4 teslimat",
    "kombo3": "3’lü kombo yap",
    "yildiz5": "3 kez 5 yıldız al",
-   "brut15": "Bir vardiyada ₺15 000 kazan",
+   "brut15": "Bir vardiyada ₺15.000 kazan",
    "tagGizli4": "Tag’de 4 yolcu teslim et"
   },
   "olayBaslik": "Yolculukta",
@@ -2173,7 +2173,7 @@
      "t": "Tabii, bekliyorum",
      "bahsis": 120,
      "puan": 0.7,
-     "cevap": "Sağ ol {ab}, bir de sana aldım!"
+     "cevap": "Sağ ol {sabi}, bir de sana aldım!"
     },
     {
      "t": "Duramam, trafik var",
@@ -2185,7 +2185,7 @@
    "turist": {
     "soru": "Wait wait! Simit! Famous bread, yes? We stop one second, please?",
     "cevap": [
-     "Thank you {ab}! I buy one for you also!",
+     "Thank you my friend! I buy one for you also!",
      "Oh no... okay, I eat later."
     ]
    }

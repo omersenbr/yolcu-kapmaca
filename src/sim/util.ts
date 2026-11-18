@@ -19,8 +19,10 @@ export const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 export const esc = (s) =>
   String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 /* Diyalog şablonu: "{semt}" gibi değişkenleri doldurur */
+/** metin şablonu: {ad} yerine değer. Tam sayı tutarlar binlik noktayla yazılır (₺3975 → ₺3.975) */
+const fmtVar = (x) => (typeof x === 'number' && Number.isInteger(x) && Math.abs(x) >= 1000 ? x.toLocaleString('tr-TR') : x);
 export const T = (s, v) =>
-  String(s).replace(/\{([^{}]+)\}/g, (m, k) => (v && v[k] !== undefined && v[k] !== null ? v[k] : m));
+  String(s).replace(/\{([^{}]+)\}/g, (m, k) => (v && v[k] !== undefined && v[k] !== null ? fmtVar(v[k]) : m));
 export function mixHex(a, b, k) {
   const p = (s) => [1, 3, 5].map((i) => parseInt(s.slice(i, i + 2), 16));
   const A = p(a),
@@ -34,3 +36,6 @@ export function mixHex(a, b, k) {
     ).join('')
   );
 }
+
+/** para yazımı: −₺5.840 / ₺12.000 (eksi işareti ₺’den önce, binlik nokta) */
+export const tlFmt = (n: number) => (n < 0 ? '−₺' : '₺') + Math.round(Math.abs(n)).toLocaleString('tr-TR');

@@ -222,12 +222,12 @@ body {
 }
 .toast {
   position: absolute;
-  top: 18px;
-  left: 12px;
-  right: 84px;
+  top: 14px;
+  left: 8px;
+  right: 128px; /* mini haritanın solunda kalsın */
   margin: auto;
   width: max-content;
-  max-width: calc(100% - 96px);
+  max-width: calc(100% - 136px);
   background: var(--ink);
   color: #fff;
   padding: 8px 14px;
@@ -241,7 +241,7 @@ body {
   transform: translateY(-6px);
   pointer-events: none;
   text-align: center;
-  z-index: 3;
+  z-index: 6; /* görev kartının (3) üstünde: duyuru kısa sürer, kapanmasın */
 }
 .toast.show {
   opacity: 1;
@@ -1771,7 +1771,7 @@ body.inmenu .hud {
   bottom: 100px;
   margin: auto;
   max-width: 360px;
-  z-index: 4;
+  z-index: 7; /* öğretici balonunun (6) üstünde: yardım çağrısı kapanmasın */
   border: 3px solid #111;
   border-radius: 14px;
   background: #2f9e44;
@@ -2347,6 +2347,15 @@ body.inmenu .hud {
 #pax {
   font-size: 19px;
 }
+#moneyShow[data-len='l'] {
+  font-size: 20px;
+}
+#moneyShow[data-len='xl'] {
+  font-size: 16px;
+}
+#moneyShow[data-len='xxl'] {
+  font-size: 12.5px;
+}
 .taskcard {
   position: absolute;
   left: 8px;
@@ -2748,5 +2757,50 @@ body.inmenu .hud {
   100% {
     transform: translateX(130px) scale(0.9);
     opacity: 0;
+  }
+}
+
+/* kısa ekranlar (iPhone SE ve benzeri): sorgu paneli sığsın, cevaplar ekran dışında kalmasın */
+@media (max-height: 700px) {
+  .comic {
+    padding: 6px;
+  }
+  .panel {
+    padding: 8px 10px 10px;
+  }
+  .cast {
+    min-height: 70px;
+    margin: 0 0 6px;
+  }
+  .cast .pimg,
+  .cast svg.f {
+    width: 70px;
+    height: 70px;
+  }
+  .bubble {
+    font-size: 15px;
+    padding: 7px 11px 8px;
+    margin-bottom: 7px;
+  }
+  .answers {
+    gap: 6px;
+  }
+  .ans {
+    padding: 1px 6px;
+    font-size: 14px;
+    line-height: 1.2;
+    border-width: 7px 10px 11px 7px;
+  }
+  .cap {
+    font-size: 12px;
+    margin-bottom: 3px;
+  }
+  .cast {
+    min-height: 58px;
+  }
+  .cast .pimg,
+  .cast svg.f {
+    width: 58px;
+    height: 58px;
   }
 }

@@ -118,14 +118,15 @@ export function drawPerson(L, x, y, s, t, ph, waving) {
   ctx.fill();
 }
 /** 2.5D görünüm yolcunun yerdeki halkasını ve figürünü ayrı çizer (figüre neon hat çekmek için) */
-export const paxOpts = { part: 'all' as 'all' | 'halo' | 'figure' };
+/** çizilecek parça: hepsi, yalnız yerdeki halka, yalnız figür (neon için), yalnız etiketler (balon, müdavim, turist) */
+export const paxOpts = { part: 'all' as 'all' | 'halo' | 'figure' | 'labels' };
 export function drawPax(p, t) {
   const boss = p.look.tourist;
   const x = px(p.x) - TS * 0.18,
     y = px(p.y) - TS * (boss ? 0.3 : 0.12),
     s = TS * (boss ? 1.45 : 1.05);
   const pulse = 0.5 + 0.5 * Math.sin(t * 4 + p.ph);
-  if (paxOpts.part === 'figure') {
+  if (paxOpts.part === 'figure' || paxOpts.part === 'labels') {
     /* halka yok */
   } else if (boss) {
     const cx0 = x + TS * 0.12,
@@ -157,7 +158,7 @@ export function drawPax(p, t) {
     ctx.fill();
   }
   if (paxOpts.part === 'halo') return;
-  {
+  if (paxOpts.part !== 'labels') {
     const k = p.look.prof,
       pf = k && MANIFEST.passengers.map[k],
       im = pf ? img(pf) : null;
@@ -171,6 +172,7 @@ export function drawPax(p, t) {
       ctx.drawImage(im, (i % 4) * S, Math.floor(i / 4) * S, S, S, cx - sz / 2, cy - sz + bob, sz, sz);
     } else drawPerson(p.look, x, y, s, t, p.ph, true);
   }
+  if (paxOpts.part === 'figure') return;
   if (boss) {
     const bx = x,
       by = y - s * 0.72 - Math.sin(t * 3 + p.ph) * TS * 0.05;

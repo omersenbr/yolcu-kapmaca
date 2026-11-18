@@ -5,7 +5,7 @@ import { assetUrl } from '../core/assets';
 import { DLG, MANIFEST } from '../sim/content';
 import { G } from '../sim/state';
 import { load } from '../sim/storage';
-import { T } from '../sim/util';
+import { T, tlFmt } from '../sim/util';
 import { sfx } from '../audio/sound';
 
 let seed = 11;
@@ -76,7 +76,7 @@ export function endReveal(why: string, final: number, rekor: boolean) {
     txt = el.textContent,
     t0 = performance.now(),
     dur = reduce ? 0 : 1100;
-  const fmt = (v: number) => (v < 0 ? '−₺' : '₺') + Math.abs(Math.round(v)).toLocaleString('tr-TR');
+  const fmt = tlFmt;
   const tick = () => {
     const k = dur ? Math.min(1, (performance.now() - t0) / dur) : 1;
     if (k < 1) {

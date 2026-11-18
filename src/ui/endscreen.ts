@@ -2,7 +2,7 @@
 import { $ } from '../core/dom';
 import { DF, G, UNAME } from '../sim/state';
 import { load, save } from '../sim/storage';
-import { esc } from '../sim/util';
+import { esc, tlFmt } from '../sim/util';
 import { face } from '../dialog/portraits';
 import { addLB, renderLB } from './leaderboard';
 import { pageTurn } from './pageflip';
@@ -38,7 +38,10 @@ export function endGame(why) {
   if (why === 'time')
     msg = G.role === 'taxi' ? 'Taksimetreyi kapattın. Bugünkü kazanç:' : 'Uygulamayı kapattın. Bugünkü kazanç:';
   else if (why === 'baglandi') {
-    msg = `Araç otoparkta, ceza kesildi. Kasadaki ${G.money < 0 ? '−₺' : '₺'}${Math.abs(G.money)} da gitti, her şey sıfırlandı.`;
+    msg =
+      G.money > 0
+        ? `Araç otoparkta, ceza kesildi. Kasadaki ${tlFmt(G.money)} da gitti, her şey sıfırlandı.`
+        : 'Araç otoparkta, ceza kesildi. Kasada zaten para yoktu; her şey sıfırlandı.';
     final = 0;
   } else if (why === 'ruhsat') {
     msg =
@@ -51,10 +54,10 @@ export function endGame(why) {
   if (final > best) save(key, final);
   $('endTitle').textContent = titles[why];
   $('endWhy').textContent = msg;
-  $('endMoney').textContent = (final < 0 ? '−₺' : '₺') + Math.abs(final);
-  $('endBest').textContent = (final > best ? 'Yeni rekor!' : 'Rekorun: ₺' + best) + ` (${DF().label})`;
+  $('endMoney').textContent = tlFmt(final);
+  $('endBest').textContent = (final > best ? 'Yeni rekor!' : 'Rekorun: ' + tlFmt(best)) + ` (${DF().label})`;
   const fd = $('founder'),
-    rank = addLB(G.role, final);
+    rank = final > 0 ? addLB(G.role, final) : 0; // zararlı gün sıralamaya girmez
   if (rank === 1 && final > 0) {
     fd.innerHTML =
       G.role === 'tag'

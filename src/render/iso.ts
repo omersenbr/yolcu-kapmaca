@@ -882,8 +882,8 @@ interface NeonEntry {
   H: number;
 }
 const neonCache = new Map<any, NeonEntry>();
-// geniş: müdavim etiketi ve “Taksi!” balonu kesilmesin
-const neonBox = () => ({ w: S * 6.4, h: S * 4.2, up: S * 0.9 });
+// yalnızca figür (etiketler neona girmez, ayrıca çizilir): kutu dar, kopyalama ucuz
+const neonBox = () => ({ w: S * 1.9, h: S * 1.95, up: S * 0.5 });
 const sized = (c: HTMLCanvasElement, W: number, H: number) => {
   if (c.width !== W || c.height !== H) {
     c.width = W;
@@ -968,6 +968,11 @@ function drawPaxNeon(p, t) {
   });
   const e = neonEntry(p, t);
   blitNeon(p, e.cv, e.W, e.H);
+  upright(p.x, p.y, 0, () => {
+    paxOpts.part = 'labels';
+    drawPax(p, t);
+    paxOpts.part = 'all';
+  });
 }
 /** bina arkasında kalan yolcu: yalnızca figürün neon hattı binanın üstüne */
 function drawPaxGhost(p, t) {
@@ -1270,7 +1275,8 @@ export function renderIso(t: number, dt: number) {
   if (G && spriteMode()) {
     const P = G.player,
       d = P.dir || [0, -1];
-    key(P.x, P.y, G.role === 'taxi' ? '#ffc20e' : '#8e98ff', d);
+    // oyuncu: önündeki bina saydamlaşır; ayrıca sarı siluet çizilmez (sürekli yanıp gereksiz duruyordu)
+    key(P.x, P.y, '', d);
     for (let n = 1; n <= 4; n++) key(P.x + d[0] * n, P.y + d[1] * n, '', undefined, 0); // gideceği yol
     if (P.carry) {
       key(P.carry.dx, P.carry.dy, '#2f9e44', undefined, 0);
