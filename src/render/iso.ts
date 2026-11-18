@@ -429,8 +429,9 @@ function drawCarSprite(e, t: number): boolean {
   ctx.beginPath();
   ctx.arc(x, y, TS * 0.46, 0, Math.PI * 2);
   ctx.fill();
-  if (e.isPlayer || G.assist === e) {
-    ctx.strokeStyle = G.assist === e ? '#ff922b' : G.role === 'taxi' ? '#ffc20e' : '#8e98ff';
+  // oyuncunun aracında halka yok (gereksiz duruyordu); yalnızca yardıma gelen ekip arkadaşı işaretlenir
+  if (G.assist === e) {
+    ctx.strokeStyle = '#ff922b';
     ctx.lineWidth = Math.max(2, TS * 0.09);
     ctx.globalAlpha = blink ? 0.35 : 1;
     ctx.beginPath();
@@ -596,6 +597,20 @@ function lmSub(m: Lm, r: number): Lm {
       if (e < err - 1e-6) ((best = n), (err = e));
     }
   return best;
+}
+/* saydamlaşma hafızası: kapatma bitince hemen geri gelmez (kısa süre bekler, yavaşça belirir);
+   böylece önündeki nokta bir girip bir çıkınca bina yanıp sönmez */
+const fadeMem = new WeakMap<object, { a: number; until: number; t: number }>();
+function fadeAlpha(o: object, hit: boolean, low: number, t: number) {
+  let st = fadeMem.get(o);
+  if (!st) fadeMem.set(o, (st = { a: 1, until: -1, t }));
+  if (hit) st.until = t + 0.9;
+  const target = t < st.until ? low : 1,
+    dt = clamp(t - st.t, 0, 0.1);
+  st.t = t;
+  st.a += (target - st.a) * Math.min(1, dt * 7);
+  if (Math.abs(st.a - target) < 0.01) st.a = target;
+  return st.a;
 }
 /** 3x3 doğrusal denklem (Cramer) */
 function solve3(M: number[][], v: number[]): number[] | null {
@@ -1313,11 +1328,9 @@ export function renderIso(t: number, dt: number) {
           objs.push([
             d,
             () => {
-              if (hide) {
-                screen();
-                ctx.globalAlpha = 0.32;
-              }
-              ctx.globalAlpha = hide ? 0.32 : 1;
+              const al = fadeAlpha(b, hide, 0.32, t);
+              if (al < 1) screen();
+              ctx.globalAlpha = al;
               drawCell(b, L.night);
               ctx.globalAlpha = 1;
             },
@@ -1335,7 +1348,7 @@ export function renderIso(t: number, dt: number) {
           objs.push([
             d,
             () => {
-              ctx.globalAlpha = hide ? 0.4 : 1;
+              ctx.globalAlpha = fadeAlpha(m, hide, 0.4, t);
               drawLandmark(m);
               ctx.globalAlpha = 1;
             },
