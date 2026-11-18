@@ -6,7 +6,7 @@ import { assetUrl } from '../core/assets';
 import { DLG, MANIFEST } from '../sim/content';
 import { G, TL, tagLevel } from '../sim/state';
 import { levelUp } from './ceremony';
-import { T } from '../sim/util';
+import { T, tlFmt } from '../sim/util';
 import { muted, sfx } from '../audio/sound';
 import { playerScr } from '../render/view';
 
@@ -31,11 +31,22 @@ const MIN_GAIN = 50,
 let shown: number | null = null,
   lastMoney: number | null = null,
   lastUsd = 0;
-const fmt = (v: number) => (v < 0 ? '−₺' : '₺') + Math.abs(Math.round(v)).toLocaleString('tr-TR');
+const fmt = tlFmt;
 function showMoney() {
   const el = $('moneyShow');
   if (!el || !G) return;
-  el.textContent = fmt(shown ?? G.money) + (G.usd ? ' +$' + G.usd : '');
+  const txt = fmt(shown ?? G.money);
+  // turist doları tutarın yanında değil, küçük “Kasa” etiketinde: şerit taşmasın
+  const lab = el.parentElement && el.parentElement.querySelector('small');
+  if (lab) {
+    if (!lab.dataset.base) lab.dataset.base = lab.textContent || '';
+    const l2 = lab.dataset.base + (G.usd ? ' · +$' + G.usd : '');
+    if (lab.textContent !== l2) lab.textContent = l2;
+  }
+  if (el.textContent === txt) return;
+  el.textContent = txt;
+  // uzun tutarda yazı küçülür: yanındaki “Yolcu” alanı kırpılmasın
+  el.dataset.len = txt.length > 11 ? 'xxl' : txt.length > 7 ? 'xl' : txt.length > 6 ? 'l' : '';
 }
 /** her kare: kasayı izle, değiştiyse para uçur ve sayacı yuvarla */
 export function juiceFrame(dt: number) {

@@ -1,7 +1,7 @@
 // <auto-imports>
 import { DF, UNAME } from '../sim/state';
 import { load, save } from '../sim/storage';
-import { esc } from '../sim/util';
+import { esc, tlFmt } from '../sim/util';
 import { careerBoardHtml } from './career';
 // </auto-imports>
 /* ================= SIRALAMA: şimdilik yerel, rol başına ilk 10 ================= */
@@ -27,11 +27,11 @@ export function renderLB(el) {
   if (!el) return;
   const lb = loadLB();
   const col = (role, title, boss) => {
-    const L = lb[role];
+    const L = lb[role].filter((e) => e.m > 0); // eski kayıtlardaki zararlı günler gösterilmez
     return `<section><h3>${title}</h3>${
       L.length
         ? `<p class="boss">${boss}: ${esc(L[0].n)}</p><ol>${L.slice(0, 5)
-            .map((e) => `<li>${esc(e.n)} <span>₺${e.m} · ${e.d}</span></li>`)
+            .map((e) => `<li>${esc(e.n)} <span>${tlFmt(e.m)} · ${e.d}</span></li>`)
             .join('')}</ol>`
         : '<p class="empty">Henüz kimse yok.</p>'
     }</section>`;

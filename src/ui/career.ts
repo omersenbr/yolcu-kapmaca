@@ -8,7 +8,7 @@ import type { Career } from '../sim/career';
 import { DBOX, STREETS, ZONES, district } from '../sim/grid';
 import { G, UNAME } from '../sim/state';
 import { load, save } from '../sim/storage';
-import { T, esc, rnd } from '../sim/util';
+import { T, esc, rnd, tlFmt } from '../sim/util';
 import { toast } from './hud';
 import { MANIFEST } from '../sim/content';
 import { assetUrl } from '../core/assets';
@@ -20,7 +20,7 @@ let mode = load('yk-mod', 'hizli');
 let lastShift = 'gunduz';
 const S = () => DLG.kariyer;
 /** işaretli tutar: −₺800 / ₺800 */
-const money = (n: number) => (n < 0 ? '−₺' : '₺') + Math.round(Math.abs(n)).toLocaleString('tr-TR');
+const money = tlFmt;
 const tl = (n: number) => Math.round(n).toLocaleString('tr-TR');
 
 export const careerMode = () => mode === 'kariyer';

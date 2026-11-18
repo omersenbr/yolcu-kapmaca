@@ -3,7 +3,7 @@ import { DLG } from '../sim/content';
 import { $ } from '../core/dom';
 import { DF, G, TL, demand, hourNow } from '../sim/state';
 import { taximeter } from '../sim/passengers';
-import { clamp } from '../sim/util';
+import { clamp, tlFmt } from '../sim/util';
 import { district } from '../sim/grid';
 // </auto-imports>
 /* ---- telsiz: yakındaki meslektaşlar Tag kovalıyor (taksici rolü) ---- */
@@ -37,7 +37,7 @@ export function initHud() {
 /* ================= HUD / ARAYÜZ ================= */
 export function updHud() {
   if (!G) return;
-  $('money').textContent = (G.money < 0 ? '−₺' : '₺') + Math.abs(G.money) + (G.usd ? ' +$' + G.usd : '');
+  $('money').textContent = tlFmt(G.money) + (G.usd ? ' +$' + G.usd : '');
   {
     const h = hourNow(),
       hh = Math.floor(h),

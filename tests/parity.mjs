@@ -45,7 +45,9 @@ const snapRaw = (page) => page.evaluate(() => ({
   end: document.getElementById('end').hidden ? '' : document.getElementById('endTitle').textContent,
   img: document.getElementById('cv').toDataURL('image/png'),
 }));
-const snap = async (page) => { const x = await snapRaw(page); x.hud = noEmoji(x.hud); x.panel = noEmoji(x.panel); return x; };
+// bilinçli fark: yeni sürümde tutarlar binlik noktayla yazılır (₺3.975); karşılaştırmada noktalar yok sayılır
+const noDots = (x) => x.replace(/(\d)\.(?=\d{3}(?!\d))/g, '$1');
+const snap = async (page) => { const x = await snapRaw(page); x.hud = noDots(noEmoji(x.hud)); x.panel = noDots(noEmoji(x.panel)); return x; };
 
 /* oyun durumunun özeti: kare kare karşılaştırılır, ilk ayrışma ayrıntılı raporlanır */
 const digest = (page) => page.evaluate(() => {
