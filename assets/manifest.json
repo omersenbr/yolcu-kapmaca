@@ -1043,40 +1043,40 @@
   "yapilar": {
    "Galata Kulesi": {
     "file": "assets/landmarks_iso/galata-kulesi.webp",
-    "w": 335,
-    "h": 469,
+    "w": 334,
+    "h": 466,
     "taban": [
-     2,
-     368,
-     167,
+     0,
+     366,
+     166,
      466,
-     333,
-     356
+     332,
+     367
     ]
    },
    "Kız Kulesi": {
     "file": "assets/landmarks_iso/kiz-kulesi.webp",
-    "w": 421,
-    "h": 412,
+    "w": 420,
+    "h": 410,
     "taban": [
-     2,
-     288,
-     212,
-     410,
-     419,
-     278
+     0,
+     287,
+     209,
+     411,
+     418,
+     286
     ]
    },
    "Çamlıca Kulesi": {
     "file": "assets/landmarks_iso/camlica-kulesi.webp",
     "w": 383,
-    "h": 488,
+    "h": 486,
     "taban": [
      1,
-     366,
+     372,
      192,
-     485,
-     381,
+     486,
+     382,
      372
     ]
    },
@@ -1095,28 +1095,28 @@
    },
    "Ayasofya": {
     "file": "assets/landmarks_iso/ayasofya.webp",
-    "w": 486,
-    "h": 465,
+    "w": 485,
+    "h": 461,
     "taban": [
-     2,
-     317,
-     245,
-     462,
-     484,
-     312
+     0,
+     316,
+     243,
+     461,
+     483,
+     316
     ]
    },
    "Sultanahmet Camii": {
     "file": "assets/landmarks_iso/sultanahmet-camii.webp",
-    "w": 487,
-    "h": 463,
+    "w": 485,
+    "h": 459,
     "taban": [
-     2,
-     315,
-     244,
-     460,
+     0,
+     314,
+     243,
+     459,
      484,
-     315
+     313
     ]
    },
    "Topkapı Sarayı": {
@@ -1135,65 +1135,65 @@
    "Dolmabahçe Sarayı": {
     "file": "assets/landmarks_iso/dolmabahce-sarayi.webp",
     "w": 487,
-    "h": 344,
+    "h": 341,
     "taban": [
      1,
-     186,
+     197,
      244,
-     340,
+     341,
      485,
-     189
+     195
     ]
    },
    "Rams Park": {
     "file": "assets/landmarks_iso/rams-park.webp",
-    "w": 500,
-    "h": 391,
+    "w": 499,
+    "h": 389,
     "taban": [
-     2,
+     0,
      233,
-     246,
+     245,
      389,
-     499,
+     498,
      202
     ]
    },
    "Şükrü Saracoğlu Stadyumu": {
     "file": "assets/landmarks_iso/sukru-saracoglu-stadyumu.webp",
     "w": 495,
-    "h": 368,
+    "h": 367,
     "taban": [
-     0,
-     198,
-     240,
-     365,
-     493,
-     182
+     19,
+     225,
+     241,
+     367,
+     494,
+     183
     ]
    },
    "Tüpraş Stadyumu": {
     "file": "assets/landmarks_iso/tupras-stadyumu.webp",
-    "w": 500,
-    "h": 395,
+    "w": 499,
+    "h": 393,
     "taban": [
-     2,
+     0,
      234,
      245,
      393,
-     499,
+     498,
      194
     ]
    },
    "Başakşehir Fatih Terim Stadyumu": {
     "file": "assets/landmarks_iso/basaksehir-fatih-terim-stadyumu.webp",
-    "w": 501,
-    "h": 355,
+    "w": 489,
+    "h": 354,
     "taban": [
      0,
-     160,
-     249,
-     352,
-     498,
+     201,
+     238,
+     353,
+     488,
      166
     ]
    },
@@ -1212,27 +1212,27 @@
    },
    "Harbiye Açıkhava": {
     "file": "assets/landmarks_iso/harbiye-acikhava.webp",
-    "w": 495,
-    "h": 360,
+    "w": 494,
+    "h": 356,
     "taban": [
-     0,
-     164,
+     40,
+     213,
      267,
      357,
      492,
-     151
+     199
     ]
    },
    "KüçükÇiftlik Park": {
     "file": "assets/landmarks_iso/kucukciftlik-park.webp",
-    "w": 490,
-    "h": 370,
+    "w": 489,
+    "h": 368,
     "taban": [
-     2,
+     0,
      234,
      229,
-     368,
-     489,
+     369,
+     488,
      204
     ]
    },
@@ -1241,25 +1241,25 @@
     "w": 495,
     "h": 377,
     "taban": [
-     0,
-     214,
-     228,
-     376,
+     8,
+     252,
+     229,
+     377,
      494,
-     209
+     213
     ]
    },
    "Zorlu PSM": {
     "file": "assets/landmarks_iso/zorlu-psm.webp",
-    "w": 499,
-    "h": 431,
+    "w": 494,
+    "h": 429,
     "taban": [
-     2,
+     0,
      293,
-     226,
+     224,
      428,
-     498,
-     343
+     493,
+     261
     ]
    },
    "Taksim Meydanı": {
@@ -1277,15 +1277,15 @@
    },
    "Esenler Otogarı": {
     "file": "assets/landmarks_iso/esenler-otogari.webp",
-    "w": 499,
-    "h": 418,
+    "w": 498,
+    "h": 416,
     "taban": [
-     2,
-     241,
+     1,
+     245,
      279,
-     415,
-     498,
-     283
+     416,
+     497,
+     284
     ]
    },
    "Maslak gökdelenleri": {
@@ -1294,37 +1294,37 @@
     "h": 453,
     "taban": [
      0,
-     332,
-     195,
+     334,
+     196,
      452,
      402,
-     324
+     326
     ]
    },
    "Havalimanı terminali": {
     "file": "assets/landmarks_iso/havalimani-terminali.webp",
-    "w": 708,
-    "h": 492,
+    "w": 707,
+    "h": 491,
     "taban": [
-     1,
-     289,
+     0,
+     290,
      339,
-     489,
-     705,
-     273
+     490,
+     706,
+     274
     ]
    },
    "Avrasya Tüneli girişi": {
     "file": "assets/landmarks_iso/avrasya-tuneli-girisi.webp",
-    "w": 687,
-    "h": 505,
+    "w": 685,
+    "h": 503,
     "taban": [
      2,
-     323,
-     209,
-     502,
-     684,
-     186
+     380,
+     208,
+     503,
+     683,
+     206
     ]
    }
   }
